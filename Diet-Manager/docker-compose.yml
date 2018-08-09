@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  diet-manager:
+    image: ${DOCKER_REGISTRY}dietmanager
+    build:
+      context: .
+      dockerfile: DM.Web/Dockerfile
