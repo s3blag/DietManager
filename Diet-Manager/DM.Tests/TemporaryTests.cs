@@ -1,5 +1,5 @@
 using DM.Database;
-using DM.Database.Repositories;
+using DM.Repositories;
 using LinqToDB.Data;
 using System;
 using System.Threading.Tasks;
@@ -22,7 +22,7 @@ namespace DM.Tests
 
             await userRepository.AddUserAsync(new User()
             { 
-                UserId = guid,
+                Id = guid,
                 Email = "121313",
                 Password = "p@ssw0rd",
                 UserName = "seblag"

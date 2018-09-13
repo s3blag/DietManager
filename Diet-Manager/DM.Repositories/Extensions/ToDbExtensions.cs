@@ -10,7 +10,7 @@ namespace DM.Logic.Extensions
         {
             return new User()
             {
-                UserId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 Email = userCreation.Email,
                 Password = userCreation.Password,
                 UserName = userCreation.UserName

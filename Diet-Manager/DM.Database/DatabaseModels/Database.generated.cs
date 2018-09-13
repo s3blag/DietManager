@@ -5,6 +5,7 @@
 // </auto-generated>
 //---------------------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using LinqToDB;
@@ -15,12 +16,18 @@ namespace DM.Database
 	/// <summary>
 	/// Database       : DietManager
 	/// Data Source    : tcp://localhost:5432
-	/// Server Version : 10.4
+	/// Server Version : 9.5.14
 	/// </summary>
 	public partial class DietManagerDB : LinqToDB.Data.DataConnection
 	{
-		public ITable<Image> Images { get { return this.GetTable<Image>(); } }
-		public ITable<User>  Users  { get { return this.GetTable<User>(); } }
+		public ITable<Friend>             Friends             { get { return this.GetTable<Friend>(); } }
+		public ITable<Image>              Images              { get { return this.GetTable<Image>(); } }
+		public ITable<Meal>               Meals               { get { return this.GetTable<Meal>(); } }
+		public ITable<MealIngredient>     MealIngredients     { get { return this.GetTable<MealIngredient>(); } }
+		public ITable<MealMealIngredient> MealMealIngredients { get { return this.GetTable<MealMealIngredient>(); } }
+		public ITable<Nutrition>          Nutritions          { get { return this.GetTable<Nutrition>(); } }
+		public ITable<Role>               Roles               { get { return this.GetTable<Role>(); } }
+		public ITable<User>               Users               { get { return this.GetTable<User>(); } }
 
 		public DietManagerDB()
 		{
@@ -36,34 +43,267 @@ namespace DM.Database
 		partial void InitDataContext();
 	}
 
+	[Table(Schema="Users", Name="Friend")]
+	public partial class Friend
+	{
+		[PrimaryKey, NotNull] public Guid Id      { get; set; } // uuid
+		[Column,     NotNull] public Guid User1Id { get; set; } // uuid
+		[Column,     NotNull] public Guid User2Id { get; set; } // uuid
+
+		#region Associations
+
+		/// <summary>
+		/// fk_friend_user1
+		/// </summary>
+		[Association(ThisKey="User1Id", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_friend_user1", BackReferenceName="fkfriendusers")]
+		public User User1 { get; set; }
+
+		/// <summary>
+		/// fk_friend_user2
+		/// </summary>
+		[Association(ThisKey="User2Id", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_friend_user2", BackReferenceName="fk_friend_user2_BackReferences")]
+		public User User2 { get; set; }
+
+		#endregion
+	}
+
 	[Table(Schema="Images", Name="Image")]
 	public partial class Image
 	{
-		[PrimaryKey, NotNull] public Guid   ImageId { get; set; } // uuid
-		[Column,     NotNull] public string Path    { get; set; } // text
+		[PrimaryKey, NotNull] public Guid   Id   { get; set; } // uuid
+		[Column,     NotNull] public string Path { get; set; } // text
+
+		#region Associations
+
+		/// <summary>
+		/// fk_user_photo_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="PhotoId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<User> fkuserphotoes { get; set; }
+
+		/// <summary>
+		/// FK_MealIngredient_Photo_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="PhotoId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<MealIngredient> MealIngredientPhotos { get; set; }
+
+		/// <summary>
+		/// FK_Meal_Photo_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="PhotoId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<Meal> MealPhotos { get; set; }
+
+		#endregion
+	}
+
+	[Table(Schema="Meals", Name="Meal")]
+	public partial class Meal
+	{
+		[PrimaryKey, NotNull] public Guid   Id       { get; set; } // uuid
+		[Column,     NotNull] public Guid   PhotoId  { get; set; } // uuid
+		[Column,     NotNull] public string Name     { get; set; } // text
+		[Column,     NotNull] public float  Calories { get; set; } // real
+
+		#region Associations
+
+		/// <summary>
+		/// FK_MealIngredientMeal_Meal_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="MealId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<MealMealIngredient> MealIngredientMeals { get; set; }
+
+		/// <summary>
+		/// FK_Meal_Photo
+		/// </summary>
+		[Association(ThisKey="PhotoId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="FK_Meal_Photo", BackReferenceName="MealPhotos")]
+		public Image Photo { get; set; }
+
+		#endregion
+	}
+
+	[Table(Schema="Meals", Name="MealIngredient")]
+	public partial class MealIngredient
+	{
+		[PrimaryKey, NotNull    ] public Guid   Id       { get; set; } // uuid
+		[Column,     NotNull    ] public Guid   PhotoId  { get; set; } // uuid
+		[Column,        Nullable] public string Name     { get; set; } // text
+		[Column,     NotNull    ] public int    Calories { get; set; } // integer
+
+		#region Associations
+
+		/// <summary>
+		/// FK_MealIngredientMeal_MealIngredient_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="MealIngredientId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<MealMealIngredient> MealIngredientMeals { get; set; }
+
+		/// <summary>
+		/// FK_Nutritions_MealIngredient_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="MealIngredientId", CanBeNull=true, Relationship=Relationship.OneToOne, IsBackReference=true)]
+		public Nutrition Nutrition { get; set; }
+
+		/// <summary>
+		/// FK_MealIngredient_Photo
+		/// </summary>
+		[Association(ThisKey="PhotoId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="FK_MealIngredient_Photo", BackReferenceName="MealIngredientPhotos")]
+		public Image Photo { get; set; }
+
+		#endregion
+	}
+
+	[Table(Schema="Meals", Name="Meal_MealIngredient")]
+	public partial class MealMealIngredient
+	{
+		[PrimaryKey, NotNull] public Guid Id               { get; set; } // uuid
+		[Column,     NotNull] public Guid MealIngredientId { get; set; } // uuid
+		[Column,     NotNull] public Guid MealId           { get; set; } // uuid
+
+		#region Associations
+
+		/// <summary>
+		/// FK_MealIngredientMeal_Meal
+		/// </summary>
+		[Association(ThisKey="MealId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="FK_MealIngredientMeal_Meal", BackReferenceName="MealIngredientMeals")]
+		public Meal Meal { get; set; }
+
+		/// <summary>
+		/// FK_MealIngredientMeal_MealIngredient
+		/// </summary>
+		[Association(ThisKey="MealIngredientId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="FK_MealIngredientMeal_MealIngredient", BackReferenceName="MealIngredientMeals")]
+		public MealIngredient MealIngredient { get; set; }
+
+		#endregion
+	}
+
+	[Table(Schema="Meals", Name="Nutritions")]
+	public partial class Nutrition
+	{
+		[PrimaryKey, NotNull    ] public Guid   MealIngredientId { get; set; } // uuid
+		[Column,     NotNull    ] public float  ProteinAmount    { get; set; } // real
+		[Column,     NotNull    ] public float  Carbohydrates    { get; set; } // real
+		[Column,     NotNull    ] public float  Fats             { get; set; } // real
+		[Column,        Nullable] public float? VitaminA         { get; set; } // real
+		[Column,        Nullable] public float? VitaminC         { get; set; } // real
+		[Column,        Nullable] public float? VitaminB6        { get; set; } // real
+		[Column,        Nullable] public float? VitaminD         { get; set; } // real
+
+		#region Associations
+
+		/// <summary>
+		/// FK_Nutritions_MealIngredient
+		/// </summary>
+		[Association(ThisKey="MealIngredientId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.OneToOne, KeyName="FK_Nutritions_MealIngredient", BackReferenceName="Nutrition")]
+		public MealIngredient MealIngredient { get; set; }
+
+		#endregion
+	}
+
+	[Table(Schema="Users", Name="Role")]
+	public partial class Role
+	{
+		[PrimaryKey, NotNull] public Guid   Id       { get; set; } // uuid
+		[Column,     NotNull] public string RoleName { get; set; } // text
+
+		#region Associations
+
+		/// <summary>
+		/// fk_user_role_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="RoleId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<User> fkuserroles { get; set; }
+
+		#endregion
 	}
 
 	[Table(Schema="Users", Name="User")]
 	public partial class User
 	{
-		[PrimaryKey, NotNull] public Guid   UserId   { get; set; } // uuid
-		[Column,     NotNull] public string Email    { get; set; } // character varying(60)
-		[Column,     NotNull] public string UserName { get; set; } // character varying(60)
-		[Column,     NotNull] public string Password { get; set; } // text
+		[PrimaryKey, NotNull] public Guid           Id           { get; set; } // uuid
+		[Column,     NotNull] public string         Email        { get; set; } // character varying(254)
+		[Column,     NotNull] public string         UserName     { get; set; } // character varying(20)
+		[Column,     NotNull] public string         Password     { get; set; } // text
+		[Column,     NotNull] public DateTimeOffset CreationDate { get; set; } // timestamp (6) with time zone
+		[Column,     NotNull] public Guid           PhotoId      { get; set; } // uuid
+		[Column,     NotNull] public Guid           RoleId       { get; set; } // uuid
+
+		#region Associations
+
+		/// <summary>
+		/// fk_friend_user2_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="User2Id", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<Friend> fk_friend_user2_BackReferences { get; set; }
+
+		/// <summary>
+		/// fk_friend_user1_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="User1Id", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<Friend> fkfriendusers { get; set; }
+
+		/// <summary>
+		/// fk_user_photo
+		/// </summary>
+		[Association(ThisKey="PhotoId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_user_photo", BackReferenceName="fkuserphotoes")]
+		public Image Photo { get; set; }
+
+		/// <summary>
+		/// fk_user_role
+		/// </summary>
+		[Association(ThisKey="RoleId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_user_role", BackReferenceName="fkuserroles")]
+		public Role Role { get; set; }
+
+		#endregion
 	}
 
 	public static partial class TableExtensions
 	{
-		public static Image Find(this ITable<Image> table, Guid ImageId)
+		public static Friend Find(this ITable<Friend> table, Guid Id)
 		{
 			return table.FirstOrDefault(t =>
-				t.ImageId == ImageId);
+				t.Id == Id);
 		}
 
-		public static User Find(this ITable<User> table, Guid UserId)
+		public static Image Find(this ITable<Image> table, Guid Id)
 		{
 			return table.FirstOrDefault(t =>
-				t.UserId == UserId);
+				t.Id == Id);
+		}
+
+		public static Meal Find(this ITable<Meal> table, Guid Id)
+		{
+			return table.FirstOrDefault(t =>
+				t.Id == Id);
+		}
+
+		public static MealIngredient Find(this ITable<MealIngredient> table, Guid Id)
+		{
+			return table.FirstOrDefault(t =>
+				t.Id == Id);
+		}
+
+		public static MealMealIngredient Find(this ITable<MealMealIngredient> table, Guid Id)
+		{
+			return table.FirstOrDefault(t =>
+				t.Id == Id);
+		}
+
+		public static Nutrition Find(this ITable<Nutrition> table, Guid MealIngredientId)
+		{
+			return table.FirstOrDefault(t =>
+				t.MealIngredientId == MealIngredientId);
+		}
+
+		public static Role Find(this ITable<Role> table, Guid Id)
+		{
+			return table.FirstOrDefault(t =>
+				t.Id == Id);
+		}
+
+		public static User Find(this ITable<User> table, Guid Id)
+		{
+			return table.FirstOrDefault(t =>
+				t.Id == Id);
 		}
 	}
 }

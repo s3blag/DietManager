@@ -1,10 +1,11 @@
-﻿using LinqToDB;
+﻿using DM.Database;
+using LinqToDB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DM.Database.Repositories
+namespace DM.Repositories
 {
     public class UserRepository
     {
@@ -13,7 +14,7 @@ namespace DM.Database.Repositories
             using (var db = new DietManagerDB())
             {
                 return await db.Users.
-                    Where(u => u.UserId == id).
+                    Where(u => u.Id == id).
                     FirstOrDefaultAsync()
                     ?? throw new KeyNotFoundException($"User with id = {id} was not found.");
             }
@@ -32,7 +33,7 @@ namespace DM.Database.Repositories
             using (var db = new DietManagerDB())
             {
                 await db.Users.
-                    Where(u => u.UserId == id).
+                    Where(u => u.Id == id).
                     DeleteAsync();
             }
         }

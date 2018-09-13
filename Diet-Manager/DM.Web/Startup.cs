@@ -1,21 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DM.Database;
+﻿using DM.Database;
 using LinqToDB.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+//using IdentityRole = AspNetCore.Identity.PostgreSQL.IdentityRole;
+//using User = DM.Logic.Models.User.User;
 
 namespace Diet_Manager
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IHostingEnvironment env)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables();
+
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -23,9 +26,17 @@ namespace Diet_Manager
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            //services.AddIdentity<User, IdentityRole>()
+            //    .AddUserStore<UserStore<User>>()
+            //    .AddRoleStore<RoleStore<IdentityRole>>()
+            //    .AddRoleManager<RoleManager<IdentityRole>>()
+            //    .AddDefaultTokenProviders();
 
+            services.AddMvc();
+             
             DataConnection.DefaultSettings = new DBConnectionSettings();
+
+            services.AddSingleton(_ => Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

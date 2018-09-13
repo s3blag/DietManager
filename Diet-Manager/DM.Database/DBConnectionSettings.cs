@@ -12,7 +12,7 @@ namespace DM.Database
 
         public string DefaultDataProvider => "PostgreSQL";
 
-        public IEnumerable<IConnectionStringSettings> ConnectionStrings => new[]
+        public IEnumerable<IConnectionStringSettings> ConnectionStrings => new []
         {
             new ConnectionStringSettings()
             {
