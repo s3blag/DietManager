@@ -48,6 +48,15 @@ CREATE TABLE "Meals"."Meal" (
 ALTER TABLE "Meals"."Meal" 
 ADD CONSTRAINT "FK_Meal_Photo" FOREIGN KEY ("PhotoId") REFERENCES  "Images"."Image"("Id");
 
+CREATE TABLE "Meals"."User-Meal" (
+    "Id" UUID PRIMARY KEY,
+    "MealId" UUID NOT NULL,
+    "UserId" UUID NOT NULL
+);
+ALTER TABLE "Meals"."User-Meal"
+ADD CONSTRAINT FK_UserMeal_MealId FOREIGN KEY ("MealId") REFERENCES "Meals"."Meal"("Id"),
+ADD CONSTRAINT FK_UserMeal_UserId FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id");
+
 CREATE TABLE "Meals"."MealIngredient" (
     "Id" UUID PRIMARY KEY,
     "PhotoId" UUID NOT NULL,
@@ -68,7 +77,7 @@ ADD CONSTRAINT "FK_MealIngredientMeal_Meal" FOREIGN KEY ("MealId") REFERENCES  "
 
 CREATE TABLE "Meals"."Nutritions" (
     "MealIngredientId" UUID PRIMARY KEY,
-    "ProteinAmount" REAL NOT NULL,
+    "Protein" REAL NOT NULL,
     "Carbohydrates" REAL NOT NULL,
     "Fats" REAL NOT NULL,
     "VitaminA" REAL,

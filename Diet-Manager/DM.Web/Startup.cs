@@ -1,4 +1,7 @@
-﻿using DM.Database;
+﻿using AutoMapper;
+using DM.Database;
+using DM.Repositories;
+using DM.Repositories.Interfaces;
 using LinqToDB.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,8 +36,13 @@ namespace Diet_Manager
             //    .AddDefaultTokenProviders();
 
             services.AddMvc();
-             
+
+            services.AddAutoMapper();
+            
             DataConnection.DefaultSettings = new DBConnectionSettings();
+
+            services.AddScoped<IMealRepository, MealRepository>();
+
 
             services.AddSingleton(_ => Configuration);
         }

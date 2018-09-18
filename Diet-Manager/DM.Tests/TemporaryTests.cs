@@ -1,7 +1,12 @@
+using AutoMapper;
 using DM.Database;
+using DM.Logic.Services;
+using DM.Models.ViewModels;
 using DM.Repositories;
+using DM.Web.Config;
 using LinqToDB.Data;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -30,5 +35,33 @@ namespace DM.Tests
 
             var user = await userRepository.GetUserAsync(guid);
         }
+
+        [Fact]
+        public async Task Test2()
+        {
+            //var guid = Guid.NewGuid();
+
+            Mapper.Initialize(cfg =>
+            {
+                cfg.AddProfile<MappingProfile>();
+            });
+            Mapper.Configuration.CompileMappings();
+            var mapper = Mapper.Instance;
+
+            var mealService = new MealService(mapper, new MealRepository());
+
+            var newMeal = new NewMealVM()
+            {
+                Name = "Nowy posi³ek",
+                PhotoId = new Guid("beb5afef-d709-4f50-b280-a45068518718"),
+                Calories = "220",
+                Ingredients = Enumerable.Empty<MealIngredientVM>(),
+            };
+
+            DataConnection.DefaultSettings = new DBConnectionSettings();
+
+            var result = await mealService.AddMealAsync(newMeal);
+        }
+
     }
 }

@@ -28,6 +28,7 @@ namespace DM.Database
 		public ITable<Nutrition>          Nutritions          { get { return this.GetTable<Nutrition>(); } }
 		public ITable<Role>               Roles               { get { return this.GetTable<Role>(); } }
 		public ITable<User>               Users               { get { return this.GetTable<User>(); } }
+		public ITable<UserMeal>           UserMeals           { get { return this.GetTable<UserMeal>(); } }
 
 		public DietManagerDB()
 		{
@@ -107,6 +108,12 @@ namespace DM.Database
 		#region Associations
 
 		/// <summary>
+		/// fk_usermeal_mealid_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="MealId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<UserMeal> fkusermealmealids { get; set; }
+
+		/// <summary>
 		/// FK_MealIngredientMeal_Meal_BackReference
 		/// </summary>
 		[Association(ThisKey="Id", OtherKey="MealId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
@@ -180,7 +187,7 @@ namespace DM.Database
 	public partial class Nutrition
 	{
 		[PrimaryKey, NotNull    ] public Guid   MealIngredientId { get; set; } // uuid
-		[Column,     NotNull    ] public float  ProteinAmount    { get; set; } // real
+		[Column,     NotNull    ] public float  Protein          { get; set; } // real
 		[Column,     NotNull    ] public float  Carbohydrates    { get; set; } // real
 		[Column,     NotNull    ] public float  Fats             { get; set; } // real
 		[Column,        Nullable] public float? VitaminA         { get; set; } // real
@@ -242,6 +249,12 @@ namespace DM.Database
 		public IEnumerable<Friend> fkfriendusers { get; set; }
 
 		/// <summary>
+		/// fk_usermeal_userid_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="UserId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<UserMeal> fkusermealuserids { get; set; }
+
+		/// <summary>
 		/// fk_user_photo
 		/// </summary>
 		[Association(ThisKey="PhotoId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_user_photo", BackReferenceName="fkuserphotoes")]
@@ -252,6 +265,30 @@ namespace DM.Database
 		/// </summary>
 		[Association(ThisKey="RoleId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_user_role", BackReferenceName="fkuserroles")]
 		public Role Role { get; set; }
+
+		#endregion
+	}
+
+	[Table(Schema="Meals", Name="User-Meal")]
+	public partial class UserMeal
+	{
+		[PrimaryKey, NotNull] public Guid Id     { get; set; } // uuid
+		[Column,     NotNull] public Guid MealId { get; set; } // uuid
+		[Column,     NotNull] public Guid UserId { get; set; } // uuid
+
+		#region Associations
+
+		/// <summary>
+		/// fk_usermeal_mealid
+		/// </summary>
+		[Association(ThisKey="MealId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_usermeal_mealid", BackReferenceName="fkusermealmealids")]
+		public Meal Meal { get; set; }
+
+		/// <summary>
+		/// fk_usermeal_userid
+		/// </summary>
+		[Association(ThisKey="UserId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_usermeal_userid", BackReferenceName="fkusermealuserids")]
+		public User User { get; set; }
 
 		#endregion
 	}
@@ -301,6 +338,12 @@ namespace DM.Database
 		}
 
 		public static User Find(this ITable<User> table, Guid Id)
+		{
+			return table.FirstOrDefault(t =>
+				t.Id == Id);
+		}
+
+		public static UserMeal Find(this ITable<UserMeal> table, Guid Id)
 		{
 			return table.FirstOrDefault(t =>
 				t.Id == Id);

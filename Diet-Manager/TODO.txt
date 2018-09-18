@@ -1,0 +1,33 @@
+TODO:
+
+[Milestones]:
+1. Logowanie + Autentykacja (AspNet.Core.Identity)
+    1.1 Tworzenie nowego użytkownika(rejestracja)
+    1.2 Walidacja
+    1.3 Tokeny
+2. Dania
+    2.1 Tworzenie nowego dania z użyciem składników z zewn. API / zcachowanych danych
+    2.2 Edycja utworzonych wcześniej dań
+
+3. Zewnętrzne API
+    3.1 Komunikacja z zewnętrznym API dostarczającym informacje dot. składników posiłku
+    3.2 Cachowanie danych
+
+4. Kalendarz dań wraz z generatorem listy zakupów
+
+5. Integracja z facebookiem
+    5.1 Logowanie
+    5.2 Przeglądanie aktywności znajomych
+
+6. System osiągnięć
+
+
+[Minor]:
+
+1. IndexedResults 
+	- koło GetAll stwórz metody pobierające x pierwszych obiektów:
+
+		IndexedResult : {
+			result: [],
+			isLastBatch: bool
+		}
