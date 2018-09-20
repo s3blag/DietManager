@@ -5,7 +5,9 @@ using DM.Models.ViewModels;
 using DM.Repositories;
 using DM.Web.Config;
 using LinqToDB.Data;
+using Newtonsoft.Json;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -63,5 +65,27 @@ namespace DM.Tests
             var result = await mealService.AddMealAsync(newMeal);
         }
 
+        [Fact]
+        public async Task Test3()
+        {
+            var imagePath = @"C:\Users\seblag-stacjonarny\Desktop\ImagesRootDirectory\104647_1.jpg";
+
+            byte[] imageToSave = await File.ReadAllBytesAsync(imagePath);
+
+            var bytesAsString = JsonConvert.SerializeObject(imageToSave);
+
+            Mapper.Initialize(cfg =>
+            {
+                cfg.AddProfile<MappingProfile>();
+            });
+            Mapper.Configuration.CompileMappings();
+            var mapper = Mapper.Instance;
+
+            var imageService = new ImageService(new ImageRepository(), mapper);
+
+            DataConnection.DefaultSettings = new DBConnectionSettings();
+
+            var result = await imageService.AddImageAsync(imageToSave);
+        }
     }
 }

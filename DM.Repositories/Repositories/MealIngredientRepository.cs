@@ -3,7 +3,7 @@ using LinqToDB;
 using System;
 using System.Threading.Tasks;
 
-namespace DM.Repositories.Repositories
+namespace DM.Repositories
 {
     public class MealIngredientRepository
     {

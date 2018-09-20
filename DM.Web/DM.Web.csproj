@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DM.Database\DM.Models.csproj" />
+    <ProjectReference Include="..\DM.Logic\DM.Logic.csproj" />
     <ProjectReference Include="..\DM.Repositories\DM.Repositories.csproj" />
   </ItemGroup>
 

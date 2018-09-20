@@ -8,5 +8,11 @@
     "LogLevel": {
       "Default": "Warning"
     }
+  },
+
+  "Tokens": {
+    "Key": "ad1223s23e;42dasa;a21313sfrwzav;asdsfsdfs21313aafa",
+    "Issuer": "localhost",
+    "Audience": "users"
   }
 }

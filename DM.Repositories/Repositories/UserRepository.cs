@@ -1,7 +1,6 @@
 ﻿using DM.Database;
 using LinqToDB;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,8 +14,7 @@ namespace DM.Repositories
             {
                 return await db.Users.
                     Where(u => u.Id == id).
-                    FirstOrDefaultAsync()
-                    ?? throw new KeyNotFoundException($"User with id = {id} was not found.");
+                    FirstOrDefaultAsync();
             }
         }
 

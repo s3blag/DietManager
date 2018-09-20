@@ -10,13 +10,18 @@ namespace DM.Web.Config
     {
         public MappingProfile()
         {
-            CreateMap<Meal, MealVM>();
-            CreateMap<MealWithIngredients, MealVM>();
-            CreateMap<Nutrition, NutritionsVM>();
-            CreateMap<MealIngredient, MealIngredientVM>();
+            CreateMap<MealVM, Meal>().
+                ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
+                ReverseMap();
+            CreateMap<MealWithIngredients, MealVM>().ReverseMap();
+            CreateMap<Nutrition, NutritionsVM>().ReverseMap();
+            CreateMap<MealIngredient, MealIngredientVM>().ReverseMap();
             CreateMap<NewMealVM, Meal>().
-                ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid()));
-
+                ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
+                ReverseMap();
+            CreateMap<ImageCreation, Image>().
+                ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
+                ReverseMap();
         }
     }
 }

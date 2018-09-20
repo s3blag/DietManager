@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using DM.Database;
+using DM.Logic.Interfaces;
+using DM.Logic.Services;
 using DM.Repositories;
 using DM.Repositories.Interfaces;
 using LinqToDB.Data;
@@ -7,7 +9,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Text;
 
 namespace Diet_Manager
 {
@@ -17,7 +21,7 @@ namespace Diet_Manager
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile("config.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
             Configuration = builder.Build();
@@ -34,9 +38,23 @@ namespace Diet_Manager
             
             DataConnection.DefaultSettings = new DBConnectionSettings();
 
-            services.AddScoped<IMealRepository, MealRepository>();
-
             services.AddLinq2Identity<Guid>();
+
+            services.AddAuthentication()
+               .AddCookie()
+               .AddJwtBearer(cfg =>
+               {
+                   cfg.TokenValidationParameters = new TokenValidationParameters()
+                   {
+                       ValidIssuer = Configuration["Tokens:Issuer"],
+                       ValidAudience = Configuration["Tokens:Audience"],
+                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
+                   };
+               });
+
+            services.AddScoped<IMealRepository, MealRepository>();
+            services.AddScoped<IImageRepository, ImageRepository>();
+            services.AddScoped<IImageService, ImageService>();
 
             services.AddSingleton(_ => Configuration);
         }

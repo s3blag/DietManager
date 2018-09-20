@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DM.Database;
+using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
 using DM.Repositories.Interfaces;
 using System;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DM.Logic.Services
 {
-    public class MealService
+    public class MealService : IMealService
     {
         private readonly IMapper _mapper;
         private readonly IMealRepository _mealRepository;
