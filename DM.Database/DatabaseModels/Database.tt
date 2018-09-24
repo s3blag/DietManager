@@ -7,8 +7,6 @@
 	NamespaceName = "DM.Database";
 
 	LoadPostgreSQLMetadata("localhost", "5432", "DietManager", "postgres", "root");
-//	LoadPostgreSQLMetadata(string connectionString);
-//	LoadPostgreSQLMetadata("Server=localhost;Port=5432;Database=DietMananager;User Id=postgres;Password=root;");
 	
 	GenerateModel();
 #>

@@ -16,7 +16,7 @@ namespace DM.Database
 	/// <summary>
 	/// Database       : DietManager
 	/// Data Source    : tcp://localhost:5432
-	/// Server Version : 10.4
+	/// Server Version : 9.5.14
 	/// </summary>
 	public partial class DietManagerDB : LinqToDB.Data.DataConnection
 	{
@@ -102,10 +102,10 @@ namespace DM.Database
 	[Table(Schema="Meals", Name="Meal")]
 	public partial class Meal
 	{
-		[PrimaryKey, NotNull] public Guid   Id       { get; set; } // uuid
-		[Column,     NotNull] public Guid?   PhotoId  { get; set; } // uuid
-		[Column,     NotNull] public string Name     { get; set; } // text
-		[Column,     NotNull] public float  Calories { get; set; } // real
+		[PrimaryKey, NotNull    ] public Guid   Id       { get; set; } // uuid
+		[Column,        Nullable] public Guid?  PhotoId  { get; set; } // uuid
+		[Column,     NotNull    ] public string Name     { get; set; } // text
+		[Column,     NotNull    ] public float  Calories { get; set; } // real
 
 		#region Associations
 
@@ -124,7 +124,7 @@ namespace DM.Database
 		/// <summary>
 		/// FK_Meal_Photo
 		/// </summary>
-		[Association(ThisKey="PhotoId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="FK_Meal_Photo", BackReferenceName="MealPhotos")]
+		[Association(ThisKey="PhotoId", OtherKey="Id", CanBeNull=true, Relationship=Relationship.ManyToOne, KeyName="FK_Meal_Photo", BackReferenceName="MealPhotos")]
 		public Image Photo { get; set; }
 
 		#endregion
@@ -151,7 +151,7 @@ namespace DM.Database
 	public partial class MealIngredient
 	{
 		[PrimaryKey, NotNull    ] public Guid   Id           { get; set; } // uuid
-		[Column,     NotNull    ] public Guid   PhotoId      { get; set; } // uuid
+		[Column,        Nullable] public Guid?  PhotoId      { get; set; } // uuid
 		[Column,        Nullable] public string Name         { get; set; } // text
 		[Column,     NotNull    ] public int    Calories     { get; set; } // integer
 		[Column,     NotNull    ] public Guid   NutritionsId { get; set; } // uuid
@@ -173,7 +173,7 @@ namespace DM.Database
 		/// <summary>
 		/// FK_MealIngredient_Photo
 		/// </summary>
-		[Association(ThisKey="PhotoId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="FK_MealIngredient_Photo", BackReferenceName="MealIngredientPhotos")]
+		[Association(ThisKey="PhotoId", OtherKey="Id", CanBeNull=true, Relationship=Relationship.ManyToOne, KeyName="FK_MealIngredient_Photo", BackReferenceName="MealIngredientPhotos")]
 		public Image Photo { get; set; }
 
 		#endregion
@@ -262,13 +262,13 @@ namespace DM.Database
 	[Table(Schema="Users", Name="User")]
 	public partial class User
 	{
-		[PrimaryKey, NotNull] public Guid           Id           { get; set; } // uuid
-		[Column,     NotNull] public string         Email        { get; set; } // character varying(254)
-		[Column,     NotNull] public string         UserName     { get; set; } // character varying(20)
-		[Column,     NotNull] public string         Password     { get; set; } // text
-		[Column,     NotNull] public DateTimeOffset CreationDate { get; set; } // timestamp (6) with time zone
-		[Column,     NotNull] public Guid           PhotoId      { get; set; } // uuid
-		[Column,     NotNull] public Guid           RoleId       { get; set; } // uuid
+		[PrimaryKey, NotNull    ] public Guid           Id           { get; set; } // uuid
+		[Column,     NotNull    ] public string         Email        { get; set; } // character varying(254)
+		[Column,     NotNull    ] public string         UserName     { get; set; } // character varying(20)
+		[Column,     NotNull    ] public string         Password     { get; set; } // text
+		[Column,     NotNull    ] public DateTimeOffset CreationDate { get; set; } // timestamp (6) with time zone
+		[Column,        Nullable] public Guid?          PhotoId      { get; set; } // uuid
+		[Column,     NotNull    ] public Guid           RoleId       { get; set; } // uuid
 
 		#region Associations
 
@@ -293,7 +293,7 @@ namespace DM.Database
 		/// <summary>
 		/// fk_user_photo
 		/// </summary>
-		[Association(ThisKey="PhotoId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_user_photo", BackReferenceName="fkuserphotoes")]
+		[Association(ThisKey="PhotoId", OtherKey="Id", CanBeNull=true, Relationship=Relationship.ManyToOne, KeyName="fk_user_photo", BackReferenceName="fkuserphotoes")]
 		public Image Photo { get; set; }
 
 		/// <summary>

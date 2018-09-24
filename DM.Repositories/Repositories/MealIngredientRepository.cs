@@ -1,6 +1,7 @@
 ﻿using DM.Database;
 using DM.Repositories.Interfaces;
 using LinqToDB;
+using LinqToDB.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,42 @@ namespace DM.Repositories
 
                 return Convert.ToBoolean(result);
             } 
+        }
+
+        public async Task<bool> AddMealIngredientsAsync(IEnumerable<MealIngredient> mealIngredients)
+        {
+            if (mealIngredients == null)
+            {
+                throw new ArgumentNullException(nameof(mealIngredients));
+            }
+
+            return await Task.Run(() =>
+            {
+                using (var db = new DietManagerDB())
+                {
+                    var result = db.BulkCopy(mealIngredients);
+
+                    return result.RowsCopied == mealIngredients.Count();
+                }
+            });
+        }
+
+        public async Task<bool> AddMealIngredientNutritionsAsync(IEnumerable<Nutrition> nutritions)
+        {
+            if (nutritions == null)
+            {
+                throw new ArgumentNullException(nameof(nutritions));
+            }
+
+            return await Task.Run(() =>
+            {
+                using (var db = new DietManagerDB())
+                {
+                    var result = db.BulkCopy(nutritions);
+
+                    return result.RowsCopied == nutritions.Count();
+                }
+            });
         }
 
         public async Task<IEnumerable<MealIngredient>> GetMealIngredientsForMealAsync(Guid mealId)

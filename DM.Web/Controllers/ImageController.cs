@@ -24,7 +24,7 @@ namespace DM.Web.Controllers
             {
                 return BadRequest();
             }
-            return Ok(await _imageService.GetImageByIdAsync(id));
+            return Ok (await _imageService.GetImageByIdAsync(id));
         }
 
         [HttpPost]
@@ -37,7 +37,7 @@ namespace DM.Web.Controllers
 
             byte[] byteImage = Encoding.ASCII.GetBytes(image.Image);
 
-            return Ok(await _imageService.AddImageAsync(byteImage));
+            return Ok (await _imageService.AddImageAsync(byteImage));
         }
 
     }

@@ -4,7 +4,7 @@ namespace DM.Models.ViewModels
 {
     public class NutritionsVM
     {
-        public float ProteinAmount { get; set; }
+        public float Protein { get; set; }
         public float Carbohydrates { get; set; }
         public float Fats { get; set; }
         public float? VitaminA { get; set; } 

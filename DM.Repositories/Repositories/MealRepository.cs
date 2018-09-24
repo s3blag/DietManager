@@ -2,6 +2,7 @@
 using DM.Models;
 using DM.Repositories.Interfaces;
 using LinqToDB;
+using LinqToDB.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,8 @@ namespace DM.Repositories
 {
     public class MealRepository : IMealRepository
     {
-        private readonly IMealIngredientRepository _mealIngredientRepository;
-
-        public MealRepository(IMealIngredientRepository mealIngredientRepository)
+        public MealRepository()
         {
-            _mealIngredientRepository = mealIngredientRepository;
         }
 
         public async Task<IEnumerable<Meal>> GetMealsByUserAsync(Guid id)
@@ -32,16 +30,14 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<MealWithIngredients> GetMealByIdAsync(Guid id)
+        public async Task<Meal> GetMealByIdAsync(Guid id)
         {
             using (var db = new DietManagerDB())
             {
-                var ingredients = await _mealIngredientRepository.GetMealIngredientsForMealAsync(id);
-
                 var meal = await db.Meals.
                     FirstOrDefaultAsync(m => m.Id == id);
 
-                return new MealWithIngredients(meal, ingredients);
+                return meal;
             }
         }
 
@@ -65,6 +61,19 @@ namespace DM.Repositories
 
                 return Convert.ToBoolean(result);
             }
+        }
+
+        public async Task<bool> AddMealMealIngredientsAsync(IEnumerable<MealMealIngredient> mealMealIngredients)
+        {
+            return await Task.Run(() =>
+            {
+                using (var db = new DietManagerDB())
+                {
+                    var result = db.BulkCopy(mealMealIngredients);
+
+                    return result.RowsCopied == mealMealIngredients.Count();
+                }
+            });
         }
 
         public async Task<bool> UpdateMealAsync(Meal newMealData)

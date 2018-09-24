@@ -41,7 +41,7 @@ ADD CONSTRAINT Friend_UserIdsShouldBeDifferent CHECK ("User1Id" != "User2Id");
 
 CREATE TABLE "Meals"."Meal" (
     "Id" UUID PRIMARY KEY,
-    "PhotoId" UUID UNIQUE NOT NULL,
+    "PhotoId" UUID NULL,
     "Name" TEXT NOT NULL,
     "Calories" REAL NOT NULL
 );
@@ -71,7 +71,7 @@ CREATE TABLE "Meals"."Nutritions" (
 CREATE TABLE "Meals"."MealIngredient" (
     "Id" UUID PRIMARY KEY,
     "PhotoId" UUID NULL,
-    "Name" TEXT,
+    "Name" TEXT UNIQUE,
     "Calories" INTEGER NOT NULL,
     "NutritionsId" UUID NOT NULL
 );

@@ -47,7 +47,7 @@ namespace DM.Tests
         {
             ObjectsFactory.InitDbConnection(Constants.ConnectionString);
 
-            var mealService = new MealService(ObjectsFactory.GetMapperInstance(), new MealRepository(new MealIngredientRepository()));
+            var mealService = new MealService(ObjectsFactory.GetMapperInstance(), new MealRepository(), new MealIngredientRepository());
 
             var newMeal = new NewMealVM()
             {
@@ -80,7 +80,9 @@ namespace DM.Tests
             var mapper = ObjectsFactory.GetMapperInstance();
 
             var mealIngredientRepo = new MealIngredientRepository();
-            var mealRepo = new MealRepository(mealIngredientRepo);
+            var mealRepo = new MealRepository();
+
+            var mealService = new MealService(mapper, mealRepo, mealIngredientRepo);
 
             var mealVM = new NewMealVM()
             {
@@ -95,7 +97,7 @@ namespace DM.Tests
                         Calories = "35",
                         Nutritions = new NutritionsVM()
                         {
-                            ProteinAmount = 23,
+                            Protein = 23,
                             Carbohydrates = 11,
                             Fats = 22,
                             VitaminA = 13
@@ -107,7 +109,7 @@ namespace DM.Tests
                         Calories = "150",
                         Nutritions = new NutritionsVM()
                         {
-                            ProteinAmount = 53,
+                            Protein = 53,
                             Carbohydrates = 1,
                             Fats = 78,
                             VitaminA = 16
@@ -115,11 +117,11 @@ namespace DM.Tests
                     },
                     new MealIngredientVM()
                     {
-                        Name = "mealIngredient2",
+                        Name = "mealIngredient3",
                         Calories = "50",
                         Nutritions = new NutritionsVM()
                         {
-                            ProteinAmount = 13,
+                            Protein = 13,
                             Carbohydrates = 12,
                             Fats = 25,
                             VitaminA = 6
@@ -128,9 +130,7 @@ namespace DM.Tests
                 }
             };
 
-            var dbMeal = mapper.Map<Meal>(mealVM);
-
-            var result = mealRepo.AddMealAsync(dbMeal);
+            var result = await mealService.AddMealAsync(mealVM);
         }
     }
 }
