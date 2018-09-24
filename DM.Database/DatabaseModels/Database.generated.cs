@@ -16,19 +16,21 @@ namespace DM.Database
 	/// <summary>
 	/// Database       : DietManager
 	/// Data Source    : tcp://localhost:5432
-	/// Server Version : 9.5.14
+	/// Server Version : 10.4
 	/// </summary>
 	public partial class DietManagerDB : LinqToDB.Data.DataConnection
 	{
-		public ITable<Friend>             Friends             { get { return this.GetTable<Friend>(); } }
-		public ITable<Image>              Images              { get { return this.GetTable<Image>(); } }
-		public ITable<Meal>               Meals               { get { return this.GetTable<Meal>(); } }
-		public ITable<MealIngredient>     MealIngredients     { get { return this.GetTable<MealIngredient>(); } }
-		public ITable<MealMealIngredient> MealMealIngredients { get { return this.GetTable<MealMealIngredient>(); } }
-		public ITable<Nutrition>          Nutritions          { get { return this.GetTable<Nutrition>(); } }
-		public ITable<Role>               Roles               { get { return this.GetTable<Role>(); } }
-		public ITable<User>               Users               { get { return this.GetTable<User>(); } }
-		public ITable<UserMeal>           UserMeals           { get { return this.GetTable<UserMeal>(); } }
+		public ITable<Friend>                       Friends                       { get { return this.GetTable<Friend>(); } }
+		public ITable<Image>                        Images                        { get { return this.GetTable<Image>(); } }
+		public ITable<Meal>                         Meals                         { get { return this.GetTable<Meal>(); } }
+		public ITable<MealFullMealIngredient>       MealFullMealIngredients       { get { return this.GetTable<MealFullMealIngredient>(); } }
+		public ITable<MealIngredient>               MealIngredients               { get { return this.GetTable<MealIngredient>(); } }
+		public ITable<MealIngredientsWithNutrition> MealIngredientsWithNutritions { get { return this.GetTable<MealIngredientsWithNutrition>(); } }
+		public ITable<MealMealIngredient>           MealMealIngredients           { get { return this.GetTable<MealMealIngredient>(); } }
+		public ITable<Nutrition>                    Nutritions                    { get { return this.GetTable<Nutrition>(); } }
+		public ITable<Role>                         Roles                         { get { return this.GetTable<Role>(); } }
+		public ITable<User>                         Users                         { get { return this.GetTable<User>(); } }
+		public ITable<UserMeal>                     UserMeals                     { get { return this.GetTable<UserMeal>(); } }
 
 		public DietManagerDB()
 		{
@@ -56,13 +58,13 @@ namespace DM.Database
 		/// <summary>
 		/// fk_friend_user1
 		/// </summary>
-		[Association(ThisKey="User1Id", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_friend_user1", BackReferenceName="fkfriendusers")]
+		[Association(ThisKey="User1Id", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_friend_user1", BackReferenceName="fk_friend_user1_BackReferences")]
 		public User User1 { get; set; }
 
 		/// <summary>
 		/// fk_friend_user2
 		/// </summary>
-		[Association(ThisKey="User2Id", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_friend_user2", BackReferenceName="fk_friend_user2_BackReferences")]
+		[Association(ThisKey="User2Id", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_friend_user2", BackReferenceName="fkfriendusers")]
 		public User User2 { get; set; }
 
 		#endregion
@@ -101,7 +103,7 @@ namespace DM.Database
 	public partial class Meal
 	{
 		[PrimaryKey, NotNull] public Guid   Id       { get; set; } // uuid
-		[Column,     NotNull] public Guid   PhotoId  { get; set; } // uuid
+		[Column,     NotNull] public Guid?   PhotoId  { get; set; } // uuid
 		[Column,     NotNull] public string Name     { get; set; } // text
 		[Column,     NotNull] public float  Calories { get; set; } // real
 
@@ -128,26 +130,44 @@ namespace DM.Database
 		#endregion
 	}
 
+	[Table(Schema="Meals", Name="Meal-FullMealIngredient", IsView=true)]
+	public partial class MealFullMealIngredient
+	{
+		[Column(SkipOnUpdate=true), Nullable] public Guid?  MealId                 { get; set; } // uuid
+		[Column(SkipOnUpdate=true), Nullable] public Guid?  MealIngredientId       { get; set; } // uuid
+		[Column(SkipOnUpdate=true), Nullable] public string MealIngredientName     { get; set; } // text
+		[Column(SkipOnUpdate=true), Nullable] public Guid?  MealIngredientPhotoId  { get; set; } // uuid
+		[Column(SkipOnUpdate=true), Nullable] public int?   MealIngredientCalories { get; set; } // integer
+		[Column(SkipOnUpdate=true), Nullable] public float? Protein                { get; set; } // real
+		[Column(SkipOnUpdate=true), Nullable] public float? Carbohydrates          { get; set; } // real
+		[Column(SkipOnUpdate=true), Nullable] public float? Fats                   { get; set; } // real
+		[Column(SkipOnUpdate=true), Nullable] public float? VitaminA               { get; set; } // real
+		[Column(SkipOnUpdate=true), Nullable] public float? VitaminC               { get; set; } // real
+		[Column(SkipOnUpdate=true), Nullable] public float? VitaminB6              { get; set; } // real
+		[Column(SkipOnUpdate=true), Nullable] public float? VitaminD               { get; set; } // real
+	}
+
 	[Table(Schema="Meals", Name="MealIngredient")]
 	public partial class MealIngredient
 	{
-		[PrimaryKey, NotNull    ] public Guid   Id       { get; set; } // uuid
-		[Column,     NotNull    ] public Guid   PhotoId  { get; set; } // uuid
-		[Column,        Nullable] public string Name     { get; set; } // text
-		[Column,     NotNull    ] public int    Calories { get; set; } // integer
+		[PrimaryKey, NotNull    ] public Guid   Id           { get; set; } // uuid
+		[Column,     NotNull    ] public Guid   PhotoId      { get; set; } // uuid
+		[Column,        Nullable] public string Name         { get; set; } // text
+		[Column,     NotNull    ] public int    Calories     { get; set; } // integer
+		[Column,     NotNull    ] public Guid   NutritionsId { get; set; } // uuid
 
 		#region Associations
 
 		/// <summary>
-		/// FK_MealIngredientMeal_MealIngredient_BackReference
+		/// FK_MealIngredient-_BackReference
 		/// </summary>
 		[Association(ThisKey="Id", OtherKey="MealIngredientId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
-		public IEnumerable<MealMealIngredient> MealIngredientMeals { get; set; }
+		public IEnumerable<MealMealIngredient> Meal_MealIngredients { get; set; }
 
 		/// <summary>
-		/// FK_Nutritions_MealIngredient_BackReference
+		/// FK_MealIngredient_Nutritions
 		/// </summary>
-		[Association(ThisKey="Id", OtherKey="MealIngredientId", CanBeNull=true, Relationship=Relationship.OneToOne, IsBackReference=true)]
+		[Association(ThisKey="NutritionsId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="FK_MealIngredient_Nutritions", BackReferenceName="MealIngredients")]
 		public Nutrition Nutrition { get; set; }
 
 		/// <summary>
@@ -159,7 +179,23 @@ namespace DM.Database
 		#endregion
 	}
 
-	[Table(Schema="Meals", Name="Meal_MealIngredient")]
+	[Table(Schema="Meals", Name="MealIngredientsWithNutritions", IsView=true)]
+	public partial class MealIngredientsWithNutrition
+	{
+		[Column(SkipOnUpdate=true), Nullable] public Guid?  Id            { get; set; } // uuid
+		[Column(SkipOnUpdate=true), Nullable] public string Name          { get; set; } // text
+		[Column(SkipOnUpdate=true), Nullable] public Guid?  PhotoId       { get; set; } // uuid
+		[Column(SkipOnUpdate=true), Nullable] public int?   Calories      { get; set; } // integer
+		[Column(SkipOnUpdate=true), Nullable] public float? Protein       { get; set; } // real
+		[Column(SkipOnUpdate=true), Nullable] public float? Carbohydrates { get; set; } // real
+		[Column(SkipOnUpdate=true), Nullable] public float? Fats          { get; set; } // real
+		[Column(SkipOnUpdate=true), Nullable] public float? VitaminA      { get; set; } // real
+		[Column(SkipOnUpdate=true), Nullable] public float? VitaminC      { get; set; } // real
+		[Column(SkipOnUpdate=true), Nullable] public float? VitaminB6     { get; set; } // real
+		[Column(SkipOnUpdate=true), Nullable] public float? VitaminD      { get; set; } // real
+	}
+
+	[Table(Schema="Meals", Name="Meal-MealIngredient")]
 	public partial class MealMealIngredient
 	{
 		[PrimaryKey, NotNull] public Guid Id               { get; set; } // uuid
@@ -175,9 +211,9 @@ namespace DM.Database
 		public Meal Meal { get; set; }
 
 		/// <summary>
-		/// FK_MealIngredientMeal_MealIngredient
+		/// FK_MealIngredient-
 		/// </summary>
-		[Association(ThisKey="MealIngredientId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="FK_MealIngredientMeal_MealIngredient", BackReferenceName="MealIngredientMeals")]
+		[Association(ThisKey="MealIngredientId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="FK_MealIngredient-", BackReferenceName="Meal_MealIngredients")]
 		public MealIngredient MealIngredient { get; set; }
 
 		#endregion
@@ -186,22 +222,22 @@ namespace DM.Database
 	[Table(Schema="Meals", Name="Nutritions")]
 	public partial class Nutrition
 	{
-		[PrimaryKey, NotNull    ] public Guid   MealIngredientId { get; set; } // uuid
-		[Column,     NotNull    ] public float  Protein          { get; set; } // real
-		[Column,     NotNull    ] public float  Carbohydrates    { get; set; } // real
-		[Column,     NotNull    ] public float  Fats             { get; set; } // real
-		[Column,        Nullable] public float? VitaminA         { get; set; } // real
-		[Column,        Nullable] public float? VitaminC         { get; set; } // real
-		[Column,        Nullable] public float? VitaminB6        { get; set; } // real
-		[Column,        Nullable] public float? VitaminD         { get; set; } // real
+		[PrimaryKey, NotNull    ] public Guid   Id            { get; set; } // uuid
+		[Column,     NotNull    ] public float  Protein       { get; set; } // real
+		[Column,     NotNull    ] public float  Carbohydrates { get; set; } // real
+		[Column,     NotNull    ] public float  Fats          { get; set; } // real
+		[Column,        Nullable] public float? VitaminA      { get; set; } // real
+		[Column,        Nullable] public float? VitaminC      { get; set; } // real
+		[Column,        Nullable] public float? VitaminB6     { get; set; } // real
+		[Column,        Nullable] public float? VitaminD      { get; set; } // real
 
 		#region Associations
 
 		/// <summary>
-		/// FK_Nutritions_MealIngredient
+		/// FK_MealIngredient_Nutritions_BackReference
 		/// </summary>
-		[Association(ThisKey="MealIngredientId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.OneToOne, KeyName="FK_Nutritions_MealIngredient", BackReferenceName="Nutrition")]
-		public MealIngredient MealIngredient { get; set; }
+		[Association(ThisKey="Id", OtherKey="NutritionsId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<MealIngredient> MealIngredients { get; set; }
 
 		#endregion
 	}
@@ -237,15 +273,15 @@ namespace DM.Database
 		#region Associations
 
 		/// <summary>
-		/// fk_friend_user2_BackReference
-		/// </summary>
-		[Association(ThisKey="Id", OtherKey="User2Id", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
-		public IEnumerable<Friend> fk_friend_user2_BackReferences { get; set; }
-
-		/// <summary>
 		/// fk_friend_user1_BackReference
 		/// </summary>
 		[Association(ThisKey="Id", OtherKey="User1Id", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<Friend> fk_friend_user1_BackReferences { get; set; }
+
+		/// <summary>
+		/// fk_friend_user2_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="User2Id", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
 		public IEnumerable<Friend> fkfriendusers { get; set; }
 
 		/// <summary>
@@ -325,10 +361,10 @@ namespace DM.Database
 				t.Id == Id);
 		}
 
-		public static Nutrition Find(this ITable<Nutrition> table, Guid MealIngredientId)
+		public static Nutrition Find(this ITable<Nutrition> table, Guid Id)
 		{
 			return table.FirstOrDefault(t =>
-				t.MealIngredientId == MealIngredientId);
+				t.Id == Id);
 		}
 
 		public static Role Find(this ITable<Role> table, Guid Id)

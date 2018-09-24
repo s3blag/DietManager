@@ -11,6 +11,13 @@ namespace DM.Repositories
 {
     public class MealRepository : IMealRepository
     {
+        private readonly IMealIngredientRepository _mealIngredientRepository;
+
+        public MealRepository(IMealIngredientRepository mealIngredientRepository)
+        {
+            _mealIngredientRepository = mealIngredientRepository;
+        }
+
         public async Task<IEnumerable<Meal>> GetMealsByUserAsync(Guid id)
         {
             using (var db = new DietManagerDB())
@@ -29,16 +36,12 @@ namespace DM.Repositories
         {
             using (var db = new DietManagerDB())
             {
-                var mealWithIngredients = await db.MealMealIngredients.
-                    LoadWith(m => m.MealIngredient).
-                    LoadWith(m => m.Meal).
-                    Where(m => m.MealId == id).
-                    Select(m => new Tuple<Meal, MealIngredient>(m.Meal, m.MealIngredient)).
-                    ToListAsync();
+                var ingredients = await _mealIngredientRepository.GetMealIngredientsForMealAsync(id);
 
-                var ingredients = mealWithIngredients.Select(m => m.Item2);
+                var meal = await db.Meals.
+                    FirstOrDefaultAsync(m => m.Id == id);
 
-                return new MealWithIngredients(mealWithIngredients.FirstOrDefault().Item1, ingredients);
+                return new MealWithIngredients(meal, ingredients);
             }
         }
 

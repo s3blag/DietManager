@@ -33,7 +33,7 @@ namespace DM.Logic.Services
             return mealVM;
         }
 
-        public async Task<MealVM> AddMealAsync(NewMealVM mealVM)
+        public async Task<Guid> AddMealAsync(NewMealVM mealVM)
         {
             if (mealVM == null)
             {
@@ -42,14 +42,16 @@ namespace DM.Logic.Services
 
             var dbMeal = _mapper.Map<Meal>(mealVM);
 
+            //1. if mealIngredient is new add it, otherwise goto 2.
+            //2. add mealMealIngredient
             var result = await _mealRepository.AddMealAsync(dbMeal);
 
             if (result != true)
             {
-                return null;
+                return Guid.Empty;
             }
 
-            return _mapper.Map<MealVM>(dbMeal);
-        }
+            return _mapper.Map<Guid>(dbMeal.Id);
+        } 
     }
 }

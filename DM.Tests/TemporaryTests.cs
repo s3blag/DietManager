@@ -1,12 +1,16 @@
 using AutoMapper;
 using DM.Database;
 using DM.Logic.Services;
+using DM.Models.Config;
 using DM.Models.ViewModels;
 using DM.Repositories;
+using DM.Tests.TestsData;
 using DM.Web.Config;
 using LinqToDB.Data;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,7 +23,7 @@ namespace DM.Tests
         [Fact]
         public async Task Test1()
         {
-            DataConnection.DefaultSettings = new DBConnectionSettings();
+            ObjectsFactory.InitDbConnection(Constants.ConnectionString);
 
             var userRepository = new UserRepository();
 
@@ -41,16 +45,9 @@ namespace DM.Tests
         [Fact]
         public async Task Test2()
         {
-            //var guid = Guid.NewGuid();
+            ObjectsFactory.InitDbConnection(Constants.ConnectionString);
 
-            Mapper.Initialize(cfg =>
-            {
-                cfg.AddProfile<MappingProfile>();
-            });
-            Mapper.Configuration.CompileMappings();
-            var mapper = Mapper.Instance;
-
-            var mealService = new MealService(mapper, new MealRepository());
+            var mealService = new MealService(ObjectsFactory.GetMapperInstance(), new MealRepository(new MealIngredientRepository()));
 
             var newMeal = new NewMealVM()
             {
@@ -60,32 +57,80 @@ namespace DM.Tests
                 Ingredients = Enumerable.Empty<MealIngredientVM>(),
             };
 
-            DataConnection.DefaultSettings = new DBConnectionSettings();
-
             var result = await mealService.AddMealAsync(newMeal);
         }
 
         [Fact]
         public async Task Test3()
         {
-            var imagePath = @"C:\Users\seblag-stacjonarny\Desktop\ImagesRootDirectory\104647_1.jpg";
+            ObjectsFactory.InitDbConnection(Constants.ConnectionString);
+            var imageService = new ImageService(new ImageRepository(), ObjectsFactory.GetMapperInstance(), ObjectsFactory.GetImageServiceIOptions(Constants.NumberOfImagesInSubdirectory, Constants.TestImageDirectoryPath));
 
+            string imagePath = Constants.TestImageDirectoryPath + "104647_1.jpg";
             byte[] imageToSave = await File.ReadAllBytesAsync(imagePath);
-
-            var bytesAsString = JsonConvert.SerializeObject(imageToSave);
-
-            Mapper.Initialize(cfg =>
-            {
-                cfg.AddProfile<MappingProfile>();
-            });
-            Mapper.Configuration.CompileMappings();
-            var mapper = Mapper.Instance;
-
-            var imageService = new ImageService(new ImageRepository(), mapper);
-
-            DataConnection.DefaultSettings = new DBConnectionSettings();
+            string bytesAsString = JsonConvert.SerializeObject(imageToSave);
 
             var result = await imageService.AddImageAsync(imageToSave);
+        }
+
+        [Fact]
+        public async Task AddMeal()
+        {
+            ObjectsFactory.InitDbConnection(Constants.ConnectionString);
+            var mapper = ObjectsFactory.GetMapperInstance();
+
+            var mealIngredientRepo = new MealIngredientRepository();
+            var mealRepo = new MealRepository(mealIngredientRepo);
+
+            var mealVM = new NewMealVM()
+            {
+                Name = "newMealVM",
+                PhotoId = null,
+                Calories = "235",
+                Ingredients = new List<MealIngredientVM>()
+                {
+                    new MealIngredientVM()
+                    {
+                        Name = "mealIngredient1",
+                        Calories = "35",
+                        Nutritions = new NutritionsVM()
+                        {
+                            ProteinAmount = 23,
+                            Carbohydrates = 11,
+                            Fats = 22,
+                            VitaminA = 13
+                        }
+                    },
+                    new MealIngredientVM()
+                    {
+                        Name = "mealIngredient2",
+                        Calories = "150",
+                        Nutritions = new NutritionsVM()
+                        {
+                            ProteinAmount = 53,
+                            Carbohydrates = 1,
+                            Fats = 78,
+                            VitaminA = 16
+                        }
+                    },
+                    new MealIngredientVM()
+                    {
+                        Name = "mealIngredient2",
+                        Calories = "50",
+                        Nutritions = new NutritionsVM()
+                        {
+                            ProteinAmount = 13,
+                            Carbohydrates = 12,
+                            Fats = 25,
+                            VitaminA = 6
+                        }
+                    },
+                }
+            };
+
+            var dbMeal = mapper.Map<Meal>(mealVM);
+
+            var result = mealRepo.AddMealAsync(dbMeal);
         }
     }
 }

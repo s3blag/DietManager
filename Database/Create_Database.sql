@@ -22,7 +22,7 @@ CREATE TABLE "Users"."User" (
     "UserName" varchar(20) UNIQUE NOT NULL,
     "Password" TEXT NOT NULL,
     "CreationDate" TIMESTAMPTZ NOT NULL,
-    "PhotoId" UUID NOT NULL,
+    "PhotoId" UUID NULL,
     "RoleId" UUID NOT NULL
 );
 ALTER TABLE "Users"."User" 
@@ -57,26 +57,8 @@ ALTER TABLE "Meals"."User-Meal"
 ADD CONSTRAINT FK_UserMeal_MealId FOREIGN KEY ("MealId") REFERENCES "Meals"."Meal"("Id"),
 ADD CONSTRAINT FK_UserMeal_UserId FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id");
 
-CREATE TABLE "Meals"."MealIngredient" (
-    "Id" UUID PRIMARY KEY,
-    "PhotoId" UUID NOT NULL,
-    "Name" TEXT,
-    "Calories" INTEGER NOT NULL
-);
-ALTER TABLE "Meals"."MealIngredient" 
-ADD CONSTRAINT "FK_MealIngredient_Photo" FOREIGN KEY ("PhotoId") REFERENCES  "Images"."Image"("Id");
-
-CREATE TABLE "Meals"."Meal_MealIngredient" (
-    "Id" UUID PRIMARY KEY,
-    "MealIngredientId" UUID NOT NULL,
-    "MealId" UUID NOT NULL
-);
-ALTER TABLE "Meals"."Meal_MealIngredient" 
-ADD CONSTRAINT "FK_MealIngredientMeal_MealIngredient" FOREIGN KEY ("MealIngredientId") REFERENCES  "Meals"."MealIngredient"("Id"),
-ADD CONSTRAINT "FK_MealIngredientMeal_Meal" FOREIGN KEY ("MealId") REFERENCES  "Meals"."Meal"("Id");
-
 CREATE TABLE "Meals"."Nutritions" (
-    "MealIngredientId" UUID PRIMARY KEY,
+    "Id" UUID PRIMARY KEY,
     "Protein" REAL NOT NULL,
     "Carbohydrates" REAL NOT NULL,
     "Fats" REAL NOT NULL,
@@ -85,5 +67,56 @@ CREATE TABLE "Meals"."Nutritions" (
     "VitaminB6" REAL,
     "VitaminD" REAL
 );
-ALTER TABLE "Meals"."Nutritions" 
-ADD CONSTRAINT "FK_Nutritions_MealIngredient" FOREIGN KEY ("MealIngredientId") REFERENCES "Meals"."MealIngredient"("Id");
+
+CREATE TABLE "Meals"."MealIngredient" (
+    "Id" UUID PRIMARY KEY,
+    "PhotoId" UUID NULL,
+    "Name" TEXT,
+    "Calories" INTEGER NOT NULL,
+    "NutritionsId" UUID NOT NULL
+);
+ALTER TABLE "Meals"."MealIngredient" 
+ADD CONSTRAINT "FK_MealIngredient_Photo" FOREIGN KEY ("PhotoId") REFERENCES  "Images"."Image"("Id"),
+ADD CONSTRAINT "FK_MealIngredient_Nutritions" FOREIGN KEY ("NutritionsId") REFERENCES  "Meals"."Nutritions"("Id");
+
+CREATE TABLE "Meals"."Meal-MealIngredient" (
+    "Id" UUID PRIMARY KEY,
+    "MealIngredientId" UUID NOT NULL,
+    "MealId" UUID NOT NULL
+);
+ALTER TABLE "Meals"."Meal-MealIngredient" 
+ADD CONSTRAINT "FK_MealIngredient-" FOREIGN KEY ("MealIngredientId") REFERENCES  "Meals"."MealIngredient"("Id"),
+ADD CONSTRAINT "FK_MealIngredientMeal_Meal" FOREIGN KEY ("MealId") REFERENCES  "Meals"."Meal"("Id");
+
+CREATE VIEW "Meals"."MealIngredientsWithNutritions" AS
+SELECT
+    m."Id",
+    m."Name",
+    m."PhotoId",
+    m."Calories",
+    n."Protein",
+    n."Carbohydrates",
+    n."Fats",
+    n."VitaminA",
+    n."VitaminC",
+    n."VitaminB6",
+    n."VitaminD"
+FROM "Meals"."MealIngredient" m
+JOIN "Meals"."Nutritions" n ON n."Id" = m."NutritionsId";
+
+CREATE VIEW "Meals"."Meal-FullMealIngredient" AS
+SELECT 
+ 	mmi."MealId",
+    min."Id" as "MealIngredientId",
+    min."Name" as "MealIngredientName",
+    min."PhotoId" as "MealIngredientPhotoId",
+    min."Calories" as "MealIngredientCalories",
+    min."Protein",
+    min."Carbohydrates",
+    min."Fats",
+    min."VitaminA",
+    min."VitaminC",
+    min."VitaminB6",
+    min."VitaminD"
+FROM "Meals"."Meal-MealIngredient" mmi
+JOIN "Meals"."MealIngredientsWithNutritions" min ON mmi."MealIngredientId" = min."Id";

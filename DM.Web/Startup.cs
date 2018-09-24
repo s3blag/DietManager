@@ -2,6 +2,7 @@
 using DM.Database;
 using DM.Logic.Interfaces;
 using DM.Logic.Services;
+using DM.Models.Config;
 using DM.Repositories;
 using DM.Repositories.Interfaces;
 using LinqToDB.Data;
@@ -36,7 +37,7 @@ namespace Diet_Manager
 
             services.AddAutoMapper();
             
-            DataConnection.DefaultSettings = new DBConnectionSettings();
+            DataConnection.DefaultSettings = new DBConnectionSettings(Configuration["ConnectionStrings:PostgreSQLBaseConnection"]);
 
             services.AddLinq2Identity<Guid>();
 
@@ -51,6 +52,8 @@ namespace Diet_Manager
                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
                    };
                });
+
+            services.Configure<ImageServiceConfig>(options => Configuration.GetSection("ImageServiceConfig").Bind(options));
 
             services.AddScoped<IMealRepository, MealRepository>();
             services.AddScoped<IImageRepository, ImageRepository>();

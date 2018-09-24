@@ -6,21 +6,35 @@ namespace DM.Database
 {
     public class DBConnectionSettings : ILinqToDBSettings
     {
+        public DBConnectionSettings(string connectionString)
+        {
+            ConnectionString = connectionString;
+        }
+
         public IEnumerable<IDataProviderSettings> DataProviders => Enumerable.Empty<IDataProviderSettings>();
 
         public string DefaultConfiguration => "postgres";
 
         public string DefaultDataProvider => "PostgreSQL";
 
-        public IEnumerable<IConnectionStringSettings> ConnectionStrings => new []
+        private string ConnectionString { get; }
+
+        public IEnumerable<IConnectionStringSettings> ConnectionStrings
         {
-            new ConnectionStringSettings()
+            get
             {
-                Name = "postgres",
-                ProviderName = "PostgreSQL",
-                ConnectionString = "Server=localhost;Port=5432;Database=DietManager;User Id=postgres;Password=root;"
+                return new[] {
+                    new ConnectionStringSettings()
+                    {
+                        Name = "postgres",
+                        ProviderName = "PostgreSQL",
+                        ConnectionString = ConnectionString
+                    }
+                 };
             }
-        };
+        
+        }
+        
     }
 
     public class ConnectionStringSettings : IConnectionStringSettings

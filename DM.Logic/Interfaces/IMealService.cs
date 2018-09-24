@@ -6,7 +6,7 @@ namespace DM.Logic.Interfaces
 {
     public interface IMealService
     {
-        Task<MealVM> AddMealAsync(NewMealVM mealVM);
+        Task<Guid> AddMealAsync(NewMealVM mealVM);
         Task<MealVM> GetMealByIdAsync(Guid id);
     }
 }

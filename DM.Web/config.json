@@ -10,6 +10,11 @@
     }
   },
 
+  "ImageServiceConfig": {
+    "ImagesRootDirectoryPath": "C:\\Users\\seblag-laptop\\Desktop\\ImagesRootDirectory",
+    "AmountOfImagesInSubDirectory": 100
+  },
+
   "Tokens": {
     "Key": "ad1223s23e;42dasa;a21313sfrwzav;asdsfsdfs21313aafa",
     "Issuer": "localhost",

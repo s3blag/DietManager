@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using DM.Database;
 using DM.Logic.Interfaces;
+using DM.Models.Config;
 using DM.Models.ViewModels;
 using DM.Repositories.Interfaces;
+using Microsoft.Extensions.Options;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -11,19 +13,18 @@ namespace DM.Logic.Services
 {
     public class ImageService : IImageService
     {
-        private const int AMOUNT_OF_IMAGES_IN_DIRECTORY = 1000;
-        //TODO: Read from config file
-        private const string IMAGE_BASE_PATH = @"C:\Users\seblag-stacjonarny\Desktop\ImagesRootDirectory";
+        private readonly ImageServiceConfig _config; 
         private readonly IImageRepository _imageRepository;
         private readonly IMapper _mapper;
 
-        public ImageService(IImageRepository imageRepository, IMapper mapper)
+        public ImageService(IImageRepository imageRepository, IMapper mapper, IOptions<ImageServiceConfig> options)
         {
             _imageRepository = imageRepository;
             _mapper = mapper;
+            _config = options.Value;
         }
 
-        public async Task<Byte[]> GetImageByIdAsync(Guid imageId)
+        public async Task<byte[]> GetImageByIdAsync(Guid imageId)
         {
             if (imageId == Guid.Empty)
             {
@@ -32,12 +33,12 @@ namespace DM.Logic.Services
 
             var imageMetaData = await _imageRepository.GetImageByIdAsync(imageId);
 
-            Byte[] image = await ReadImageAsync(imageMetaData.Path);
+            byte[] image = await ReadImageAsync(imageMetaData.Path);
 
             return image;
         }
 
-        public async Task<Guid> AddImageAsync(Byte[] image)
+        public async Task<Guid> AddImageAsync(byte[] image)
         {
             if (image == null)
             {
@@ -45,7 +46,7 @@ namespace DM.Logic.Services
             }
 
             //TODO Read from config file
-            var imageCreation = await CreateFullImagePathAsync(IMAGE_BASE_PATH);
+            var imageCreation = await CreateFullImagePathAsync(_config.ImagesRootDirectoryPath);
 
             //compress image
 
@@ -79,11 +80,11 @@ namespace DM.Logic.Services
         {
             int count = await _imageRepository.CountAsync();
 
-            int imageInternalIndex = count % (AMOUNT_OF_IMAGES_IN_DIRECTORY - 1);
+            int imageInternalIndex = count % (_config.AmountOfImagesInSubDirectory - 1);
 
             bool createDirectory = imageInternalIndex == 0;
 
-            string newImageDirectoryPath = Path.Combine(basePath, (count / (AMOUNT_OF_IMAGES_IN_DIRECTORY - 1)).ToString());
+            string newImageDirectoryPath = Path.Combine(basePath, (count / (_config.AmountOfImagesInSubDirectory - 1)).ToString());
 
             if (createDirectory)
             {

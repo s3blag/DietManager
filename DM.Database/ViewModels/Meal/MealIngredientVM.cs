@@ -4,7 +4,7 @@ namespace DM.Models.ViewModels
 {
     public class MealIngredientVM
     {
-        public Guid PhotoId { get; set; }
+        public Guid? PhotoId { get; set; }
 
         public string Name { get; set; }
 
