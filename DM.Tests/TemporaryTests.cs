@@ -124,13 +124,27 @@ namespace DM.Tests
                             Protein = 13,
                             Carbohydrates = 12,
                             Fats = 25,
-                            VitaminA = 6
+                            VitaminB6 = 6
                         }
                     },
                 }
             };
 
             var result = await mealService.AddMealAsync(mealVM);
+        }
+
+        [Fact]
+        public async Task DeleteMeal()
+        {
+            ObjectsFactory.InitDbConnection(Constants.ConnectionString);
+            var mapper = ObjectsFactory.GetMapperInstance();
+
+            var mealIngredientRepo = new MealIngredientRepository();
+            var mealRepo = new MealRepository();
+
+            var mealService = new MealService(mapper, mealRepo, mealIngredientRepo);
+
+            await mealService.DeleteMealAsync(new Guid("0199cbb1-4e7c-467a-97ae-c38f59eff6b4"));
         }
     }
 }

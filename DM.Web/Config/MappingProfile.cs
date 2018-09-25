@@ -10,7 +10,8 @@ namespace DM.Web.Config
     {
         public MappingProfile()
         {
-            CreateMap<MealWithIngredients, MealVM>().ReverseMap();
+            CreateMap<MealScheduleEntry, MealScheduleEntryVM>();
+            CreateMap<MealWithIngredients, MealVM>();
             CreateMap<NutritionsVM, Nutrition>().
                 ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
                 ReverseMap(); ;

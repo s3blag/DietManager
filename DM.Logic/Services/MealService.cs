@@ -46,7 +46,7 @@ namespace DM.Logic.Services
                 throw new ArgumentNullException(nameof(mealVM));
             }
 
-            //addUser-Meal
+            //addUser-Meal(userId, newMealVM, date
             var dbMeal = _mapper.Map<Meal>(mealVM);
 
             var (mealIngredientsToInsert, mealIngredientNutritionsToInsert) = GetMealIngredientsToInsert(mealVM.Ingredients);
@@ -65,6 +65,16 @@ namespace DM.Logic.Services
 
             return dbMeal.Id;
         } 
+
+        public async Task DeleteMealAsync(Guid mealId)
+        {
+            if (mealId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(mealId));
+            }
+
+            await _mealRepository.DeleteMealAsync(mealId);
+        }
 
         private (IList<MealIngredient>, IList<Nutrition> nutritions) GetMealIngredientsToInsert(IEnumerable<MealIngredientVM> mealIngredientVMs)
         {

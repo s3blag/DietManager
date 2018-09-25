@@ -27,10 +27,10 @@ namespace DM.Database
 		public ITable<MealIngredient>               MealIngredients               { get { return this.GetTable<MealIngredient>(); } }
 		public ITable<MealIngredientsWithNutrition> MealIngredientsWithNutritions { get { return this.GetTable<MealIngredientsWithNutrition>(); } }
 		public ITable<MealMealIngredient>           MealMealIngredients           { get { return this.GetTable<MealMealIngredient>(); } }
+		public ITable<MealScheduleEntry>            MealScheduleEntries           { get { return this.GetTable<MealScheduleEntry>(); } }
 		public ITable<Nutrition>                    Nutritions                    { get { return this.GetTable<Nutrition>(); } }
 		public ITable<Role>                         Roles                         { get { return this.GetTable<Role>(); } }
 		public ITable<User>                         Users                         { get { return this.GetTable<User>(); } }
-		public ITable<UserMeal>                     UserMeals                     { get { return this.GetTable<UserMeal>(); } }
 
 		public DietManagerDB()
 		{
@@ -113,13 +113,13 @@ namespace DM.Database
 		/// fk_usermeal_mealid_BackReference
 		/// </summary>
 		[Association(ThisKey="Id", OtherKey="MealId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
-		public IEnumerable<UserMeal> fkusermealmealids { get; set; }
+		public IEnumerable<MealScheduleEntry> fkusermealmealids { get; set; }
 
 		/// <summary>
-		/// FK_MealIngredientMeal_Meal_BackReference
+		/// FK_MealMealIngredient_Meal_BackReference
 		/// </summary>
 		[Association(ThisKey="Id", OtherKey="MealId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
-		public IEnumerable<MealMealIngredient> MealIngredientMeals { get; set; }
+		public IEnumerable<MealMealIngredient> MealMealIngredients { get; set; }
 
 		/// <summary>
 		/// FK_Meal_Photo
@@ -159,10 +159,10 @@ namespace DM.Database
 		#region Associations
 
 		/// <summary>
-		/// FK_MealIngredient-_BackReference
+		/// FK_MealMealIngredient_MealIngredient-_BackReference
 		/// </summary>
 		[Association(ThisKey="Id", OtherKey="MealIngredientId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
-		public IEnumerable<MealMealIngredient> Meal_MealIngredients { get; set; }
+		public IEnumerable<MealMealIngredient> MealMealIngredients { get; set; }
 
 		/// <summary>
 		/// FK_MealIngredient_Nutritions
@@ -205,16 +205,41 @@ namespace DM.Database
 		#region Associations
 
 		/// <summary>
-		/// FK_MealIngredientMeal_Meal
+		/// FK_MealMealIngredient_Meal
 		/// </summary>
-		[Association(ThisKey="MealId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="FK_MealIngredientMeal_Meal", BackReferenceName="MealIngredientMeals")]
+		[Association(ThisKey="MealId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="FK_MealMealIngredient_Meal", BackReferenceName="MealMealIngredients")]
 		public Meal Meal { get; set; }
 
 		/// <summary>
-		/// FK_MealIngredient-
+		/// FK_MealMealIngredient_MealIngredient-
 		/// </summary>
-		[Association(ThisKey="MealIngredientId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="FK_MealIngredient-", BackReferenceName="Meal_MealIngredients")]
+		[Association(ThisKey="MealIngredientId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="FK_MealMealIngredient_MealIngredient-", BackReferenceName="MealMealIngredients")]
 		public MealIngredient MealIngredient { get; set; }
+
+		#endregion
+	}
+
+	[Table(Schema="Meals", Name="MealScheduleEntry")]
+	public partial class MealScheduleEntry
+	{
+		[PrimaryKey, NotNull] public Guid           Id     { get; set; } // uuid
+		[Column,     NotNull] public Guid           UserId { get; set; } // uuid
+		[Column,     NotNull] public Guid           MealId { get; set; } // uuid
+		[Column,     NotNull] public DateTimeOffset Date   { get; set; } // timestamp (6) with time zone
+
+		#region Associations
+
+		/// <summary>
+		/// fk_usermeal_mealid
+		/// </summary>
+		[Association(ThisKey="MealId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_usermeal_mealid", BackReferenceName="fkusermealmealids")]
+		public Meal Meal { get; set; }
+
+		/// <summary>
+		/// fk_usermeal_userid
+		/// </summary>
+		[Association(ThisKey="UserId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_usermeal_userid", BackReferenceName="fkusermealuserids")]
+		public User User { get; set; }
 
 		#endregion
 	}
@@ -288,7 +313,7 @@ namespace DM.Database
 		/// fk_usermeal_userid_BackReference
 		/// </summary>
 		[Association(ThisKey="Id", OtherKey="UserId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
-		public IEnumerable<UserMeal> fkusermealuserids { get; set; }
+		public IEnumerable<MealScheduleEntry> fkusermealuserids { get; set; }
 
 		/// <summary>
 		/// fk_user_photo
@@ -301,30 +326,6 @@ namespace DM.Database
 		/// </summary>
 		[Association(ThisKey="RoleId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_user_role", BackReferenceName="fkuserroles")]
 		public Role Role { get; set; }
-
-		#endregion
-	}
-
-	[Table(Schema="Meals", Name="User-Meal")]
-	public partial class UserMeal
-	{
-		[PrimaryKey, NotNull] public Guid Id     { get; set; } // uuid
-		[Column,     NotNull] public Guid MealId { get; set; } // uuid
-		[Column,     NotNull] public Guid UserId { get; set; } // uuid
-
-		#region Associations
-
-		/// <summary>
-		/// fk_usermeal_mealid
-		/// </summary>
-		[Association(ThisKey="MealId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_usermeal_mealid", BackReferenceName="fkusermealmealids")]
-		public Meal Meal { get; set; }
-
-		/// <summary>
-		/// fk_usermeal_userid
-		/// </summary>
-		[Association(ThisKey="UserId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_usermeal_userid", BackReferenceName="fkusermealuserids")]
-		public User User { get; set; }
 
 		#endregion
 	}
@@ -361,6 +362,12 @@ namespace DM.Database
 				t.Id == Id);
 		}
 
+		public static MealScheduleEntry Find(this ITable<MealScheduleEntry> table, Guid Id)
+		{
+			return table.FirstOrDefault(t =>
+				t.Id == Id);
+		}
+
 		public static Nutrition Find(this ITable<Nutrition> table, Guid Id)
 		{
 			return table.FirstOrDefault(t =>
@@ -374,12 +381,6 @@ namespace DM.Database
 		}
 
 		public static User Find(this ITable<User> table, Guid Id)
-		{
-			return table.FirstOrDefault(t =>
-				t.Id == Id);
-		}
-
-		public static UserMeal Find(this ITable<UserMeal> table, Guid Id)
 		{
 			return table.FirstOrDefault(t =>
 				t.Id == Id);
