@@ -11,4 +11,4 @@ namespace DM.Logic.Interfaces
         Task<Guid> AddMealIngredientAsync(MealIngredientVM mealIngredient);
         Task<IEnumerable<MealIngredientVM>> GetMealIngredientsForMealAsync(Guid mealId);
     }
-}
+} 

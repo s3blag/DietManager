@@ -32,8 +32,5 @@ TODO:
 			isLastBatch: bool
 		}
 
-2. Linq2Db pobiera connection string ze swojej klasy. Niech pobiera go z config.json
 
-3. Pobieranie configu dla image service z config.json
-
-   Możliwe, że konieczne będzie dodanie kolumny jaki typ zdjęcia jest zapisywany -> test za js wszystko wyjaśni
+Zapisywanie pliku z rozszerzeniem

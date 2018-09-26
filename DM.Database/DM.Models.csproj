@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ViewModels\User\**" />
+    <EmbeddedResource Remove="ViewModels\User\**" />
+    <None Remove="ViewModels\User\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="linq2db" Version="2.1.0" />
     <PackageReference Include="linq2db.Identity" Version="2.0.1" />
     <PackageReference Include="linq2db.PostgreSQL" Version="2.1.0" />
@@ -28,10 +34,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Database.tt</DependentUpon>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ViewModels\User\" />
   </ItemGroup>
 
 </Project>

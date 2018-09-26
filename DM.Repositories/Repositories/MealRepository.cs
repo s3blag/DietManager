@@ -16,20 +16,6 @@ namespace DM.Repositories
         {
         }
 
-        public async Task<IEnumerable<Meal>> GetMealsByUserAsync(Guid id)
-        {
-            using (var db = new DietManagerDB())
-            {
-                var meals = await db.UserMeals.
-                    LoadWith(um => um.Meal).
-                    Where(um => um.UserId == id).
-                    Select(um => um.Meal).
-                    ToListAsync();
-
-                return meals;
-            }
-        }
-
         public async Task<Meal> GetMealByIdAsync(Guid id)
         {
             using (var db = new DietManagerDB())
