@@ -1,5 +1,5 @@
 {
-  "name": "DietManager",
+  "name": "diet-manager",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,17 +10,19 @@
   "dependencies": {
     "vue": "^2.5.17",
     "vue-class-component": "^6.0.0",
+    "vue-cli": "^2.9.6",
     "vue-property-decorator": "^7.0.0",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.4",
     "@vue/cli-plugin-eslint": "^3.0.4",
-    "@vue/cli-plugin-typescript": "^3.0.4",
     "@vue/cli-service": "^3.0.4",
-    "@vue/eslint-config-typescript": "^3.0.4",
-    "typescript": "^3.0.0",
-    "vue-template-compiler": "^2.5.17"
+    "axios": "^0.18.0",
+    "vue-template-compiler": "^2.5.17",
+    "vuex": "^3.0.1",
+    "node-sass": "^4.9.3",
+    "sass-loader": "^7.1.0"
   },
   "eslintConfig": {
     "root": true,
@@ -29,12 +31,10 @@
     },
     "extends": [
       "plugin:vue/essential",
-      "eslint:recommended",
-      "@vue/typescript"
+      "eslint:recommended"
     ],
-    "rules": {},
-    "parserOptions": {
-      "parser": "typescript-eslint-parser"
+    "rules": {
+      "linebreak-style": 0
     }
   },
   "postcss": {

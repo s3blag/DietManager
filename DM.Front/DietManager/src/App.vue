@@ -37,11 +37,22 @@
 </template>
 
 <script>
+//import { mapState } from "vuex";
+
 export default {
   name: "app",
   computed: {
+    // ...mapState({
+    //   robotsFoo: state => state.robots.foo,
+    // }),       
+    // ==
+    // robotsGetterFoo() {
+    //   return this.$store.getters["robots/foo"];
+    // },
+    // == (if namespaced module)
+    // ...mapState("moduleName", { getterName: "stateFieldName" }),
     cart() {
-      return this.$store.state.cart;
+      return this.$store.state.robots.cart;
     }
   }
 };
