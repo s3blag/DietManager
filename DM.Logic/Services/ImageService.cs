@@ -2,6 +2,7 @@
 using DM.Database;
 using DM.Logic.Interfaces;
 using DM.Models.Config;
+using DM.Models.Exceptions;
 using DM.Models.ViewModels;
 using DM.Repositories.Interfaces;
 using Microsoft.Extensions.Options;
@@ -26,10 +27,7 @@ namespace DM.Logic.Services
 
         public async Task<byte[]> GetImageByIdAsync(Guid imageId)
         {
-            if (imageId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(imageId));
-            }
+            ValidateArgument(imageId, nameof(imageId));
 
             var imageMetaData = await _imageRepository.GetImageByIdAsync(imageId);
 
@@ -40,12 +38,8 @@ namespace DM.Logic.Services
 
         public async Task<Guid> AddImageAsync(byte[] image)
         {
-            if (image == null)
-            {
-                throw new ArgumentNullException(nameof(image));
-            }
+            ValidateArgument(image, nameof(image));
 
-            //TODO Read from config file
             var imageCreation = await CreateFullImagePathAsync(_config.ImagesRootDirectoryPath);
 
             //compress image
@@ -58,7 +52,7 @@ namespace DM.Logic.Services
 
             if (!imagePathSaved)
             {
-                throw new Exception($"Image path for guid: {dbImage} could not be saved!");
+                throw new DataAccessException($"Image path for guid: {dbImage} could not be saved!");
             }
 
             return dbImage.Id;
@@ -95,6 +89,14 @@ namespace DM.Logic.Services
             }
 
             return new ImageCreation(Path.Combine(newImageDirectoryPath, imageInternalIndex.ToString() + ".jpg"));
+        }
+
+        private void ValidateArgument(Object argument, string argumentName)
+        {
+            if (argument == null)
+            {
+                throw new ArgumentNullException(argumentName);
+            }
         }
     }
 }

@@ -40,10 +40,11 @@ ADD CONSTRAINT FK_Friend_User2 FOREIGN KEY ("User2Id") REFERENCES "Users"."User"
 ADD CONSTRAINT Friend_FriendsIdsShouldBeDifferent CHECK ("User1Id" != "User2Id");
 
 CREATE TABLE "Meals"."Meal" (
-    "Id"        UUID    PRIMARY KEY,
-    "PhotoId"   UUID    NULL,
-    "Name"      TEXT    NOT NULL,
-    "Calories"  REAL    NOT NULL
+    "Id"            UUID    PRIMARY KEY,
+    "PhotoId"       UUID    NULL,
+    "Name"          TEXT    NOT NULL,
+    "Description"   TEXT    NULL,
+    "Calories"      REAL    NOT NULL
 );
 ALTER TABLE "Meals"."Meal" 
 ADD CONSTRAINT "FK_Meal_Photo" FOREIGN KEY ("PhotoId") REFERENCES  "Images"."Image"("Id");

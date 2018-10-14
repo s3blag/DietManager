@@ -24,6 +24,11 @@ namespace DM.Logic.Services
 
         public async Task<IEnumerable<MealScheduleEntryVM>> GetUpcomingMealSchedule(Guid userId, DateTimeOffset dateOffset)
         {
+            ValidateArgument(
+                (userId, nameof(userId)), 
+                (dateOffset, nameof(dateOffset))
+                );
+
             return _mapper.Map<IEnumerable<MealScheduleEntryVM>>(
                 await _mealScheduleRepository.GetMealScheduleEntriesInDateRangeAsync(
                     userId, 
@@ -34,17 +39,33 @@ namespace DM.Logic.Services
 
         public async Task<Guid> AddMealScheduleEntry(Guid userId, NewMealScheduleEntryVM newMealScheduleEntry)
         {
+            ValidateArgument(
+                (userId, nameof(userId)),
+                (newMealScheduleEntry, nameof(newMealScheduleEntry))
+                );
+
             var dbMealScheduleEntry = _mapper.Map<MealScheduleEntry>(newMealScheduleEntry);
             dbMealScheduleEntry.UserId = userId;
 
-            var result = await _mealScheduleRepository.AddMealScheduleEntryAsync(dbMealScheduleEntry);
+            var addedSuccessfully = await _mealScheduleRepository.AddMealScheduleEntryAsync(dbMealScheduleEntry);
 
-            if (result == true)
+            if (addedSuccessfully)
             {
                 return dbMealScheduleEntry.Id;
             }
 
             return Guid.Empty;
+        }
+
+        private void ValidateArgument(params (Object value, string name)[] arguments)
+        {
+            foreach (var (value, name) in arguments)
+            {
+                if (value is null)
+                {
+                    throw new ArgumentNullException(name);
+                }
+            }
         }
     }
 }

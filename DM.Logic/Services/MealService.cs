@@ -2,6 +2,7 @@
 using DM.Database;
 using DM.Logic.Interfaces;
 using DM.Models;
+using DM.Models.Exceptions;
 using DM.Models.ViewModels;
 using DM.Repositories.Interfaces;
 using Newtonsoft.Json;
@@ -27,10 +28,7 @@ namespace DM.Logic.Services
 
         public async Task<MealVM> GetMealByIdAsync(Guid id)
         {
-            if (id == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
+            ValidateArgument(id, nameof(id));
 
             var meal = await _mealRepository.GetMealByIdAsync(id);
             var ingredients = await _mealIngredientRepository.GetMealIngredientsForMealAsync(id);
@@ -39,66 +37,39 @@ namespace DM.Logic.Services
             return mealVM;
         }
 
-        public async Task<Guid> AddMealAsync(NewMealVM mealVM)
+        public async Task<Guid> AddMealAsync(MealCreationVM mealVM)
         {
-            if (mealVM == null)
-            {
-                throw new ArgumentNullException(nameof(mealVM));
-            }
+            ValidateArgument(mealVM, nameof(mealVM));
 
-            //addUser-Meal(userId, newMealVM, date
+            //addUser-Meal(userId, newMealVM)
             var dbMeal = _mapper.Map<Meal>(mealVM);
 
-            var (mealIngredientsToInsert, mealIngredientNutritionsToInsert) = GetMealIngredientsToInsert(mealVM.Ingredients);
+            if (!await _mealRepository.AddMealAsync(dbMeal))
+                throw new DataAccessException(nameof(_mealRepository.AddMealAsync) + " failed for argument: " + JsonConvert.SerializeObject(dbMeal));
 
-            if (await _mealIngredientRepository.AddMealIngredientNutritionsAsync(mealIngredientNutritionsToInsert) == false)
-                throw new Exception(nameof(_mealIngredientRepository.AddMealIngredientNutritionsAsync) + " failed for argument: " + JsonConvert.SerializeObject(mealIngredientNutritionsToInsert));
-
-            if (await _mealIngredientRepository.AddMealIngredientsAsync(mealIngredientsToInsert) == false)
-                throw new Exception(nameof(_mealIngredientRepository.AddMealIngredientsAsync) + " failed for argument: " + JsonConvert.SerializeObject(mealIngredientsToInsert));
-
-            if (await _mealRepository.AddMealAsync(dbMeal) == false)
-                throw new Exception(nameof(_mealRepository.AddMealAsync) + " failed for argument: " + JsonConvert.SerializeObject(dbMeal));
-
-            if (await _mealRepository.AddMealMealIngredientsAsync(GetMealMealIngredients(dbMeal.Id, mealVM.Ingredients)) == false)
-                throw new Exception(nameof(_mealRepository.AddMealMealIngredientsAsync) + " failed for argument: " + JsonConvert.SerializeObject(GetMealMealIngredients(dbMeal.Id, mealVM.Ingredients)));
+            if (!await _mealRepository.AddMealMealIngredientsAsync(GetMealMealIngredients(dbMeal.Id, mealVM.Ingredients)))
+                throw new DataAccessException(nameof(_mealRepository.AddMealMealIngredientsAsync) + " failed for argument: " + JsonConvert.SerializeObject(GetMealMealIngredients(dbMeal.Id, mealVM.Ingredients)));
 
             return dbMeal.Id;
         } 
 
         public async Task DeleteMealAsync(Guid mealId)
         {
-            if (mealId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(mealId));
-            }
+            ValidateArgument(mealId, nameof(mealId));
 
             await _mealRepository.DeleteMealAsync(mealId);
         }
 
-        private (IList<MealIngredient>, IList<Nutrition> nutritions) GetMealIngredientsToInsert(IEnumerable<MealIngredientVM> mealIngredientVMs)
+        private IList<MealMealIngredient> GetMealMealIngredients(Guid mealId, IEnumerable<Guid> mealIngredientsIDs) =>
+            mealIngredientsIDs.Select(m => new MealMealIngredient() { Id = Guid.NewGuid(), MealId = mealId, MealIngredientId = m }).ToList();
+
+        private void ValidateArgument(Object argument, string argumentName)
         {
-            var mealIngredientList = new List<MealIngredient>();
-            var mealIngredientNutritionList = new List<Nutrition>();
-
-            foreach (var mealIngredientVM in mealIngredientVMs)
+            if (argument is null)
             {
-                if (mealIngredientVM.Id == null)
-                {
-                    var dbNutrition = _mapper.Map<Nutrition>(mealIngredientVM.Nutritions);
-                    var dbMealIngredient = _mapper.Map<MealIngredient>(mealIngredientVM);
-                    dbMealIngredient.NutritionsId = dbNutrition.Id;
-                    mealIngredientVM.Id = dbMealIngredient.Id;
-
-                    mealIngredientList.Add(dbMealIngredient);
-                    mealIngredientNutritionList.Add(dbNutrition);
-                }
+                throw new ArgumentNullException(argumentName);
             }
-
-            return (mealIngredientList, mealIngredientNutritionList);
         }
-
-        private IList<MealMealIngredient> GetMealMealIngredients(Guid mealId, IEnumerable<MealIngredientVM> mealIngredients) =>
-            mealIngredients.Select(m => new MealMealIngredient() { Id = Guid.NewGuid(), MealId = mealId, MealIngredientId = m.Id.Value }).ToList();
+        
     }
 }

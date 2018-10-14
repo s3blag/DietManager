@@ -18,7 +18,13 @@ namespace DM.Web.Config
             CreateMap<MealVM, Meal>().
                 ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
                 ReverseMap();
+            CreateMap<MealCreationVM, Meal>().
+                ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
+                ReverseMap();
             CreateMap<MealIngredientVM, MealIngredient>().
+                ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid())).
+                ReverseMap();
+            CreateMap<MealCreationVM, MealIngredient>().
                 ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid())).
                 ReverseMap();
             CreateMap<NewMealVM, Meal>().

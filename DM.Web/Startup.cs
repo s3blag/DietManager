@@ -56,7 +56,11 @@ namespace Diet_Manager
             services.Configure<ImageServiceConfig>(options => Configuration.GetSection("ImageServiceConfig").Bind(options));
 
             services.AddScoped<IMealRepository, MealRepository>();
+            services.AddScoped<IMealIngredientRepository, MealIngredientRepository>();
             services.AddScoped<IImageRepository, ImageRepository>();
+
+            services.AddScoped<IMealService, MealService>();
+            services.AddScoped<IMealIngredientService, MealIngredientService>();
             services.AddScoped<IImageService, ImageService>();
         }
 

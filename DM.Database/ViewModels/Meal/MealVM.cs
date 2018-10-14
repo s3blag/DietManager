@@ -1,7 +1,5 @@
-﻿using DM.Database;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace DM.Models.ViewModels
 {
@@ -9,7 +7,7 @@ namespace DM.Models.ViewModels
     {
         public Guid Id { get; set; }
 
-        public Guid PhotoId { get; set; }
+        public Guid? PhotoId { get; set; }
 
         public string Name { get; set; }
 

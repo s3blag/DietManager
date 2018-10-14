@@ -1,5 +1,4 @@
 ﻿using DM.Database;
-using DM.Models;
 using DM.Repositories.Interfaces;
 using LinqToDB;
 using LinqToDB.Data;
@@ -12,9 +11,7 @@ namespace DM.Repositories
 {
     public class MealRepository : IMealRepository
     {
-        public MealRepository()
-        {
-        }
+        public MealRepository() {}
 
         public async Task<Meal> GetMealByIdAsync(Guid id)
         {
@@ -49,7 +46,9 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<bool> AddMealMealIngredientsAsync(IEnumerable<MealMealIngredient> mealMealIngredients)
+        public async Task<bool> AddMealMealIngredientsAsync(
+            IEnumerable<MealMealIngredient> mealMealIngredients
+            )
         {
             return await Task.Run(() =>
             {

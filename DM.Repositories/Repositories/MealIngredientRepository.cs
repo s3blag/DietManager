@@ -36,11 +36,6 @@ namespace DM.Repositories
 
         public async Task<bool> AddMealIngredientsAsync(IEnumerable<MealIngredient> mealIngredients)
         {
-            if (mealIngredients == null)
-            {
-                throw new ArgumentNullException(nameof(mealIngredients));
-            }
-
             return await Task.Run(() =>
             {
                 using (var db = new DietManagerDB())
@@ -52,22 +47,16 @@ namespace DM.Repositories
             });
         }
 
-        public async Task<bool> AddMealIngredientNutritionsAsync(IEnumerable<Nutrition> nutritions)
+        public async Task<bool> AddMealIngredientNutritionsAsync(Nutrition nutritions)
         {
-            if (nutritions == null)
+
+            using (var db = new DietManagerDB())
             {
-                throw new ArgumentNullException(nameof(nutritions));
+                var result = await db.InsertAsync(nutritions);
+
+                return Convert.ToBoolean(result);
             }
-
-            return await Task.Run(() =>
-            {
-                using (var db = new DietManagerDB())
-                {
-                    var result = db.BulkCopy(nutritions);
-
-                    return result.RowsCopied == nutritions.Count();
-                }
-            });
+       
         }
 
         public async Task<IEnumerable<MealIngredient>> GetMealIngredientsForMealAsync(Guid mealId)
@@ -79,7 +68,7 @@ namespace DM.Repositories
                     Select(m => new MealIngredient()
                     {
                         Id = m.MealIngredientId.Value,
-                        PhotoId = m.MealIngredientPhotoId.Value,
+                        PhotoId = m.MealIngredientPhotoId.GetValueOrDefault(),
                         Name = m.MealIngredientName,
                         Calories = m.MealIngredientCalories.Value,
                         Nutrition = new Nutrition()
