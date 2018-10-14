@@ -1,5 +1,5 @@
 import axios from "axios";
-import IUser from "@/ViewModels/user";
+import IUser from "@/ViewModels/user/user";
 
 export default {
   state: {

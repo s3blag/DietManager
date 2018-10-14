@@ -1,23 +1,23 @@
 <template>
   <div class="header-container">
     <router-link class="header-element" to="/">
-      <font-awesome-icon class="site-logo" icon="apple-alt" />
+      <font-awesome-icon class="site-logo main-color" icon="apple-alt" />
     </router-link>
-    <router-link class="header-element" to="/my-friends">
+    <router-link class="header-element hover" to="/my-friends">
       Friends
     </router-link>
-    <router-link class="header-element" to="/my-schedule">
+    <router-link class="header-element hover" to="/my-schedule">
       Schedule
     </router-link>
-    <router-link class="header-element" to="/diet-book">
-      Diet Book
+    <router-link class="header-element hover" to="/meal-manager">
+      Meals
     </router-link>
     <div class="user-info">
       <div class="header-element">
         Hi, {{username}}!
       </div>
       <router-link class="header-element" to="/user-panel">
-        <font-awesome-icon class="user-avatar" icon="user-circle" />
+        <font-awesome-icon v-if="!avatarId" class="user-avatar main-color" icon="user-circle" />
       </router-link>
     </div>
   </div>
@@ -28,7 +28,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 
-import User from "../../ViewModels/user";
+import User from "@/ViewModels/user/user";
 
 @Component({})
 export default class Header extends Vue {
@@ -39,20 +39,40 @@ export default class Header extends Vue {
     //return user.username;
     return "Sebastian";
   }
+
+  get avatarId() {
+    if (!this.user || !this.user.AvatarId) {
+      return null;
+    } else {
+      return this.user.AvatarId;
+    }
+  }
 }
 </script>
+
+<style>
+.main-color {
+  color: #3c88c7;
+}
+.main-background-color {
+  background-color: #3c88c7;
+}
+</style>
+
 
 <style scoped>
 .header-container {
   background-color: #e6e4e4;
-  padding: 5px 5px;
+  margin: 10px;
+  padding: 5px;
   overflow: hidden;
   border-radius: 10px;
 }
 .header-element {
+  position: relative;
+  top: 2px;
   float: left;
   color: #46474bef;
-  padding: 5px;
   margin: 5px;
   text-decoration: none;
   font-size: 18px;
@@ -63,8 +83,8 @@ export default class Header extends Vue {
 }
 .site-logo {
   position: relative;
+  top: -3px;
   margin-left: 5px;
-  top: -1px;
   width: 30px;
   height: 30px;
 }
@@ -74,7 +94,11 @@ export default class Header extends Vue {
   width: 30px;
   height: 30px;
 }
-@media screen and (max-width: 150px) {
+.hover:hover {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+@media screen and (max-width: 500px) {
   .header-container.header-element {
     float: none;
     display: block;

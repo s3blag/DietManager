@@ -20,4 +20,3 @@ export default class Home extends Vue {}
   left: 48%;
 }
 </style>
-
