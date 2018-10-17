@@ -4,13 +4,19 @@
       <div>
         <ul>
           <li>
-            <router-link class="link" :to="{ name: 'AddMeal'}"> Add</router-link>
+            <router-link class="link" :to="{ name: 'AddMeal'}">
+              <font-awesome-icon id="add-icon" class="option-icon" icon="plus-circle" /> Add
+            </router-link>
           </li>
           <li>
-            <router-link class="link" :to="{ name: 'BrowseMeals'}">Browse</router-link>
+            <router-link class="link" :to="{ name: 'BrowseMeals'}">
+              <font-awesome-icon id="search-icon" class="option-icon" icon="search" /> Browse
+            </router-link>
           </li>
           <li>
-            <router-link class="link" :to="{ name: 'MyMeals'}">My Meals</router-link>
+            <router-link class="link" :to="{ name: 'MyMeals'}">
+              <font-awesome-icon id="book-icon" class="option-icon" icon="book" /> My Meals
+            </router-link>
           </li>
         </ul>
       </div>
@@ -63,23 +69,38 @@ ul {
   margin: 10px 0px;
   font-size: 18px;
 }
+#add-icon {
+  position: relative;
+  right: 30px;
+}
+#search-icon {
+  position: relative;
+  right: 16px;
+}
+#book-icon {
+  position: relative;
+  right: 10px;
+}
+.option-icon {
+  color: #3c88c7;
+}
+li:hover .option-icon {
+  color: white;
+}
 li {
   padding: 5px 0px;
-
   border-radius: 8px;
   margin: 10px;
 }
 li:hover {
   background-color: #4495d8;
+  color: white;
 }
 .link {
   text-decoration: none;
   color: inherit;
   border-radius: 5px;
   /* border-bottom: 1px solid transparent; */
-}
-.link:hover {
-  /* border-bottom: 1px solid #3a3a3a; */
 }
 @media screen and (max-width: 1300px) {
   .column {

@@ -16,10 +16,29 @@
       <div class="column right">
         <div class="picture-input">
           <picture-input ref="pictureInput" @change="onChange" width="400" height="200" radius="5" accept="image/jpeg,image/png" size="10" :removable="true" :customStrings="{
-        upload: '<h1>Bummer!</h1>',
-        drag: 'Drop an image or click to select meal avatar'
-      }">
+            drag: '+'
+          }">
           </picture-input>
+        </div>
+        <div class="meal-ingredients-container">
+          <div>
+            <label for="mealName">Add Meal Ingredients</label>
+            <div class="meal-ingredients-search">
+              <input type="text" class="form-control" id="mealIngredientSearchName" placeholder="Search..." v-model="mealIngredientSearchQuery">
+              <button id="searchMealIngredients" class="btn main-background-color" @click="searchMealIngredients">
+                <font-awesome-icon id="search-icon" class="option-icon" icon="search" /></button>
+            </div>
+          </div>
+
+          <!-- TODO            -->
+          <ul class="added-meal-ingredients">
+            <li class="meal-ingredient" v-for="meal in mealIngredients" :key="meal.id">
+              <div class="image"></div>
+              <span class="name">{{meal.Name}}
+              </span>
+              <span class="quantity">x1</span>
+            </li>
+          </ul>
         </div>
       </div>
       <button id="addMealButton" type="submit" class="btn main-background-color" @click="submit">Add Meal</button>
@@ -51,7 +70,9 @@ export default class AddMeal extends Vue {
     Name: "",
     Description: ""
   } as MealCreation;
+  //pair of mealIngredient, amount
   private mealIngredients: MealIngredient[] = [];
+  private mealIngredientSearchQuery: string = "";
 
   submit() {
     const { Name, Description, ImageId } = this.mealFormData;
@@ -80,6 +101,8 @@ export default class AddMeal extends Vue {
   }
 
   onChange() {}
+
+  searchMealIngredients() {}
 }
 </script>
 
@@ -134,6 +157,7 @@ label {
 .column.right {
   width: 40%;
   padding-left: 15px;
+  padding-right: 15px;
 }
 .column.righ:after {
   content: "";
@@ -141,12 +165,42 @@ label {
   clear: both;
 }
 .picture-input {
-  margin: 45px auto 10px auto;
+  margin: 15px auto 10px auto;
 }
 #addMealButton {
   display: block;
   position: relative;
   top: -50px;
   margin: 0 auto;
+}
+.meal-ingredients-container {
+  padding-top: 15px;
+}
+.meal-ingredients-search {
+  display: inline-flex;
+  width: 100%;
+}
+#searchMealIngredients {
+  border-radius: 0px 5px 5px 0px;
+}
+#mealIngredientSearchName {
+  border-radius: 5px 0px 0px 5px;
+}
+.meal-ingredient {
+  width: 100%;
+  display: inline-flex;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+.meal-ingredient .quantity {
+  text-align: right;
+}
+.meal-ingredient .name {
+  width: 100%;
+  text-align: left;
+}
+.added-meal-ingredients {
+  padding-top: 50px;
+  padding-left: 0px;
 }
 </style>

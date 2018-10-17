@@ -4,10 +4,19 @@ import router from "./router";
 import store from "./store";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faAppleAlt, faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faAppleAlt,
+  faUserCircle,
+  faSearch,
+  faPlusCircle,
+  faBook
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(faAppleAlt);
 library.add(faUserCircle);
+library.add(faSearch);
+library.add(faPlusCircle);
+library.add(faBook);
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 
 import BootstrapVue from "bootstrap-vue";
