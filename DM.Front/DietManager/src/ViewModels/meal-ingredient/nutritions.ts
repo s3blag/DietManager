@@ -1,5 +1,5 @@
 export default interface Nutritions {
-  Protein: number;
+  Proteins: number;
   Carbohydrates: number;
   Fats: number;
   VitaminA?: number;

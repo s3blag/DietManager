@@ -1,5 +1,11 @@
 <template>
   <div class="add-meal">
+    <modal name="addMealIngredientModal"
+         height="auto"
+         :adaptive="true"
+      >
+    <add-meal-ingredient></add-meal-ingredient>
+    </modal>
     <div class="form-container">
       <div class="column left">
         <form>
@@ -25,7 +31,7 @@
             <label for="mealName">Add Meal Ingredients</label>
             <div class="meal-ingredients-search">
               <input type="text" class="form-control" id="mealIngredientSearchName" placeholder="Search..." v-model="mealIngredientSearchQuery">
-              <button id="searchMealIngredients" class="btn main-background-color" @click="searchMealIngredients">
+              <button id="searchMealIngredients" class="btn main-background-color" @click="$modal.show('addMealIngredientModal')">
                 <font-awesome-icon id="search-icon" class="option-icon" icon="search" /></button>
             </div>
           </div>
@@ -58,10 +64,11 @@ import MealIngredient from "@/ViewModels/meal-ingredient/mealIngredient";
 import MealApiCaller from "@/services/api-callers/mealApi";
 import MealLookup from "@/ViewModels/meal/mealLookup";
 import AddMealSummary from "@/components/meal/AddMealSummary.vue";
-
+import AddMealIngredient from "@/components/meal-ingredient/AddMealIngredient.vue";
 @Component({
   components: {
     "add-meal-summary": AddMealSummary,
+    "add-meal-ingredient": AddMealIngredient,
     "picture-input": PictureInput
   }
 })
@@ -73,6 +80,7 @@ export default class AddMeal extends Vue {
   //pair of mealIngredient, amount
   private mealIngredients: MealIngredient[] = [];
   private mealIngredientSearchQuery: string = "";
+  private modalEnabled: boolean = true;
 
   submit() {
     const { Name, Description, ImageId } = this.mealFormData;
@@ -99,6 +107,8 @@ export default class AddMeal extends Vue {
     // eslint-disable-next-line no-console
     console.error(error);
   }
+
+  addMealIngredient() {}
 
   onChange() {}
 
