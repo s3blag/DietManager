@@ -1,10 +1,7 @@
 <template>
   <div class="add-meal">
-    <modal name="addMealIngredientModal"
-         height="auto"
-         :adaptive="true"
-      >
-    <add-meal-ingredient></add-meal-ingredient>
+    <modal name="addMealIngredientModal" height="auto" class="modal-window" :adaptive="true">
+      <add-meal-ingredient></add-meal-ingredient>
     </modal>
     <div class="form-container">
       <div class="column left">
@@ -213,4 +210,6 @@ label {
   padding-top: 50px;
   padding-left: 0px;
 }
+/* .modal-window {
+} */
 </style>

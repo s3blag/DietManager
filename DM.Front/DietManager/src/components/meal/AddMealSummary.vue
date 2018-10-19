@@ -59,7 +59,7 @@ export default class AddMealSummary extends Vue {
   }
   get proteinsSummary() {
     let result = _.sum(
-      this.mealIngredients.map(ingredient => ingredient.Nutritions.Protein)
+      this.mealIngredients.map(ingredient => ingredient.Nutritions.Proteins)
     );
 
     return this.finalizeResult(result, "g");
