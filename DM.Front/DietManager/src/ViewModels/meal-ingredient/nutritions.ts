@@ -1,9 +1,9 @@
 export default interface Nutritions {
-  Proteins: number;
+  Protein: number;
   Carbohydrates: number;
   Fats: number;
-  VitaminA?: number;
-  VitaminC?: number;
-  VitaminB6?: number;
-  VitaminD?: number;
+  VitaminA: number | null;
+  VitaminC: number | null;
+  VitaminB6: number | null;
+  VitaminD: number | null;
 }

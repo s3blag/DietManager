@@ -95,7 +95,7 @@ namespace DM.Tests
                     {
                         Name = "mealIngredient1",
                         Calories = "35",
-                        Nutritions = new NutritionsVM()
+                        Nutrition = new NutritionsVM()
                         {
                             Protein = 23,
                             Carbohydrates = 11,
@@ -107,7 +107,7 @@ namespace DM.Tests
                     {
                         Name = "mealIngredient2",
                         Calories = "150",
-                        Nutritions = new NutritionsVM()
+                        Nutrition = new NutritionsVM()
                         {
                             Protein = 53,
                             Carbohydrates = 1,
@@ -119,7 +119,7 @@ namespace DM.Tests
                     {
                         Name = "mealIngredient3",
                         Calories = "50",
-                        Nutritions = new NutritionsVM()
+                        Nutrition = new NutritionsVM()
                         {
                             Protein = 13,
                             Carbohydrates = 12,

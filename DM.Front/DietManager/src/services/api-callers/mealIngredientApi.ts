@@ -21,7 +21,7 @@ export default class MealIngredientApiCaller {
     errorHandler: (error: Error) => void
   ) {
     Axios.post(
-      "/api/mealIngredient/AddMealIngredient",
+      "/api/mealIngredient/add",
       mealIngredientCreationVM
     )
       .then(response => {

@@ -1,4 +1,5 @@
 ﻿using DM.Database;
+using DM.Models.Models;
 using System;
 using System.Collections.Generic;
 
@@ -6,7 +7,7 @@ namespace DM.Models
 {
     public class MealWithIngredients
     {
-        public MealWithIngredients(Meal meal, IEnumerable<MealIngredient> ingredients)
+        public MealWithIngredients(Meal meal, IEnumerable<MealIngredientWithQuantity> ingredients)
         {
             Id = meal.Id;
             PhotoId = meal.PhotoId;
@@ -23,6 +24,6 @@ namespace DM.Models
 
         public float Calories { get; set; }
 
-        public IEnumerable<MealIngredient> Ingredients { get; set; }
+        public IEnumerable<MealIngredientWithQuantity> Ingredients { get; set; }
     }
 }

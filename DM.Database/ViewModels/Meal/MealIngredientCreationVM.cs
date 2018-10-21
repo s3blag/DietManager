@@ -12,10 +12,11 @@ namespace DM.Models.ViewModels
         public string Name { get; set; }
 
         [Required]
-        [Range(0, Int32.MaxValue)]
+        [Range(0, int.MaxValue)]
         public int Calories { get; set; }
 
         [Required]
-        public NutritionsVM Nutritions { get; set; }
+        public NutritionsVM Nutrition { get; set; }
+
     }
 }

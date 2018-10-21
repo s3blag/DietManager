@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DM.Models.ViewModels.Meal;
+using System;
 using System.Collections.Generic;
 
 namespace DM.Models.ViewModels
@@ -13,6 +14,6 @@ namespace DM.Models.ViewModels
 
         public string Calories { get; set; }
 
-        public IEnumerable<MealIngredientVM> Ingredients { get; set; }
+        public IEnumerable<MealIngredientWithQuantityVM> Ingredients { get; set; }
     }
 }

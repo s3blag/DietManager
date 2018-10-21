@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DM.Models.ViewModels.Meal;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -19,6 +20,6 @@ namespace DM.Models.ViewModels
 
         [Required]
         [MinLength(2)]
-        public IEnumerable<Guid> Ingredients { get; set; }
+        public IEnumerable<MealIngredientIdWithQuantityVM> IngredientsIdsWithQuantity { get; set; }
     }
 }

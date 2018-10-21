@@ -16,7 +16,7 @@ namespace DM.Database
 	/// <summary>
 	/// Database       : DietManager
 	/// Data Source    : tcp://localhost:5432
-	/// Server Version : 9.5.14
+	/// Server Version : 10.4
 	/// </summary>
 	public partial class DietManagerDB : LinqToDB.Data.DataConnection
 	{
@@ -102,10 +102,11 @@ namespace DM.Database
 	[Table(Schema="Meals", Name="Meal")]
 	public partial class Meal
 	{
-		[PrimaryKey, NotNull    ] public Guid   Id       { get; set; } // uuid
-		[Column,        Nullable] public Guid?  PhotoId  { get; set; } // uuid
-		[Column,     NotNull    ] public string Name     { get; set; } // text
-		[Column,     NotNull    ] public float  Calories { get; set; } // real
+		[PrimaryKey, NotNull    ] public Guid   Id          { get; set; } // uuid
+		[Column,        Nullable] public Guid?  PhotoId     { get; set; } // uuid
+		[Column,     NotNull    ] public string Name        { get; set; } // text
+		[Column,        Nullable] public string Description { get; set; } // text
+		[Column,     NotNull    ] public float  Calories    { get; set; } // real
 
 		#region Associations
 
@@ -134,6 +135,7 @@ namespace DM.Database
 	public partial class MealFullMealIngredient
 	{
 		[Column(SkipOnUpdate=true), Nullable] public Guid?  MealId                 { get; set; } // uuid
+		[Column(SkipOnUpdate=true), Nullable] public int?   Quantity               { get; set; } // integer
 		[Column(SkipOnUpdate=true), Nullable] public Guid?  MealIngredientId       { get; set; } // uuid
 		[Column(SkipOnUpdate=true), Nullable] public string MealIngredientName     { get; set; } // text
 		[Column(SkipOnUpdate=true), Nullable] public Guid?  MealIngredientPhotoId  { get; set; } // uuid
@@ -201,6 +203,7 @@ namespace DM.Database
 		[PrimaryKey, NotNull] public Guid Id               { get; set; } // uuid
 		[Column,     NotNull] public Guid MealIngredientId { get; set; } // uuid
 		[Column,     NotNull] public Guid MealId           { get; set; } // uuid
+		[Column,     NotNull] public int  Quantity         { get; set; } // integer
 
 		#region Associations
 

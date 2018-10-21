@@ -3,39 +3,53 @@
     <div id="add-meal-ingredient-form">
       <div class="form-input">
         <div class="label">Name</div>
-        <input type="text" class="form-control" placeholder="Enter meal ingredient name..." v-model="mealIngredientFormData.Name">
+        <input type="text" class="form-control" placeholder="Enter meal ingredient name..." 
+          v-model="mealIngredientFormData.MealIngredient.Name">
+      </div>
+      <div class="form-input">
+        <div class="label">Quantity</div>
+        <input type="number" class="form-control" placeholder="Enter quantity..." 
+          v-model="mealIngredientFormData.Quantity">
       </div>
       <div class="form-input">
         <div class="label">Calories</div>
-        <input type="number" class="form-control" placeholder="Enter number of calories..." v-model="mealIngredientFormData.Calories">
+        <input type="number" class="form-control" placeholder="Enter number of calories..." 
+          v-model="mealIngredientFormData.MealIngredient.Calories">
       </div>
       <div class="form-input">
         <div class="label">Proteins</div>
-        <input type="number" class="form-control" placeholder="Enter amount of proteins..." v-model="mealIngredientFormData.Nutritions.Proteins">
+        <input type="number" class="form-control" placeholder="Enter amount of proteins..." 
+          v-model="mealIngredientFormData.MealIngredient.Nutrition.Protein">
       </div>
       <div class="form-input">
         <div class="label">Carbohydrates</div>
-        <input type="number" class="form-control" placeholder="Enter amount of carbohydrates..." v-model="mealIngredientFormData.Nutritions.Carbohydrates">
+        <input type="number" class="form-control" placeholder="Enter amount of carbohydrates..." 
+          v-model="mealIngredientFormData.MealIngredient.Nutrition.Carbohydrates">
       </div>
       <div class="form-input">
         <div class="label">Fats</div>
-        <input type="number" class="form-control" placeholder="Enter amount of fats..." v-model="mealIngredientFormData.Nutritions.Fats">
+        <input type="number" class="form-control" placeholder="Enter amount of fats..." 
+          v-model="mealIngredientFormData.MealIngredient.Nutrition.Fats">
       </div>
       <div class="form-input">
         <div class="label">Vitamin A (optional)</div>
-        <input type="number" class="form-control" placeholder="Enter amount of Vitamin A..." v-model="mealIngredientFormData.Nutritions.VitaminA">
+        <input type="number" class="form-control" placeholder="Enter amount of Vitamin A..." 
+          v-model="mealIngredientFormData.MealIngredient.Nutrition.VitaminA">
       </div>
       <div class="form-input">
         <div class="label">Vitamin C (optional)</div>
-        <input type="number" class="form-control" placeholder="Enter amount of Vitamin C..." v-model="mealIngredientFormData.Nutritions.VitaminC">
+        <input type="number" class="form-control" placeholder="Enter amount of Vitamin C..." 
+          v-model="mealIngredientFormData.MealIngredient.Nutrition.VitaminC">
       </div>
       <div class="form-input">
         <div class="label">Vitamin B6 (optional)</div>
-        <input type="number" class="form-control" placeholder="Enter amount of Vitamin B6..." v-model="mealIngredientFormData.Nutritions.VitaminB6">
+        <input type="number" class="form-control" placeholder="Enter amount of Vitamin B6..." 
+          v-model="mealIngredientFormData.MealIngredient.Nutrition.VitaminB6">
       </div>
       <div class="form-input">
         <div class="label">Vitamin D (optional)</div>
-        <input type="number" class="form-control" placeholder="Enter amount of Vitamin D..." v-model="mealIngredientFormData.Nutritions.VitaminD">
+        <input type="number" class="form-control" placeholder="Enter amount of Vitamin D..." 
+          v-model="mealIngredientFormData.MealIngredient.Nutrition.VitaminD">
       </div>
     </div>
     <div id="buttons-container">
@@ -47,30 +61,54 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import MealIngredientCreation from "@/ViewModels/meal-ingredient/mealIngredientCreation";
 import MealIngredientApiCaller from "@/services/api-callers/mealIngredientApi";
+import MealIngredient from "@/ViewModels/meal-ingredient/mealIngredient";
+import MealIngredientCreationWithQuantity from "@/ViewModels/meal-ingredient/mealIngredientCreationWithQuantity";
+import MealIngredientWithQuantity from "@/ViewModels/meal-ingredient/mealIngredientWithQuantity";
 
 @Component
 export default class AddMealIngredient extends Vue {
-  private mealIngredientFormData: MealIngredientCreation = {
-    Nutritions: {
-      Proteins: 0.0,
-      Carbohydrates: 0.0,
-      Fats: 0.0
+  private mealIngredientFormData: MealIngredientCreationWithQuantity = {
+    Quantity: 1,
+    MealIngredient: {
+      Nutrition: {
+        Protein: 0.0,
+        Carbohydrates: 0.0,
+        Fats: 0.0,
+        VitaminA: 0.0,
+        VitaminC: null,
+        VitaminB6: null,
+        VitaminD: null
+      }
     }
-  } as MealIngredientCreation;
+  } as MealIngredientCreationWithQuantity;
+  private counter: number = 0;
 
   addMealIngredient() {
+    //this.addMealIngredientSuccessHandler((this.counter++).toString());
     MealIngredientApiCaller.add(
-      this.mealIngredientFormData,
+      this.mealIngredientFormData.MealIngredient,
       this.addMealIngredientSuccessHandler,
       this.addMealIngredientErrorHandler
     );
   }
 
   addMealIngredientSuccessHandler(guid: string) {
+    let mealIngredientCreation = this.mealIngredientFormData;
+    let addedMealIngredientWithQuantity = {
+      MealIngredient: {
+        Id: guid,
+        PhotoId: mealIngredientCreation.MealIngredient.PhotoId,
+        Name: mealIngredientCreation.MealIngredient.Name,
+        Calories: mealIngredientCreation.MealIngredient.Calories,
+        Nutritions: mealIngredientCreation.MealIngredient.Nutrition
+      } as MealIngredient,
+      Quantity: mealIngredientCreation.Quantity
+    } as MealIngredientWithQuantity;
+
     // eslint-disable-next-line no-console
-    console.log("meal-ingredient guid: " + guid);
+    console.log("added meal-ingredient quid: " + guid);
+    this.$emit("meal-ingredient-added", addedMealIngredientWithQuantity);
   }
 
   addMealIngredientErrorHandler(error: Error) {

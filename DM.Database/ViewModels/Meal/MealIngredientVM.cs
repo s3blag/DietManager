@@ -12,6 +12,6 @@ namespace DM.Models.ViewModels
 
         public string Calories { get; set; }
 
-        public NutritionsVM Nutritions { get; set; }
+        public NutritionsVM Nutrition { get; set; }
     }
 }

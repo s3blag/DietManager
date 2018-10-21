@@ -1,4 +1,5 @@
 ﻿using DM.Database;
+using DM.Models.Models;
 using DM.Repositories.Interfaces;
 using LinqToDB;
 using LinqToDB.Data;
@@ -59,27 +60,30 @@ namespace DM.Repositories
        
         }
 
-        public async Task<IEnumerable<MealIngredient>> GetMealIngredientsForMealAsync(Guid mealId)
+        public async Task<IEnumerable<MealIngredientWithQuantity>> GetMealIngredientsForMealAsync(Guid mealId)
         {
             using (var db = new DietManagerDB())
             {
                 var mealIngredients = await db.MealFullMealIngredients.
                     Where(m => m.MealId == mealId).
-                    Select(m => new MealIngredient()
-                    {
-                        Id = m.MealIngredientId.Value,
-                        PhotoId = m.MealIngredientPhotoId.GetValueOrDefault(),
-                        Name = m.MealIngredientName,
-                        Calories = m.MealIngredientCalories.Value,
-                        Nutrition = new Nutrition()
+                    Select(m => new MealIngredientWithQuantity()
+                    {   Quantity = m.Quantity.Value,
+                        MealIngredient =new MealIngredient()
                         {
-                            Protein = m.Protein.Value,
-                            Carbohydrates  = m.Carbohydrates.Value,
-                            Fats = m.Fats.Value,
-                            VitaminA = m.VitaminA,
-                            VitaminC = m.VitaminC,
-                            VitaminB6 = m.VitaminB6,
-                            VitaminD = m.VitaminD
+                            Id = m.MealIngredientId.Value,
+                            PhotoId = m.MealIngredientPhotoId.GetValueOrDefault(),
+                            Name = m.MealIngredientName,
+                            Calories = m.MealIngredientCalories.Value,
+                            Nutrition = new Nutrition()
+                            {
+                                Protein = m.Protein.Value,
+                                Carbohydrates  = m.Carbohydrates.Value,
+                                Fats = m.Fats.Value,
+                                VitaminA = m.VitaminA,
+                                VitaminC = m.VitaminC,
+                                VitaminB6 = m.VitaminB6,
+                                VitaminD = m.VitaminD
+                            }
                         }
                     }).
                     ToListAsync();

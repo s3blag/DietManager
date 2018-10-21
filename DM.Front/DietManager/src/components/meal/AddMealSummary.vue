@@ -41,25 +41,33 @@ import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 import _ from "lodash";
 
-import MealIngredient from "@/ViewModels/meal-ingredient/mealIngredient";
+import MealIngredientWithQuantity from "@/ViewModels/meal-ingredient/mealIngredientWithQuantity";
 
 @Component
 export default class AddMealSummary extends Vue {
   @Prop({
     type: Array
   })
-  private mealIngredients!: MealIngredient[];
+  private mealIngredients!: MealIngredientWithQuantity[];
 
   get caloriesSummary() {
     let result = _.sum(
-      this.mealIngredients.map(ingredient => ingredient.Calories)
+      this.mealIngredients.map(
+        ingredientWithQuantity =>
+          ingredientWithQuantity.MealIngredient.Calories *
+          ingredientWithQuantity.Quantity
+      )
     );
 
     return this.finalizeResult(result, "kcal");
   }
   get proteinsSummary() {
     let result = _.sum(
-      this.mealIngredients.map(ingredient => ingredient.Nutritions.Proteins)
+      this.mealIngredients.map(
+        ingredientWithQuantity =>
+          ingredientWithQuantity.MealIngredient.Nutritions.Protein *
+          ingredientWithQuantity.Quantity
+      )
     );
 
     return this.finalizeResult(result, "g");
@@ -67,7 +75,9 @@ export default class AddMealSummary extends Vue {
   get carbohydratesSummary() {
     let result = _.sum(
       this.mealIngredients.map(
-        ingredient => ingredient.Nutritions.Carbohydrates
+        ingredientWithQuantity =>
+          ingredientWithQuantity.MealIngredient.Nutritions.Carbohydrates *
+          ingredientWithQuantity.Quantity
       )
     );
 
@@ -75,38 +85,106 @@ export default class AddMealSummary extends Vue {
   }
   get fatsSummary() {
     let result = _.sum(
-      this.mealIngredients.map(ingredient => ingredient.Nutritions.Fats)
+      this.mealIngredients.map(
+        ingredientWithQuantity =>
+          ingredientWithQuantity.MealIngredient.Nutritions.Fats *
+          ingredientWithQuantity.Quantity
+      )
     );
 
     return this.finalizeResult(result, "g");
   }
   get vitaminASummary() {
     let result = _.sum(
-      this.mealIngredients.map(ingredient => ingredient.Nutritions.VitaminA)
+      this.mealIngredients.map(ingredientWithQuantity => {
+        // eslint-disable-next-line no-console
+        console.log(
+          "meal-ingredient quantity: " + ingredientWithQuantity.Quantity
+        );
+        if (
+          !this.isNullOrUndefined(
+            ingredientWithQuantity.MealIngredient.Nutritions.VitaminA
+          )
+        ) {
+          return (
+            ingredientWithQuantity.MealIngredient.Nutritions.VitaminA! *
+            ingredientWithQuantity.Quantity
+          );
+        } else {
+          return 0;
+        }
+      })
     );
 
     return this.finalizeResult(result, "mg");
   }
   get vitaminCSummary() {
     let result = _.sum(
-      this.mealIngredients.map(ingredient => ingredient.Nutritions.VitaminC)
+      this.mealIngredients.map(ingredientWithQuantity => {
+        if (
+          !this.isNullOrUndefined(
+            ingredientWithQuantity.MealIngredient.Nutritions.VitaminC
+          )
+        ) {
+          return (
+            ingredientWithQuantity.MealIngredient.Nutritions.VitaminC! *
+            ingredientWithQuantity.Quantity
+          );
+        } else {
+          return 0;
+        }
+      })
     );
 
     return this.finalizeResult(result, "mg");
   }
   get vitaminB6Summary() {
     let result = _.sum(
-      this.mealIngredients.map(ingredient => ingredient.Nutritions.VitaminB6)
+      this.mealIngredients.map(ingredientWithQuantity => {
+        if (
+          !this.isNullOrUndefined(
+            ingredientWithQuantity.MealIngredient.Nutritions.VitaminB6
+          )
+        ) {
+          return (
+            ingredientWithQuantity.MealIngredient.Nutritions.VitaminB6! *
+            ingredientWithQuantity.Quantity
+          );
+        } else {
+          return 0;
+        }
+      })
     );
 
     return this.finalizeResult(result, "mg");
   }
   get vitaminDSummary() {
     let result = _.sum(
-      this.mealIngredients.map(ingredient => ingredient.Nutritions.VitaminD)
+      this.mealIngredients.map(ingredientWithQuantity => {
+        if (
+          !this.isNullOrUndefined(
+            ingredientWithQuantity.MealIngredient.Nutritions.VitaminD
+          )
+        ) {
+          return (
+            ingredientWithQuantity.MealIngredient.Nutritions.VitaminD! *
+            ingredientWithQuantity.Quantity
+          );
+        } else {
+          return 0;
+        }
+      })
     );
 
     return this.finalizeResult(result, "mg");
+  }
+
+  private isNullOrUndefined(argument: any) {
+    if (typeof argument === "undefined" || argument === null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   private finalizeResult(result: number, suffix: string) {

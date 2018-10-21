@@ -30,15 +30,15 @@ namespace DM.Web.Controllers
             return Ok(meal);
         }
 
-        [HttpPost(Name = "addMealIngredient")]
-        public async Task<IActionResult> AddMealIngredient([FromBody] MealIngredientCreationVM mealCreationVM)
+        [HttpPost("add")]
+        public async Task<IActionResult> AddMealIngredient([FromBody]MealIngredientCreationVM mealIngredientCreationVM)
         {
             if (!ModelState.IsValid)
             {
                 return NotFound();
             }
 
-            var mealIngredient = await _mealIngredientService.AddMealIngredientAsync(mealCreationVM);
+            var mealIngredient = await _mealIngredientService.AddMealIngredientAsync(mealIngredientCreationVM);
 
             return Ok(mealIngredient);
         }

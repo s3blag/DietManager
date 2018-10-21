@@ -23,7 +23,7 @@ export default class MealApiCaller {
     successHandler: (createdMealGuid: string) => void,
     errorHandler: (error: Error) => void
   ) {
-    Axios.post("/api/meal/AddMeal", mealCreationVM)
+    Axios.post("/api/meal/add", mealCreationVM)
       .then(response => {
         successHandler(response.data as string);
       })

@@ -1,8 +1,9 @@
 import Nutritions from "@/ViewModels/meal-ingredient/nutritions";
 
 export default interface MealIngredientCreation {
-  PhotoId?: number;
+  PhotoId: string;
+  Quantity: number;
   Name: string;
   Calories: number;
-  Nutritions: Nutritions;
+  Nutrition: Nutritions;
 }

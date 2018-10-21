@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DM.Database;
 using DM.Models;
+using DM.Models.Models;
 using DM.Models.ViewModels;
 using System;
 
@@ -12,9 +13,10 @@ namespace DM.Web.Config
         {
             CreateMap<MealScheduleEntry, MealScheduleEntryVM>();
             CreateMap<MealWithIngredients, MealVM>();
+            CreateMap<MealIngredientWithQuantityVM, MealIngredientWithQuantity>().ReverseMap();
             CreateMap<NutritionsVM, Nutrition>().
                 ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
-                ReverseMap(); ;
+                ReverseMap(); 
             CreateMap<MealVM, Meal>().
                 ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
                 ReverseMap();
@@ -25,6 +27,9 @@ namespace DM.Web.Config
                 ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid())).
                 ReverseMap();
             CreateMap<MealCreationVM, MealIngredient>().
+                ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid())).
+                ReverseMap();
+            CreateMap<MealIngredientCreationVM, MealIngredient>().
                 ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid())).
                 ReverseMap();
             CreateMap<NewMealVM, Meal>().

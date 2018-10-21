@@ -1,7 +1,7 @@
 <template>
   <div class="add-meal">
     <modal name="addMealIngredientModal" height="auto" class="modal-window" :adaptive="true">
-      <add-meal-ingredient></add-meal-ingredient>
+      <add-meal-ingredient @meal-ingredient-added="mealIngredientAddedHandler"></add-meal-ingredient>
     </modal>
     <div class="form-container">
       <div class="column left">
@@ -35,11 +35,10 @@
 
           <!-- TODO            -->
           <ul class="added-meal-ingredients">
-            <li class="meal-ingredient" v-for="meal in mealIngredients" :key="meal.id">
+            <li class="meal-ingredient" v-for="mealIngredientWithQuantity in mealIngredients" :key="mealIngredientWithQuantity.MealIngredient.Id">
               <div class="image"></div>
-              <span class="name">{{meal.Name}}
-              </span>
-              <span class="quantity">x1</span>
+              <span class="name">{{mealIngredientWithQuantity.MealIngredient.Name}}</span>
+              <span class="quantity">{{mealIngredientWithQuantity.Quantity}}</span>
             </li>
           </ul>
         </div>
@@ -54,14 +53,17 @@
 import Vue from "vue";
 import { Watch, Model, Component } from "vue-property-decorator";
 import PictureInput from "vue-picture-input";
+import _ from "lodash";
 
 import MealCreation from "@/ViewModels/meal/mealCreation";
-import MealCreationFormData from "@/ViewModels/meal/mealCreationFormData";
 import MealIngredient from "@/ViewModels/meal-ingredient/mealIngredient";
 import MealApiCaller from "@/services/api-callers/mealApi";
 import MealLookup from "@/ViewModels/meal/mealLookup";
 import AddMealSummary from "@/components/meal/AddMealSummary.vue";
 import AddMealIngredient from "@/components/meal-ingredient/AddMealIngredient.vue";
+import MealIngredientWithQuantity from "@/ViewModels/meal-ingredient/mealIngredientWithQuantity";
+import MealIngredientIdWithQuantity from "@/ViewModels/meal-ingredient/mealIngredientIdWithQuantity";
+
 @Component({
   components: {
     "add-meal-summary": AddMealSummary,
@@ -70,22 +72,37 @@ import AddMealIngredient from "@/components/meal-ingredient/AddMealIngredient.vu
   }
 })
 export default class AddMeal extends Vue {
-  private mealFormData: MealCreationFormData = {
+  private mealFormData: MealCreation = {
     Name: "",
     Description: ""
   } as MealCreation;
-  //pair of mealIngredient, amount
-  private mealIngredients: MealIngredient[] = [];
+  private mealIngredients: MealIngredientWithQuantity[] = [];
   private mealIngredientSearchQuery: string = "";
   private modalEnabled: boolean = true;
+
+  get mealCalories() {
+    return _.sum(
+      this.mealIngredients.map(
+        ingredientWithQuantity =>
+          ingredientWithQuantity.MealIngredient.Calories *
+          ingredientWithQuantity.Quantity
+      )
+    );
+  }
 
   submit() {
     const { Name, Description, ImageId } = this.mealFormData;
     let completeMealCreation = {
+      Calories: this.mealCalories,
       Name: Name,
       Description: Description,
       ImageId: ImageId,
-      Ingredients: this.mealIngredients.map(mealIngredient => mealIngredient.Id)
+      IngredientsIdsWithQuantity: this.mealIngredients.map(mealIngredient => {
+        return {
+          Id: mealIngredient.MealIngredient.Id,
+          Quantity: mealIngredient.Quantity
+        } as MealIngredientIdWithQuantity;
+      })
     } as MealCreation;
 
     MealApiCaller.add(
@@ -110,6 +127,13 @@ export default class AddMeal extends Vue {
   onChange() {}
 
   searchMealIngredients() {}
+
+  mealIngredientAddedHandler(
+    addedMealIngredientWithQuantity: MealIngredientWithQuantity
+  ) {
+    this.mealIngredients.push(addedMealIngredientWithQuantity);
+    this.$modal.hide("addMealIngredientModal");
+  }
 }
 </script>
 
@@ -210,6 +234,8 @@ label {
   padding-top: 50px;
   padding-left: 0px;
 }
-/* .modal-window {
-} */
+.modal-window {
+  opacity: 1;
+  z-index: 10004;
+}
 </style>

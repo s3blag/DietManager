@@ -4,6 +4,7 @@ using DM.Logic.Interfaces;
 using DM.Models;
 using DM.Models.Exceptions;
 using DM.Models.ViewModels;
+using DM.Models.ViewModels.Meal;
 using DM.Repositories.Interfaces;
 using Newtonsoft.Json;
 using System;
@@ -47,8 +48,8 @@ namespace DM.Logic.Services
             if (!await _mealRepository.AddMealAsync(dbMeal))
                 throw new DataAccessException(nameof(_mealRepository.AddMealAsync) + " failed for argument: " + JsonConvert.SerializeObject(dbMeal));
 
-            if (!await _mealRepository.AddMealMealIngredientsAsync(GetMealMealIngredients(dbMeal.Id, mealVM.Ingredients)))
-                throw new DataAccessException(nameof(_mealRepository.AddMealMealIngredientsAsync) + " failed for argument: " + JsonConvert.SerializeObject(GetMealMealIngredients(dbMeal.Id, mealVM.Ingredients)));
+            if (!await _mealRepository.AddMealMealIngredientsAsync(GetMealMealIngredients(dbMeal.Id, mealVM.IngredientsIdsWithQuantity)))
+                throw new DataAccessException(nameof(_mealRepository.AddMealMealIngredientsAsync) + " failed for argument: " + JsonConvert.SerializeObject(GetMealMealIngredients(dbMeal.Id, mealVM.IngredientsIdsWithQuantity)));
 
             return dbMeal.Id;
         } 
@@ -60,8 +61,8 @@ namespace DM.Logic.Services
             await _mealRepository.DeleteMealAsync(mealId);
         }
 
-        private IList<MealMealIngredient> GetMealMealIngredients(Guid mealId, IEnumerable<Guid> mealIngredientsIDs) =>
-            mealIngredientsIDs.Select(m => new MealMealIngredient() { Id = Guid.NewGuid(), MealId = mealId, MealIngredientId = m }).ToList();
+        private IList<MealMealIngredient> GetMealMealIngredients(Guid mealId, IEnumerable<MealIngredientIdWithQuantityVM> mealIngredientsIDs) =>
+            mealIngredientsIDs.Select(m => new MealMealIngredient() { Id = Guid.NewGuid(), MealId = mealId, MealIngredientId = m .Id, Quantity = m.Quantity }).ToList();
 
         private void ValidateArgument(Object argument, string argumentName)
         {

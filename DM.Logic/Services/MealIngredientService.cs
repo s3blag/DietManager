@@ -46,9 +46,11 @@ namespace DM.Logic.Services
 
             if (!mealIngredientNutritionsAddedSuccessfully)
             {
-                throw new DataAccessException("Failed adding nutritions: " + JsonConvert.SerializeObject(dbMealIngredient.Nutrition) + "for mealIngredient: " 
+                throw new DataAccessException("Failed adding nutritions: " + JsonConvert.SerializeObject(dbMealIngredient.Nutrition) + "for mealIngredient: "
                     + JsonConvert.SerializeObject(dbMealIngredient));
             }
+
+            dbMealIngredient.NutritionsId = dbMealIngredient.Nutrition.Id;
 
             bool mealIngredientAddedSuccesfully =  await _mealIngredientRepository.AddMealIngredientAsync(dbMealIngredient);
 

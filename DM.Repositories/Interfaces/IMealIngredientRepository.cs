@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DM.Database;
+using DM.Models.Models;
 
 namespace DM.Repositories.Interfaces
 {
@@ -11,6 +12,6 @@ namespace DM.Repositories.Interfaces
         Task<bool> AddMealIngredientsAsync(IEnumerable<MealIngredient> mealIngredients);
         Task<bool> AddMealIngredientNutritionsAsync(Nutrition nutritions);
         Task<MealIngredient> GetMealIngredientByIdAsync(Guid id);
-        Task<IEnumerable<MealIngredient>> GetMealIngredientsForMealAsync(Guid mealId);
+        Task<IEnumerable<MealIngredientWithQuantity>> GetMealIngredientsForMealAsync(Guid mealId);
     }
 }

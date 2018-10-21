@@ -84,11 +84,13 @@ ADD CONSTRAINT "FK_MealIngredient_Nutritions" FOREIGN KEY ("NutritionsId") REFER
 CREATE TABLE "Meals"."Meal-MealIngredient" (
     "Id"                UUID    PRIMARY KEY,
     "MealIngredientId"  UUID    NOT NULL,
-    "MealId"            UUID    NOT NULL
+    "MealId"            UUID    NOT NULL,
+    "Quantity"          INTEGER NOT NULL
 );
 ALTER TABLE "Meals"."Meal-MealIngredient" 
 ADD CONSTRAINT "FK_MealMealIngredient_MealIngredient-" FOREIGN KEY ("MealIngredientId") REFERENCES  "Meals"."MealIngredient"("Id") ON DELETE CASCADE,
-ADD CONSTRAINT "FK_MealMealIngredient_Meal" FOREIGN KEY ("MealId") REFERENCES  "Meals"."Meal"("Id") ON DELETE CASCADE;
+ADD CONSTRAINT "FK_MealMealIngredient_Meal" FOREIGN KEY ("MealId") REFERENCES  "Meals"."Meal"("Id") ON DELETE CASCADE,
+ADD CONSTRAINT "Quantity_MustBeGreaterThan0" CHECK ("Quantity" > 0);
 
 CREATE VIEW "Meals"."MealIngredientsWithNutritions" AS
 SELECT
@@ -109,6 +111,7 @@ JOIN "Meals"."Nutritions" n ON n."Id" = m."NutritionsId";
 CREATE VIEW "Meals"."Meal-FullMealIngredient" AS
 SELECT 
  	mmi."MealId",
+    mmi."Quantity" as "Quantity",
     min."Id" as "MealIngredientId",
     min."Name" as "MealIngredientName",
     min."PhotoId" as "MealIngredientPhotoId",
