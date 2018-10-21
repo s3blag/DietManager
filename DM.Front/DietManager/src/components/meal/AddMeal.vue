@@ -18,7 +18,7 @@
       </div>
       <div class="column right">
         <div class="picture-input">
-          <picture-input ref="pictureInput" @change="onChange" width="400" height="200" radius="5" accept="image/jpeg,image/png" size="10" :removable="true" :customStrings="{
+          <picture-input ref="pictureInput" @change="onPictureChange" width="400" height="200" radius="5" accept="image/jpeg,image/png" size="10" :removable="true" :customStrings="{
             drag: '+'
           }">
           </picture-input>
@@ -32,8 +32,6 @@
                 <font-awesome-icon id="search-icon" class="option-icon" icon="search" /></button>
             </div>
           </div>
-
-          <!-- TODO            -->
           <ul class="added-meal-ingredients">
             <li class="meal-ingredient" v-for="mealIngredientWithQuantity in mealIngredients" :key="mealIngredientWithQuantity.MealIngredient.Id">
               <div class="image"></div>
@@ -58,6 +56,7 @@ import _ from "lodash";
 import MealCreation from "@/ViewModels/meal/mealCreation";
 import MealIngredient from "@/ViewModels/meal-ingredient/mealIngredient";
 import MealApiCaller from "@/services/api-callers/mealApi";
+import imageApiCaller from "@/services/api-callers/imageApi";
 import MealLookup from "@/ViewModels/meal/mealLookup";
 import AddMealSummary from "@/components/meal/AddMealSummary.vue";
 import AddMealIngredient from "@/components/meal-ingredient/AddMealIngredient.vue";
@@ -91,12 +90,12 @@ export default class AddMeal extends Vue {
   }
 
   submit() {
-    const { Name, Description, ImageId } = this.mealFormData;
-    let completeMealCreation = {
+    const { Name, Description, PhotoId } = this.mealFormData;
+    const completeMealCreation = {
       Calories: this.mealCalories,
       Name: Name,
       Description: Description,
-      ImageId: ImageId,
+      PhotoId: PhotoId,
       IngredientsIdsWithQuantity: this.mealIngredients.map(mealIngredient => {
         return {
           Id: mealIngredient.MealIngredient.Id,
@@ -124,7 +123,22 @@ export default class AddMeal extends Vue {
 
   addMealIngredient() {}
 
-  onChange() {}
+  onPictureChange(base64ImageString: string) {
+    imageApiCaller.add(
+      base64ImageString,
+      this.addImageSuccessHandler,
+      this.addImageErrorHandler
+    );
+  }
+
+  addImageSuccessHandler(imageId: string) {
+    this.mealFormData.PhotoId = imageId;
+  }
+
+  addImageErrorHandler(error: Error) {
+    // eslint-disable-next-line no-console
+    console.error(error);
+  }
 
   searchMealIngredients() {}
 

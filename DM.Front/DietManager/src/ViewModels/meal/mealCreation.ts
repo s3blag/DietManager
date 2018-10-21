@@ -3,7 +3,7 @@ import MealIngredientIdWithQuantity from "../meal-ingredient/mealIngredientIdWit
 export default interface MealCreation {
   Name: string;
   Description: string;
-  ImageId: string;
+  PhotoId: string;
   Calories: number;
   IngredientsIdsWithQuantity: MealIngredientIdWithQuantity[];
 }

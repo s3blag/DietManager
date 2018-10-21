@@ -3,53 +3,43 @@
     <div id="add-meal-ingredient-form">
       <div class="form-input">
         <div class="label">Name</div>
-        <input type="text" class="form-control" placeholder="Enter meal ingredient name..." 
-          v-model="mealIngredientFormData.MealIngredient.Name">
+        <input type="text" class="form-control" placeholder="Enter meal ingredient name..." v-model="mealIngredientFormData.MealIngredient.Name">
       </div>
       <div class="form-input">
         <div class="label">Quantity</div>
-        <input type="number" class="form-control" placeholder="Enter quantity..." 
-          v-model="mealIngredientFormData.Quantity">
+        <input type="number" class="form-control" placeholder="Enter quantity..." v-model="mealIngredientFormData.Quantity">
       </div>
       <div class="form-input">
         <div class="label">Calories</div>
-        <input type="number" class="form-control" placeholder="Enter number of calories..." 
-          v-model="mealIngredientFormData.MealIngredient.Calories">
+        <input type="number" class="form-control" placeholder="Enter number of calories..." v-model="mealIngredientFormData.MealIngredient.Calories">
       </div>
       <div class="form-input">
         <div class="label">Proteins</div>
-        <input type="number" class="form-control" placeholder="Enter amount of proteins..." 
-          v-model="mealIngredientFormData.MealIngredient.Nutrition.Protein">
+        <input type="number" class="form-control" placeholder="Enter amount of proteins..." v-model="mealIngredientFormData.MealIngredient.Nutrition.Protein">
       </div>
       <div class="form-input">
         <div class="label">Carbohydrates</div>
-        <input type="number" class="form-control" placeholder="Enter amount of carbohydrates..." 
-          v-model="mealIngredientFormData.MealIngredient.Nutrition.Carbohydrates">
+        <input type="number" class="form-control" placeholder="Enter amount of carbohydrates..." v-model="mealIngredientFormData.MealIngredient.Nutrition.Carbohydrates">
       </div>
       <div class="form-input">
         <div class="label">Fats</div>
-        <input type="number" class="form-control" placeholder="Enter amount of fats..." 
-          v-model="mealIngredientFormData.MealIngredient.Nutrition.Fats">
+        <input type="number" class="form-control" placeholder="Enter amount of fats..." v-model="mealIngredientFormData.MealIngredient.Nutrition.Fats">
       </div>
       <div class="form-input">
         <div class="label">Vitamin A (optional)</div>
-        <input type="number" class="form-control" placeholder="Enter amount of Vitamin A..." 
-          v-model="mealIngredientFormData.MealIngredient.Nutrition.VitaminA">
+        <input type="number" class="form-control" placeholder="Enter amount of Vitamin A..." v-model="mealIngredientFormData.MealIngredient.Nutrition.VitaminA">
       </div>
       <div class="form-input">
         <div class="label">Vitamin C (optional)</div>
-        <input type="number" class="form-control" placeholder="Enter amount of Vitamin C..." 
-          v-model="mealIngredientFormData.MealIngredient.Nutrition.VitaminC">
+        <input type="number" class="form-control" placeholder="Enter amount of Vitamin C..." v-model="mealIngredientFormData.MealIngredient.Nutrition.VitaminC">
       </div>
       <div class="form-input">
         <div class="label">Vitamin B6 (optional)</div>
-        <input type="number" class="form-control" placeholder="Enter amount of Vitamin B6..." 
-          v-model="mealIngredientFormData.MealIngredient.Nutrition.VitaminB6">
+        <input type="number" class="form-control" placeholder="Enter amount of Vitamin B6..." v-model="mealIngredientFormData.MealIngredient.Nutrition.VitaminB6">
       </div>
       <div class="form-input">
         <div class="label">Vitamin D (optional)</div>
-        <input type="number" class="form-control" placeholder="Enter amount of Vitamin D..." 
-          v-model="mealIngredientFormData.MealIngredient.Nutrition.VitaminD">
+        <input type="number" class="form-control" placeholder="Enter amount of Vitamin D..." v-model="mealIngredientFormData.MealIngredient.Nutrition.VitaminD">
       </div>
     </div>
     <div id="buttons-container">
@@ -94,8 +84,8 @@ export default class AddMealIngredient extends Vue {
   }
 
   addMealIngredientSuccessHandler(guid: string) {
-    let mealIngredientCreation = this.mealIngredientFormData;
-    let addedMealIngredientWithQuantity = {
+    const mealIngredientCreation = this.mealIngredientFormData;
+    const addedMealIngredientWithQuantity = {
       MealIngredient: {
         Id: guid,
         PhotoId: mealIngredientCreation.MealIngredient.PhotoId,

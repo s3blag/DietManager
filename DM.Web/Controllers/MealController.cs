@@ -43,7 +43,7 @@ namespace DM.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return NotFound();
+                return NotFound("ViewModelIsInvalid");
             }
 
             var mealId = await _mealService.AddMealAsync(mealCreationVM);

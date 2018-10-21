@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DM.Web.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Produces("application/json")]
+    [Route("api/[controller]/")]
     public class ImageController : Controller
     {
         private readonly IImageService _imageService;
@@ -24,10 +25,10 @@ namespace DM.Web.Controllers
             {
                 return BadRequest();
             }
-            return Ok (await _imageService.GetImageByIdAsync(id));
+            return Ok (Encoding.UTF8.GetString(await _imageService.GetImageByIdAsync(id)));
         }
 
-        [HttpPost]
+        [HttpPost("add")]
         public async Task<IActionResult> AddImage([FromBody] ImageVM image)
         {
             if (String.IsNullOrEmpty(image.Image))
@@ -35,7 +36,7 @@ namespace DM.Web.Controllers
                 return BadRequest();
             }
 
-            byte[] byteImage = Encoding.ASCII.GetBytes(image.Image);
+            byte[] byteImage = Encoding.UTF8.GetBytes(image.Image);
 
             return Ok (await _imageService.AddImageAsync(byteImage));
         }
