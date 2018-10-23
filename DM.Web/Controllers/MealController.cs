@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DM.Web.Controllers
 {
+    //TODO Model State Validator
+
     [Produces("application/json")]
     [Route("api/[controller]")]
     public class MealController : Controller
@@ -38,7 +40,7 @@ namespace DM.Web.Controllers
             return Ok(meal);
         }
 
-        [HttpPost("add",Name ="addMeal")]
+        [HttpPost("add")]
         public async Task<IActionResult> AddMeal([FromBody] MealCreationVM mealCreationVM)
         {
             if (!ModelState.IsValid)
@@ -46,7 +48,9 @@ namespace DM.Web.Controllers
                 return NotFound("ViewModelIsInvalid");
             }
 
-            var mealId = await _mealService.AddMealAsync(mealCreationVM);
+            var userId = Guid.Empty;
+
+            var mealId = await _mealService.AddMealAsync(mealCreationVM, userId);
 
             if (mealId == Guid.Empty)
             {
@@ -56,7 +60,7 @@ namespace DM.Web.Controllers
             return Ok(mealId);
         }
 
-        [HttpGet("{id}/MealIngredients", Name = "GetMealIngredientsForMeal")]
+        [HttpGet("{id}/meal-ingredients")]
         public async Task<IActionResult> GetMealIngredients(Guid mealId)
         {
             var mealIngredients = await _mealIngredientService.GetMealIngredientsForMealAsync(mealId);
@@ -67,6 +71,16 @@ namespace DM.Web.Controllers
             }
 
             return Ok(mealIngredients);
+        }
+
+        [HttpPost("meal-previews")]
+        public async Task<IActionResult> GetMealPreviews([FromBody] MealPreviewVM lastReturned)
+        {
+            var userId = Guid.Empty;
+
+            var result = await _mealService.GetMealPreviewsAsync(userId, lastReturned);
+
+            return Ok(result);
         }
     }
 }

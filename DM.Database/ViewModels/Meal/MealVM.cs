@@ -8,7 +8,7 @@ namespace DM.Models.ViewModels
     {
         public Guid Id { get; set; }
 
-        public Guid? PhotoId { get; set; }
+        public Guid? ImageId { get; set; }
 
         public string Name { get; set; }
 

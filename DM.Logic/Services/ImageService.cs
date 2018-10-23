@@ -27,7 +27,8 @@ namespace DM.Logic.Services
 
         public async Task<byte[]> GetImageByIdAsync(Guid imageId)
         {
-            ValidateArgument(imageId, nameof(imageId));
+
+            ValidateArgument((imageId, nameof(imageId)));
 
             var imageMetaData = await _imageRepository.GetImageByIdAsync(imageId);
 
@@ -38,7 +39,7 @@ namespace DM.Logic.Services
 
         public async Task<Guid> AddImageAsync(byte[] image)
         {
-            ValidateArgument(image, nameof(image));
+            ValidateArgument((image, nameof(image)));
 
             var imageCreation = await CreateFullImagePathAsync(_config.ImagesRootDirectoryPath);
 
@@ -84,18 +85,21 @@ namespace DM.Logic.Services
             {
                 await Task.Run(() =>
                 {
-                    var directoryInfo = Directory.CreateDirectory(newImageDirectoryPath);
+                    Directory.CreateDirectory(newImageDirectoryPath);
                 });  
             }
 
             return new ImageCreation(Path.Combine(newImageDirectoryPath, imageInternalIndex.ToString() + ".jpg"));
         }
-
-        private void ValidateArgument(Object argument, string argumentName)
+        
+        private void ValidateArgument(params (Object value, string name)[] arguments)
         {
-            if (argument == null)
+            foreach (var (value, name) in arguments)
             {
-                throw new ArgumentNullException(argumentName);
+                if (value is null)
+                {
+                    throw new ArgumentNullException(name);
+                }
             }
         }
     }

@@ -5,7 +5,7 @@ namespace DM.Models.ViewModels
 {
     public class MealIngredientCreationVM
     {
-        public Guid? PhotoId { get; set; }
+        public Guid? ImageId { get; set; }
 
         [Required]
         [MinLength(3)]

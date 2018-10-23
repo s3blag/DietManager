@@ -3,6 +3,7 @@ import Router from "vue-router";
 import Home from "./views/Home.vue";
 import MealManager from "./components/meal/MealManager.vue";
 import AddMeal from "@/components/meal/AddMeal.vue";
+import MyMeals from "@/components/meal/MyMeals.vue";
 
 Vue.use(Router);
 
@@ -26,12 +27,13 @@ export default new Router({
           component: AddMeal
         },
         {
-          path: "/browse",
+          path: "browse",
           name: "BrowseMeals"
         },
         {
-          path: "/my-meals",
-          name: "MyMeals"
+          path: "my-meals",
+          name: "MyMeals",
+          component: MyMeals
         }
       ]
     }

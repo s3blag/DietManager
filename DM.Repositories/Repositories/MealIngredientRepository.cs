@@ -18,7 +18,7 @@ namespace DM.Repositories
             {
                 var mealIngredient = await db.MealIngredients.
                     LoadWith(mi => mi.Nutrition).
-                    LoadWith(mi => mi.Photo).
+                    LoadWith(mi => mi.Image).
                     FirstOrDefaultAsync(m => m.Id == id);
 
                 return mealIngredient;
@@ -71,7 +71,7 @@ namespace DM.Repositories
                         MealIngredient =new MealIngredient()
                         {
                             Id = m.MealIngredientId.Value,
-                            PhotoId = m.MealIngredientPhotoId.GetValueOrDefault(),
+                            ImageId = m.MealIngredientImageId.GetValueOrDefault(),
                             Name = m.MealIngredientName,
                             Calories = m.MealIngredientCalories.Value,
                             Nutrition = new Nutrition()

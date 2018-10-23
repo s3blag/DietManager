@@ -14,6 +14,7 @@ namespace DM.Web.Config
             CreateMap<MealScheduleEntry, MealScheduleEntryVM>();
             CreateMap<MealWithIngredients, MealVM>();
             CreateMap<MealIngredientWithQuantityVM, MealIngredientWithQuantity>().ReverseMap();
+            CreateMap<MealPreview, MealPreviewVM>().ReverseMap();
             CreateMap<NutritionsVM, Nutrition>().
                 ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
                 ReverseMap(); 
@@ -22,11 +23,9 @@ namespace DM.Web.Config
                 ReverseMap();
             CreateMap<MealCreationVM, Meal>().
                 ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
+                ForMember(target => target.CreationDate, config => config.MapFrom(src => DateTimeOffset.Now)).
                 ReverseMap();
             CreateMap<MealIngredientVM, MealIngredient>().
-                ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid())).
-                ReverseMap();
-            CreateMap<MealCreationVM, MealIngredient>().
                 ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid())).
                 ReverseMap();
             CreateMap<MealIngredientCreationVM, MealIngredient>().

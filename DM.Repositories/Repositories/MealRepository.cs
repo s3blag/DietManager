@@ -1,4 +1,5 @@
 ﻿using DM.Database;
+using DM.Models.Models;
 using DM.Repositories.Interfaces;
 using LinqToDB;
 using LinqToDB.Data;
@@ -81,6 +82,30 @@ namespace DM.Repositories
                     DeleteAsync();
 
                 return Convert.ToBoolean(result);
+            }
+        }
+
+        public async Task<IList<MealPreview>> GetMealPreviewsAsync(Guid userId, MealPreview lastReturned, int takeAmount)
+        {
+            using (var db = new DietManagerDB())
+            {
+                var mealPreviewsQuery = db.Meals.
+                    Where(m => m.CreatorId == userId).
+                    OrderBy(m => m.CreationDate).
+                    ThenBy(m => m.Name).
+                    Take(takeAmount).
+                    Select(m => new MealPreview(m.Id, m.ImageId, m.Name, (int)m.Calories)).
+                    AsQueryable();
+
+                if (lastReturned != null)
+                {
+                    mealPreviewsQuery.
+                        Where(m => m.CreationDate >= lastReturned.CreationDate).
+                        Where(m => string.Compare(m.Name, lastReturned.Name, true) > 0);
+                }
+
+                return await mealPreviewsQuery.ToListAsync();
+                   
             }
         }
 

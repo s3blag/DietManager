@@ -22,11 +22,11 @@ CREATE TABLE "Users"."User" (
     "UserName"      varchar(20)     UNIQUE NOT NULL,
     "Password"      TEXT            NOT NULL,
     "CreationDate"  TIMESTAMPTZ     NOT NULL,
-    "PhotoId"       UUID            NULL,
+    "ImageId"       UUID            NULL,
     "RoleId"        UUID            NOT NULL
 );
 ALTER TABLE "Users"."User" 
-ADD CONSTRAINT FK_User_Photo FOREIGN KEY ("PhotoId") REFERENCES "Images"."Image"("Id"),
+ADD CONSTRAINT FK_User_Image FOREIGN KEY ("ImageId") REFERENCES "Images"."Image"("Id"),
 ADD CONSTRAINT FK_User_Role FOREIGN KEY ("RoleId") REFERENCES "Users"."Role"("Id");
 
 CREATE TABLE "Users"."Friend" (
@@ -40,14 +40,17 @@ ADD CONSTRAINT FK_Friend_User2 FOREIGN KEY ("User2Id") REFERENCES "Users"."User"
 ADD CONSTRAINT Friend_FriendsIdsShouldBeDifferent CHECK ("User1Id" != "User2Id");
 
 CREATE TABLE "Meals"."Meal" (
-    "Id"            UUID    PRIMARY KEY,
-    "PhotoId"       UUID    NULL,
-    "Name"          TEXT    NOT NULL,
-    "Description"   TEXT    NULL,
-    "Calories"      REAL    NOT NULL
+    "Id"            UUID        PRIMARY KEY,
+    "CreationDate"  TIMESTAMPTZ NOT NULL,
+    "CreatorId"     UUID        NULL,
+    "ImageId"       UUID        NULL,
+    "Name"          TEXT        NOT NULL,
+    "Description"   TEXT        NULL,
+    "Calories"      REAL        NOT NULL
 );
 ALTER TABLE "Meals"."Meal" 
-ADD CONSTRAINT "FK_Meal_Photo" FOREIGN KEY ("PhotoId") REFERENCES  "Images"."Image"("Id");
+ADD CONSTRAINT "FK_Meal_Image" FOREIGN KEY ("ImageId") REFERENCES  "Images"."Image"("Id"),
+ADD CONSTRAINT "FK_Meal_User" FOREIGN KEY ("CreatorId") REFERENCES  "Users"."User"("Id");
 
 CREATE TABLE "Meals"."MealScheduleEntry" (
     "Id"        UUID            PRIMARY KEY,
@@ -72,13 +75,13 @@ CREATE TABLE "Meals"."Nutritions" (
 
 CREATE TABLE "Meals"."MealIngredient" (
     "Id"            UUID        PRIMARY KEY,
-    "PhotoId"       UUID        NULL,
+    "ImageId"       UUID        NULL,
     "Name"          TEXT        UNIQUE,
     "Calories"      INTEGER     NOT NULL,
     "NutritionsId"  UUID        NOT NULL
 );
 ALTER TABLE "Meals"."MealIngredient" 
-ADD CONSTRAINT "FK_MealIngredient_Photo" FOREIGN KEY ("PhotoId") REFERENCES  "Images"."Image"("Id"),
+ADD CONSTRAINT "FK_MealIngredient_Image" FOREIGN KEY ("ImageId") REFERENCES  "Images"."Image"("Id"),
 ADD CONSTRAINT "FK_MealIngredient_Nutritions" FOREIGN KEY ("NutritionsId") REFERENCES  "Meals"."Nutritions"("Id");
 
 CREATE TABLE "Meals"."Meal-MealIngredient" (
@@ -96,7 +99,7 @@ CREATE VIEW "Meals"."MealIngredientsWithNutritions" AS
 SELECT
     m."Id",
     m."Name",
-    m."PhotoId",
+    m."ImageId",
     m."Calories",
     n."Protein",
     n."Carbohydrates",
@@ -114,7 +117,7 @@ SELECT
     mmi."Quantity" as "Quantity",
     min."Id" as "MealIngredientId",
     min."Name" as "MealIngredientName",
-    min."PhotoId" as "MealIngredientPhotoId",
+    min."ImageId" as "MealIngredientImageId",
     min."Calories" as "MealIngredientCalories",
     min."Protein",
     min."Carbohydrates",

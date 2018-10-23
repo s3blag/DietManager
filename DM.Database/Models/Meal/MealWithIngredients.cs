@@ -10,7 +10,7 @@ namespace DM.Models
         public MealWithIngredients(Meal meal, IEnumerable<MealIngredientWithQuantity> ingredients)
         {
             Id = meal.Id;
-            PhotoId = meal.PhotoId;
+            ImageId = meal.ImageId;
             Name = meal.Name;
             Calories = meal.Calories;
             Ingredients = ingredients;
@@ -18,7 +18,7 @@ namespace DM.Models
 
         public Guid Id { get; set; }
 
-        public Guid? PhotoId { get; set; }
+        public Guid? ImageId { get; set; }
 
         public string Name { get; set; }
 

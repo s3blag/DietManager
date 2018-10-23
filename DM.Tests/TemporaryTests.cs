@@ -51,8 +51,8 @@ namespace DM.Tests
 
             var newMeal = new NewMealVM()
             {
-                Name = "Nowy posi³ek",
-                PhotoId = new Guid("beb5afef-d709-4f50-b280-a45068518718"),
+                Name = "Nowy posiï¿½ek",
+                ImageId = new Guid("beb5afef-d709-4f50-b280-a45068518718"),
                 Calories = "220",
                 Ingredients = Enumerable.Empty<MealIngredientVM>(),
             };
@@ -87,7 +87,7 @@ namespace DM.Tests
             var mealVM = new NewMealVM()
             {
                 Name = "newMealVM",
-                PhotoId = null,
+                ImageId = null,
                 Calories = "235",
                 Ingredients = new List<MealIngredientVM>()
                 {

@@ -5,7 +5,7 @@ namespace DM.Models.Models
 {
     public class ApplicationUser : IdentityUser<Guid>
     {
-        public Guid PhotoId { get; set; }
+        public Guid ImageId { get; set; }
 
         public string FirstName { get; set; }
 

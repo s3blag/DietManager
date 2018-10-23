@@ -54,8 +54,8 @@ export default class AddMealSummary extends Vue {
     let result = _.sum(
       this.mealIngredients.map(
         ingredientWithQuantity =>
-          ingredientWithQuantity.MealIngredient.Calories *
-          ingredientWithQuantity.Quantity
+          ingredientWithQuantity.mealIngredient.calories *
+          ingredientWithQuantity.quantity
       )
     );
 
@@ -65,8 +65,8 @@ export default class AddMealSummary extends Vue {
     let result = _.sum(
       this.mealIngredients.map(
         ingredientWithQuantity =>
-          ingredientWithQuantity.MealIngredient.Nutritions.Protein *
-          ingredientWithQuantity.Quantity
+          ingredientWithQuantity.mealIngredient.nutritions.protein *
+          ingredientWithQuantity.quantity
       )
     );
 
@@ -76,8 +76,8 @@ export default class AddMealSummary extends Vue {
     let result = _.sum(
       this.mealIngredients.map(
         ingredientWithQuantity =>
-          ingredientWithQuantity.MealIngredient.Nutritions.Carbohydrates *
-          ingredientWithQuantity.Quantity
+          ingredientWithQuantity.mealIngredient.nutritions.carbohydrates *
+          ingredientWithQuantity.quantity
       )
     );
 
@@ -87,8 +87,8 @@ export default class AddMealSummary extends Vue {
     let result = _.sum(
       this.mealIngredients.map(
         ingredientWithQuantity =>
-          ingredientWithQuantity.MealIngredient.Nutritions.Fats *
-          ingredientWithQuantity.Quantity
+          ingredientWithQuantity.mealIngredient.nutritions.fats *
+          ingredientWithQuantity.quantity
       )
     );
 
@@ -99,16 +99,16 @@ export default class AddMealSummary extends Vue {
       this.mealIngredients.map(ingredientWithQuantity => {
         // eslint-disable-next-line no-console
         console.log(
-          "meal-ingredient quantity: " + ingredientWithQuantity.Quantity
+          "meal-ingredient quantity: " + ingredientWithQuantity.quantity
         );
         if (
           !this.isNullOrUndefined(
-            ingredientWithQuantity.MealIngredient.Nutritions.VitaminA
+            ingredientWithQuantity.mealIngredient.nutritions.vitaminA
           )
         ) {
           return (
-            ingredientWithQuantity.MealIngredient.Nutritions.VitaminA! *
-            ingredientWithQuantity.Quantity
+            ingredientWithQuantity.mealIngredient.nutritions.vitaminA! *
+            ingredientWithQuantity.quantity
           );
         } else {
           return 0;
@@ -123,12 +123,12 @@ export default class AddMealSummary extends Vue {
       this.mealIngredients.map(ingredientWithQuantity => {
         if (
           !this.isNullOrUndefined(
-            ingredientWithQuantity.MealIngredient.Nutritions.VitaminC
+            ingredientWithQuantity.mealIngredient.nutritions.vitaminC
           )
         ) {
           return (
-            ingredientWithQuantity.MealIngredient.Nutritions.VitaminC! *
-            ingredientWithQuantity.Quantity
+            ingredientWithQuantity.mealIngredient.nutritions.vitaminC! *
+            ingredientWithQuantity.quantity
           );
         } else {
           return 0;
@@ -143,12 +143,12 @@ export default class AddMealSummary extends Vue {
       this.mealIngredients.map(ingredientWithQuantity => {
         if (
           !this.isNullOrUndefined(
-            ingredientWithQuantity.MealIngredient.Nutritions.VitaminB6
+            ingredientWithQuantity.mealIngredient.nutritions.vitaminB6
           )
         ) {
           return (
-            ingredientWithQuantity.MealIngredient.Nutritions.VitaminB6! *
-            ingredientWithQuantity.Quantity
+            ingredientWithQuantity.mealIngredient.nutritions.vitaminB6! *
+            ingredientWithQuantity.quantity
           );
         } else {
           return 0;
@@ -163,12 +163,12 @@ export default class AddMealSummary extends Vue {
       this.mealIngredients.map(ingredientWithQuantity => {
         if (
           !this.isNullOrUndefined(
-            ingredientWithQuantity.MealIngredient.Nutritions.VitaminD
+            ingredientWithQuantity.mealIngredient.nutritions.vitaminD
           )
         ) {
           return (
-            ingredientWithQuantity.MealIngredient.Nutritions.VitaminD! *
-            ingredientWithQuantity.Quantity
+            ingredientWithQuantity.mealIngredient.nutritions.vitaminD! *
+            ingredientWithQuantity.quantity
           );
         } else {
           return 0;

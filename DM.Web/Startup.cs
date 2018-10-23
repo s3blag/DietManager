@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Text;
 
@@ -35,7 +36,7 @@ namespace Diet_Manager
         {
             services.AddMvc();
 
-            services.AddAutoMapper();
+        services.AddAutoMapper();
             
             DataConnection.DefaultSettings = new DBConnectionSettings(Configuration["ConnectionStrings:PostgreSQLBaseConnection"]);
 

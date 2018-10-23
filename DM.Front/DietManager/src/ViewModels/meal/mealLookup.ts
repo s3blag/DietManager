@@ -1,5 +1,5 @@
 export default interface MealLookup {
-  Id: number;
-  Name: string;
-  Description: string;
+  id: number;
+  name: string;
+  description: string;
 }

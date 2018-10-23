@@ -59,16 +59,16 @@ import MealIngredientWithQuantity from "@/ViewModels/meal-ingredient/mealIngredi
 @Component
 export default class AddMealIngredient extends Vue {
   private mealIngredientFormData: MealIngredientCreationWithQuantity = {
-    Quantity: 1,
-    MealIngredient: {
-      Nutrition: {
-        Protein: 0.0,
-        Carbohydrates: 0.0,
-        Fats: 0.0,
-        VitaminA: 0.0,
-        VitaminC: null,
-        VitaminB6: null,
-        VitaminD: null
+    quantity: 1,
+    mealIngredient: {
+      nutrition: {
+        protein: 0.0,
+        carbohydrates: 0.0,
+        fats: 0.0,
+        vitaminC: null,
+        vitaminB6: null,
+        vitaminA: 0.0,
+        vitaminD: null
       }
     }
   } as MealIngredientCreationWithQuantity;
@@ -77,33 +77,27 @@ export default class AddMealIngredient extends Vue {
   addMealIngredient() {
     //this.addMealIngredientSuccessHandler((this.counter++).toString());
     MealIngredientApiCaller.add(
-      this.mealIngredientFormData.MealIngredient,
-      this.addMealIngredientSuccessHandler,
-      this.addMealIngredientErrorHandler
+      this.mealIngredientFormData.mealIngredient,
+      this.addMealIngredientSuccessHandler
     );
   }
 
   addMealIngredientSuccessHandler(guid: string) {
     const mealIngredientCreation = this.mealIngredientFormData;
     const addedMealIngredientWithQuantity = {
-      MealIngredient: {
-        Id: guid,
-        PhotoId: mealIngredientCreation.MealIngredient.PhotoId,
-        Name: mealIngredientCreation.MealIngredient.Name,
-        Calories: mealIngredientCreation.MealIngredient.Calories,
-        Nutritions: mealIngredientCreation.MealIngredient.Nutrition
+      mealIngredient: {
+        id: guid,
+        imageId: mealIngredientCreation.mealIngredient.imageId,
+        name: mealIngredientCreation.mealIngredient.name,
+        calories: mealIngredientCreation.mealIngredient.calories,
+        nutritions: mealIngredientCreation.mealIngredient.nutrition
       } as MealIngredient,
-      Quantity: mealIngredientCreation.Quantity
+      quantity: mealIngredientCreation.quantity
     } as MealIngredientWithQuantity;
 
     // eslint-disable-next-line no-console
     console.log("added meal-ingredient quid: " + guid);
     this.$emit("meal-ingredient-added", addedMealIngredientWithQuantity);
-  }
-
-  addMealIngredientErrorHandler(error: Error) {
-    // eslint-disable-next-line no-console
-    console.error(error);
   }
 }
 </script>

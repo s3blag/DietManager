@@ -72,8 +72,8 @@ import MealIngredientIdWithQuantity from "@/ViewModels/meal-ingredient/mealIngre
 })
 export default class AddMeal extends Vue {
   private mealFormData: MealCreation = {
-    Name: "",
-    Description: ""
+    name: "",
+    description: ""
   } as MealCreation;
   private mealIngredients: MealIngredientWithQuantity[] = [];
   private mealIngredientSearchQuery: string = "";
@@ -83,32 +83,28 @@ export default class AddMeal extends Vue {
     return _.sum(
       this.mealIngredients.map(
         ingredientWithQuantity =>
-          ingredientWithQuantity.MealIngredient.Calories *
-          ingredientWithQuantity.Quantity
+          ingredientWithQuantity.mealIngredient.calories *
+          ingredientWithQuantity.quantity
       )
     );
   }
 
   submit() {
-    const { Name, Description, PhotoId } = this.mealFormData;
+    const { name, description, imageId } = this.mealFormData;
     const completeMealCreation = {
-      Calories: this.mealCalories,
-      Name: Name,
-      Description: Description,
-      PhotoId: PhotoId,
-      IngredientsIdsWithQuantity: this.mealIngredients.map(mealIngredient => {
+      calories: this.mealCalories,
+      name: name,
+      description: description,
+      imageId: imageId,
+      ingredientsIdsWithQuantity: this.mealIngredients.map(mealIngredient => {
         return {
-          Id: mealIngredient.MealIngredient.Id,
-          Quantity: mealIngredient.Quantity
+          id: mealIngredient.mealIngredient.id,
+          quantity: mealIngredient.quantity
         } as MealIngredientIdWithQuantity;
       })
     } as MealCreation;
 
-    MealApiCaller.add(
-      completeMealCreation,
-      this.addMealSuccessHandler,
-      this.addMealErrorHandler
-    );
+    MealApiCaller.add(completeMealCreation, this.addMealSuccessHandler);
   }
 
   addMealSuccessHandler(addedMealGuid: string) {
@@ -116,28 +112,14 @@ export default class AddMeal extends Vue {
     console.log(addedMealGuid);
   }
 
-  addMealErrorHandler(error: Error) {
-    // eslint-disable-next-line no-console
-    console.error(error);
-  }
-
   addMealIngredient() {}
 
   onPictureChange(base64ImageString: string) {
-    imageApiCaller.add(
-      base64ImageString,
-      this.addImageSuccessHandler,
-      this.addImageErrorHandler
-    );
+    imageApiCaller.add(base64ImageString, this.addImageSuccessHandler);
   }
 
   addImageSuccessHandler(imageId: string) {
-    this.mealFormData.PhotoId = imageId;
-  }
-
-  addImageErrorHandler(error: Error) {
-    // eslint-disable-next-line no-console
-    console.error(error);
+    this.mealFormData.imageId = imageId;
   }
 
   searchMealIngredients() {}

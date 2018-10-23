@@ -1,4 +1,4 @@
 export default interface MealIngredientIdWithQuantity {
-    Id: string;
-    Quantity: number;
+  id: string;
+  quantity: number;
 }

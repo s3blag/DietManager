@@ -16,7 +16,7 @@ namespace DM.Database
 	/// <summary>
 	/// Database       : DietManager
 	/// Data Source    : tcp://localhost:5432
-	/// Server Version : 10.4
+	/// Server Version : 9.5.14
 	/// </summary>
 	public partial class DietManagerDB : LinqToDB.Data.DataConnection
 	{
@@ -79,22 +79,22 @@ namespace DM.Database
 		#region Associations
 
 		/// <summary>
-		/// fk_user_photo_BackReference
+		/// fk_user_image_BackReference
 		/// </summary>
-		[Association(ThisKey="Id", OtherKey="PhotoId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
-		public IEnumerable<User> fkuserphotoes { get; set; }
+		[Association(ThisKey="Id", OtherKey="ImageId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<User> fkuserimages { get; set; }
 
 		/// <summary>
-		/// FK_MealIngredient_Photo_BackReference
+		/// FK_MealIngredient_Image_BackReference
 		/// </summary>
-		[Association(ThisKey="Id", OtherKey="PhotoId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
-		public IEnumerable<MealIngredient> MealIngredientPhotos { get; set; }
+		[Association(ThisKey="Id", OtherKey="ImageId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<MealIngredient> MealIngredients { get; set; }
 
 		/// <summary>
-		/// FK_Meal_Photo_BackReference
+		/// FK_Meal_Image_BackReference
 		/// </summary>
-		[Association(ThisKey="Id", OtherKey="PhotoId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
-		public IEnumerable<Meal> MealPhotos { get; set; }
+		[Association(ThisKey="Id", OtherKey="ImageId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<Meal> Meals { get; set; }
 
 		#endregion
 	}
@@ -102,13 +102,21 @@ namespace DM.Database
 	[Table(Schema="Meals", Name="Meal")]
 	public partial class Meal
 	{
-		[PrimaryKey, NotNull    ] public Guid   Id          { get; set; } // uuid
-		[Column,        Nullable] public Guid?  PhotoId     { get; set; } // uuid
-		[Column,     NotNull    ] public string Name        { get; set; } // text
-		[Column,        Nullable] public string Description { get; set; } // text
-		[Column,     NotNull    ] public float  Calories    { get; set; } // real
+		[PrimaryKey, NotNull    ] public Guid           Id           { get; set; } // uuid
+		[Column,     NotNull    ] public DateTimeOffset CreationDate { get; set; } // timestamp (6) with time zone
+		[Column,        Nullable] public Guid?          CreatorId    { get; set; } // uuid
+		[Column,        Nullable] public Guid?          ImageId      { get; set; } // uuid
+		[Column,     NotNull    ] public string         Name         { get; set; } // text
+		[Column,        Nullable] public string         Description  { get; set; } // text
+		[Column,     NotNull    ] public float          Calories     { get; set; } // real
 
 		#region Associations
+
+		/// <summary>
+		/// FK_Meal_User
+		/// </summary>
+		[Association(ThisKey="CreatorId", OtherKey="Id", CanBeNull=true, Relationship=Relationship.ManyToOne, KeyName="FK_Meal_User", BackReferenceName="Meals")]
+		public User Creator { get; set; }
 
 		/// <summary>
 		/// fk_usermeal_mealid_BackReference
@@ -117,16 +125,16 @@ namespace DM.Database
 		public IEnumerable<MealScheduleEntry> fkusermealmealids { get; set; }
 
 		/// <summary>
+		/// FK_Meal_Image
+		/// </summary>
+		[Association(ThisKey="ImageId", OtherKey="Id", CanBeNull=true, Relationship=Relationship.ManyToOne, KeyName="FK_Meal_Image", BackReferenceName="Meals")]
+		public Image Image { get; set; }
+
+		/// <summary>
 		/// FK_MealMealIngredient_Meal_BackReference
 		/// </summary>
 		[Association(ThisKey="Id", OtherKey="MealId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
 		public IEnumerable<MealMealIngredient> MealMealIngredients { get; set; }
-
-		/// <summary>
-		/// FK_Meal_Photo
-		/// </summary>
-		[Association(ThisKey="PhotoId", OtherKey="Id", CanBeNull=true, Relationship=Relationship.ManyToOne, KeyName="FK_Meal_Photo", BackReferenceName="MealPhotos")]
-		public Image Photo { get; set; }
 
 		#endregion
 	}
@@ -138,7 +146,7 @@ namespace DM.Database
 		[Column(SkipOnUpdate=true), Nullable] public int?   Quantity               { get; set; } // integer
 		[Column(SkipOnUpdate=true), Nullable] public Guid?  MealIngredientId       { get; set; } // uuid
 		[Column(SkipOnUpdate=true), Nullable] public string MealIngredientName     { get; set; } // text
-		[Column(SkipOnUpdate=true), Nullable] public Guid?  MealIngredientPhotoId  { get; set; } // uuid
+		[Column(SkipOnUpdate=true), Nullable] public Guid?  MealIngredientImageId  { get; set; } // uuid
 		[Column(SkipOnUpdate=true), Nullable] public int?   MealIngredientCalories { get; set; } // integer
 		[Column(SkipOnUpdate=true), Nullable] public float? Protein                { get; set; } // real
 		[Column(SkipOnUpdate=true), Nullable] public float? Carbohydrates          { get; set; } // real
@@ -153,12 +161,18 @@ namespace DM.Database
 	public partial class MealIngredient
 	{
 		[PrimaryKey, NotNull    ] public Guid   Id           { get; set; } // uuid
-		[Column,        Nullable] public Guid?  PhotoId      { get; set; } // uuid
+		[Column,        Nullable] public Guid?  ImageId      { get; set; } // uuid
 		[Column,        Nullable] public string Name         { get; set; } // text
 		[Column,     NotNull    ] public int    Calories     { get; set; } // integer
 		[Column,     NotNull    ] public Guid   NutritionsId { get; set; } // uuid
 
 		#region Associations
+
+		/// <summary>
+		/// FK_MealIngredient_Image
+		/// </summary>
+		[Association(ThisKey="ImageId", OtherKey="Id", CanBeNull=true, Relationship=Relationship.ManyToOne, KeyName="FK_MealIngredient_Image", BackReferenceName="MealIngredients")]
+		public Image Image { get; set; }
 
 		/// <summary>
 		/// FK_MealMealIngredient_MealIngredient-_BackReference
@@ -172,12 +186,6 @@ namespace DM.Database
 		[Association(ThisKey="NutritionsId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="FK_MealIngredient_Nutritions", BackReferenceName="MealIngredients")]
 		public Nutrition Nutrition { get; set; }
 
-		/// <summary>
-		/// FK_MealIngredient_Photo
-		/// </summary>
-		[Association(ThisKey="PhotoId", OtherKey="Id", CanBeNull=true, Relationship=Relationship.ManyToOne, KeyName="FK_MealIngredient_Photo", BackReferenceName="MealIngredientPhotos")]
-		public Image Photo { get; set; }
-
 		#endregion
 	}
 
@@ -186,7 +194,7 @@ namespace DM.Database
 	{
 		[Column(SkipOnUpdate=true), Nullable] public Guid?  Id            { get; set; } // uuid
 		[Column(SkipOnUpdate=true), Nullable] public string Name          { get; set; } // text
-		[Column(SkipOnUpdate=true), Nullable] public Guid?  PhotoId       { get; set; } // uuid
+		[Column(SkipOnUpdate=true), Nullable] public Guid?  ImageId       { get; set; } // uuid
 		[Column(SkipOnUpdate=true), Nullable] public int?   Calories      { get; set; } // integer
 		[Column(SkipOnUpdate=true), Nullable] public float? Protein       { get; set; } // real
 		[Column(SkipOnUpdate=true), Nullable] public float? Carbohydrates { get; set; } // real
@@ -295,7 +303,7 @@ namespace DM.Database
 		[Column,     NotNull    ] public string         UserName     { get; set; } // character varying(20)
 		[Column,     NotNull    ] public string         Password     { get; set; } // text
 		[Column,     NotNull    ] public DateTimeOffset CreationDate { get; set; } // timestamp (6) with time zone
-		[Column,        Nullable] public Guid?          PhotoId      { get; set; } // uuid
+		[Column,        Nullable] public Guid?          ImageId      { get; set; } // uuid
 		[Column,     NotNull    ] public Guid           RoleId       { get; set; } // uuid
 
 		#region Associations
@@ -319,10 +327,16 @@ namespace DM.Database
 		public IEnumerable<MealScheduleEntry> fkusermealuserids { get; set; }
 
 		/// <summary>
-		/// fk_user_photo
+		/// fk_user_image
 		/// </summary>
-		[Association(ThisKey="PhotoId", OtherKey="Id", CanBeNull=true, Relationship=Relationship.ManyToOne, KeyName="fk_user_photo", BackReferenceName="fkuserphotoes")]
-		public Image Photo { get; set; }
+		[Association(ThisKey="ImageId", OtherKey="Id", CanBeNull=true, Relationship=Relationship.ManyToOne, KeyName="fk_user_image", BackReferenceName="fkuserimages")]
+		public Image Image { get; set; }
+
+		/// <summary>
+		/// FK_Meal_User_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="CreatorId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<Meal> Meals { get; set; }
 
 		/// <summary>
 		/// fk_user_role

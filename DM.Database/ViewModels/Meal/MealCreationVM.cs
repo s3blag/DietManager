@@ -13,10 +13,11 @@ namespace DM.Models.ViewModels
         [Required]
         public string Description { get; set; }
 
-        public Guid? PhotoId { get; set; }
+        public Guid? ImageId { get; set; }
 
         [Required]
         public int Calories { get; set; }
+
 
         [Required]
         [MinLength(2)]
