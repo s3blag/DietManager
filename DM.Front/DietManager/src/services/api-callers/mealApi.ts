@@ -4,6 +4,7 @@ import MealLookup from "@/ViewModels/meal/mealLookup";
 import MealIngredient from "@/ViewModels/meal-ingredient/mealIngredient";
 import MealPreview from "@/ViewModels/meal/mealPreview";
 import IndexedResult from "@/ViewModels/wrappers/indexedResult";
+import MealSearch from "@/ViewModels/meal/mealSearch";
 
 export default class MealApiCaller {
   static get(
@@ -50,7 +51,7 @@ export default class MealApiCaller {
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
     Axios.post<IndexedResult<MealPreview[]>>(
-      `/api/meal/meal-previews`,
+      "/api/meal/meal-previews",
       lastReturnedMealPreview,
       {
         headers: {
@@ -58,6 +59,24 @@ export default class MealApiCaller {
         }
       }
     )
+      .then(response => {
+        successHandler(response.data);
+      })
+      .catch(error => {
+        errorHandler(error);
+      });
+  }
+
+  static search(
+    lastReturnedIndexedSearch: IndexedResult<MealSearch> | null,
+    successHandler: (indexedResult: IndexedResult<MealPreview[]>) => void,
+    errorHandler: (error: Error) => void = this.defaultErrorHandler
+  ) {
+    Axios.post<IndexedResult<MealPreview[]>>("/api/meal/search", {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
       .then(response => {
         successHandler(response.data);
       })

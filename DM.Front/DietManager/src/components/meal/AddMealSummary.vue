@@ -61,6 +61,7 @@ export default class AddMealSummary extends Vue {
 
     return this.finalizeResult(result, "kcal");
   }
+
   get proteinsSummary() {
     let result = _.sum(
       this.mealIngredients.map(
@@ -72,6 +73,7 @@ export default class AddMealSummary extends Vue {
 
     return this.finalizeResult(result, "g");
   }
+
   get carbohydratesSummary() {
     let result = _.sum(
       this.mealIngredients.map(
@@ -83,6 +85,7 @@ export default class AddMealSummary extends Vue {
 
     return this.finalizeResult(result, "g");
   }
+
   get fatsSummary() {
     let result = _.sum(
       this.mealIngredients.map(
@@ -94,6 +97,7 @@ export default class AddMealSummary extends Vue {
 
     return this.finalizeResult(result, "g");
   }
+
   get vitaminASummary() {
     let result = _.sum(
       this.mealIngredients.map(ingredientWithQuantity => {
@@ -118,6 +122,7 @@ export default class AddMealSummary extends Vue {
 
     return this.finalizeResult(result, "mg");
   }
+
   get vitaminCSummary() {
     let result = _.sum(
       this.mealIngredients.map(ingredientWithQuantity => {
@@ -138,6 +143,7 @@ export default class AddMealSummary extends Vue {
 
     return this.finalizeResult(result, "mg");
   }
+
   get vitaminB6Summary() {
     let result = _.sum(
       this.mealIngredients.map(ingredientWithQuantity => {
@@ -158,6 +164,7 @@ export default class AddMealSummary extends Vue {
 
     return this.finalizeResult(result, "mg");
   }
+
   get vitaminDSummary() {
     let result = _.sum(
       this.mealIngredients.map(ingredientWithQuantity => {

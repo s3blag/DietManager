@@ -15,6 +15,7 @@ namespace DM.Repositories.Interfaces
         Task<IEnumerable<Meal>> GetAllMealsAsync();
         Task<Meal> GetMealByIdAsync(Guid id);
         Task<bool> UpdateMealAsync(Meal newMealData);
-        Task<IList<MealPreview>> GetMealPreviewsAsync(Guid userId, IndexedResult<MealPreview> lastReturned, int takeAmount);
+        Task<IList<MealPreview>> GetMealPreviewsAsync(Guid userId, int index, int takeAmount);
+        Task<IList<MealPreview>> GetMealPreviewsByQueryAsync(string query, int index, int takeAmount);
     }
 }

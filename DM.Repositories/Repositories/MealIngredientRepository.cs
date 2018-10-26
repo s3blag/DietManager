@@ -91,5 +91,20 @@ namespace DM.Repositories
                 return mealIngredients;
             }
         }
+
+        public async Task<IList<MealIngredient>> GetMealIngredientsByQueryAsync(string query, int index, int takeAmount)
+        {
+            using (var db = new DietManagerDB())
+            {
+                var dbQuery = db.MealIngredients.
+                    LoadWith(m => m.Nutrition).
+                    Where(m => m.Name.ToLower().Contains(query)).
+                    OrderBy(m => m.Name).
+                    Skip(index).
+                    Take(takeAmount);
+
+                return await dbQuery.ToListAsync();
+            }
+        }
     }
 }

@@ -90,7 +90,12 @@ namespace DM.Logic.Services
             //    (userId, nameof(userId))
             //    );
 
-            var mealPreviews = await _mealRepository.GetMealPreviewsAsync(userId, _mapper.Map<IndexedResult<MealPreview>>(lastReturned), takeAmount);
+            if (lastReturned.IsLast)
+            {
+                return null;
+            }
+
+            var mealPreviews = await _mealRepository.GetMealPreviewsAsync(userId, lastReturned.Index, takeAmount);
 
             var mealFavouritesCounts = await _favouritesRepository.GetNumberOfFavouritesMarksAsync(mealPreviews.Select(m => m.Id));
 

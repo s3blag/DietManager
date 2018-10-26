@@ -29,33 +29,6 @@ ALTER TABLE "Users"."User"
 ADD CONSTRAINT FK_User_Image FOREIGN KEY ("ImageId") REFERENCES "Images"."Image"("Id"),
 ADD CONSTRAINT FK_User_Role FOREIGN KEY ("RoleId") REFERENCES "Users"."Role"("Id");
 
-INSERT INTO "Users"."Role"(
-    "Id",
-    "RoleName"
-)
-VALUES (
-    '00000000-0000-0000-0000-000000000000',
-    'DefaultRole'
-);
-
-INSERT INTO "Users"."User"(
-    "Id", 
-    "Email", 
-    "UserName", 
-    "Password", 
-    "CreationDate", 
-    "RoleId"
-)
-VALUES (
-    '00000000-0000-0000-0000-000000000000',
-    'ad@m.in',
-    'ad@m.in',
-    'password',
-    '25.10.2018 20:58:57 +02:00',
-    '00000000-0000-0000-0000-000000000000'
-);
-
-
 CREATE TABLE "Users"."Friend" (
     "Id"        UUID    PRIMARY KEY,
     "User1Id"   UUID    NOT NULL,
@@ -166,3 +139,30 @@ SELECT
     min."VitaminD"
 FROM "Meals"."Meal-MealIngredient" mmi
 JOIN "Meals"."MealIngredientsWithNutritions" min ON mmi."MealIngredientId" = min."Id";
+
+-- built in values
+INSERT INTO "Users"."Role"(
+    "Id",
+    "RoleName"
+)
+VALUES (
+    '00000000-0000-0000-0000-000000000000',
+    'DefaultRole'
+);
+
+INSERT INTO "Users"."User"(
+    "Id", 
+    "Email", 
+    "UserName", 
+    "Password", 
+    "CreationDate", 
+    "RoleId"
+)
+VALUES (
+    '00000000-0000-0000-0000-000000000000',
+    'ad@m.in',
+    'ad@m.in',
+    'password',
+    '25.10.2018 20:58:57 +02:00',
+    '00000000-0000-0000-0000-000000000000'
+);

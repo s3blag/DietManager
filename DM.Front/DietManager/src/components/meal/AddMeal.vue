@@ -28,12 +28,12 @@
             <label for="mealName">Add Meal Ingredients</label>
             <div class="meal-ingredients-search">
               <input type="text" class="form-control" id="mealIngredientSearchName" placeholder="Search..." v-model="mealIngredientSearchQuery">
-              <button id="searchMealIngredients" class="btn main-background-color" @click="$modal.show('addMealIngredientModal')">
+              <button id="searchMealIngredients" class="btn main-background-color" @click="searchMealIngredients">
                 <font-awesome-icon id="search-icon" class="option-icon" icon="search" /></button>
             </div>
           </div>
           <ul class="added-meal-ingredients">
-            <li class="meal-ingredient" v-for="mealIngredientWithQuantity in mealIngredients" :key="mealIngredientWithQuantity.mealIngredient.id">
+            <li class="meal-ingredient" v-for="mealIngredientWithQuantity in addedMealIngredients" :key="mealIngredientWithQuantity.mealIngredient.id">
               <div class="image"></div>
               <span class="name">{{mealIngredientWithQuantity.mealIngredient.name}}</span>
               <span class="quantity">{{mealIngredientWithQuantity.quantity}}</span>
@@ -43,7 +43,7 @@
       </div>
       <button id="addMealButton" type="submit" class="btn main-background-color" @click="submit">Add Meal</button>
     </div>
-    <add-meal-summary class="summary" :mealIngredients="mealIngredients"></add-meal-summary>
+    <add-meal-summary class="summary" :mealIngredients="addedMealIngredients"></add-meal-summary>
   </div>
 </template>
 
@@ -62,6 +62,9 @@ import AddMealSummary from "@/components/meal/AddMealSummary.vue";
 import AddMealIngredient from "@/components/meal-ingredient/AddMealIngredient.vue";
 import MealIngredientWithQuantity from "@/ViewModels/meal-ingredient/mealIngredientWithQuantity";
 import MealIngredientIdWithQuantity from "@/ViewModels/meal-ingredient/mealIngredientIdWithQuantity";
+import MealIngredientApiCaller from "@/services/api-callers/mealIngredientApi";
+import IndexedResult from "@/ViewModels/wrappers/indexedResult";
+import MealIngredientSearch from "@/ViewModels/meal-ingredient/mealIngredientSearch";
 
 @Component({
   components: {
@@ -75,13 +78,22 @@ export default class AddMeal extends Vue {
     name: "",
     description: ""
   } as MealCreation;
-  private mealIngredients: MealIngredientWithQuantity[] = [];
+  private addedMealIngredients: MealIngredientWithQuantity[] = [];
+
   private mealIngredientSearchQuery: string = "";
-  private modalEnabled: boolean = true;
+  private lastReturnedMealIngredientSearch: IndexedResult<
+    MealIngredientSearch
+  > | null = null;
+  private foundMealIngredients: MealIngredient[] = [];
+
+  @Watch("mealIngredientSearchQuery")
+  onSearchQueryChanged() {
+    this.lastReturnedMealIngredientSearch = null;
+  }
 
   get mealCalories() {
     return _.sum(
-      this.mealIngredients.map(
+      this.addedMealIngredients.map(
         ingredientWithQuantity =>
           ingredientWithQuantity.mealIngredient.calories *
           ingredientWithQuantity.quantity
@@ -96,12 +108,14 @@ export default class AddMeal extends Vue {
       name: name,
       description: description,
       imageId: imageId,
-      ingredientsIdsWithQuantity: this.mealIngredients.map(mealIngredient => {
-        return {
-          id: mealIngredient.mealIngredient.id,
-          quantity: mealIngredient.quantity
-        } as MealIngredientIdWithQuantity;
-      })
+      ingredientsIdsWithQuantity: this.addedMealIngredients.map(
+        mealIngredient => {
+          return {
+            id: mealIngredient.mealIngredient.id,
+            quantity: mealIngredient.quantity
+          } as MealIngredientIdWithQuantity;
+        }
+      )
     } as MealCreation;
 
     MealApiCaller.add(completeMealCreation, this.addMealSuccessHandler);
@@ -112,8 +126,6 @@ export default class AddMeal extends Vue {
     console.log(addedMealGuid);
   }
 
-  addMealIngredient() {}
-
   onPictureChange(base64ImageString: string) {
     imageApiCaller.add(base64ImageString, this.addImageSuccessHandler);
   }
@@ -122,13 +134,41 @@ export default class AddMeal extends Vue {
     this.mealFormData.imageId = imageId;
   }
 
-  searchMealIngredients() {}
-
   mealIngredientAddedHandler(
     addedMealIngredientWithQuantity: MealIngredientWithQuantity
   ) {
-    this.mealIngredients.push(addedMealIngredientWithQuantity);
+    this.addedMealIngredients.push(addedMealIngredientWithQuantity);
     this.$modal.hide("addMealIngredientModal");
+  }
+
+  searchMealIngredients() {
+    MealIngredientApiCaller.search(
+      {
+        isLast: false,
+        index: 0,
+        result: { query: this.mealIngredientSearchQuery }
+      },
+      this.mealIngredientFoundHandler
+    );
+  }
+
+  loadMoreSearchMealIngredientResults() {
+    MealIngredientApiCaller.search(
+      this.lastReturnedMealIngredientSearch,
+      this.mealIngredientFoundHandler
+    );
+  }
+
+  //on search text change delete lest returned
+  mealIngredientFoundHandler(
+    indexedSearchResults: IndexedResult<MealIngredient[]>
+  ) {
+    this.foundMealIngredients.push(...indexedSearchResults.result);
+    this.lastReturnedMealIngredientSearch = {
+      result: { query: this.mealIngredientSearchQuery },
+      isLast: indexedSearchResults.isLast,
+      index: indexedSearchResults.index
+    };
   }
 }
 </script>

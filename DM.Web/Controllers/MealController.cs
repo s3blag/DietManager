@@ -16,11 +16,14 @@ namespace DM.Web.Controllers
     {
         private readonly IMealService _mealService;
         private readonly IMealIngredientService _mealIngredientService;
+        private readonly ISearchService _searchService;
 
-        public MealController(IMealService mealService, IMealIngredientService mealIngredientService)
+        public MealController(IMealService mealService, IMealIngredientService mealIngredientService,
+            ISearchService searchService)
         {
             _mealService = mealService;
             _mealIngredientService = mealIngredientService;
+            _searchService = searchService;
         }
 
         [HttpGet("{id}")]
@@ -75,11 +78,40 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost("meal-previews")]
-        public async Task<IActionResult> GetMealPreviews([FromBody] IndexedResult<MealPreviewVM> lastReturned)
+        public async Task<IActionResult> GetMealPreviewsForUser([FromBody] IndexedResult<MealPreviewVM> lastReturned)
         {
+            if (lastReturned != null && lastReturned.IsLast)
+            {
+                return NotFound("Invalid arguments");
+            }
+
             var userId = Guid.Empty;
 
             var result = await _mealService.GetMealPreviewsAsync(userId, lastReturned);
+
+            if (!result.Result.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
+
+        
+        [HttpPost("search")]
+        public async Task<IActionResult> SearchMeals([FromBody] IndexedResult<MealSearchVM> lastReturned)
+        {
+            if (lastReturned != null && lastReturned.IsLast)
+            {
+                return NotFound("Invalid arguments");
+            }
+
+            var result = await _searchService.SearchMealAsync(lastReturned);
+
+            if (!result.Result.Any())
+            {
+                return NotFound();
+            }
 
             return Ok(result);
         }

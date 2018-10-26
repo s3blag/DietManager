@@ -1,4 +1,7 @@
-﻿namespace DM.Models.Wrappers
+﻿using System;
+using System.Collections;
+
+namespace DM.Models.Wrappers
 {
     public class IndexedResult<T> where T: class
     {
@@ -7,5 +10,6 @@
         public bool IsLast { get; set; }
 
         public int Index { get; set; }
+
     }
 }
