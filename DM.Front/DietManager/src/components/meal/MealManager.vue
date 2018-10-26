@@ -53,6 +53,8 @@ export default class MealsManager extends Vue {}
   width: 84.3%;
   min-height: 750px;
   height: fit-content;
+  background-color: #e6e4e4;
+  border-radius: 10px;
 }
 .row {
   margin: 20px;

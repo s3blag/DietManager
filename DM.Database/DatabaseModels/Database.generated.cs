@@ -20,6 +20,7 @@ namespace DM.Database
 	/// </summary>
 	public partial class DietManagerDB : LinqToDB.Data.DataConnection
 	{
+		public ITable<Favourite>                    Favourites                    { get { return this.GetTable<Favourite>(); } }
 		public ITable<Friend>                       Friends                       { get { return this.GetTable<Friend>(); } }
 		public ITable<Image>                        Images                        { get { return this.GetTable<Image>(); } }
 		public ITable<Meal>                         Meals                         { get { return this.GetTable<Meal>(); } }
@@ -44,6 +45,30 @@ namespace DM.Database
 		}
 
 		partial void InitDataContext();
+	}
+
+	[Table(Schema="Meals", Name="Favourites")]
+	public partial class Favourite
+	{
+		[PrimaryKey, NotNull] public Guid Id     { get; set; } // uuid
+		[Column,     NotNull] public Guid MealId { get; set; } // uuid
+		[Column,     NotNull] public Guid UserId { get; set; } // uuid
+
+		#region Associations
+
+		/// <summary>
+		/// fk_favourites_mealid
+		/// </summary>
+		[Association(ThisKey="MealId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_favourites_mealid", BackReferenceName="fkfavouritesmealids")]
+		public Meal Meal { get; set; }
+
+		/// <summary>
+		/// fk_favourites_userid
+		/// </summary>
+		[Association(ThisKey="UserId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_favourites_userid", BackReferenceName="fkfavouritesuserids")]
+		public User User { get; set; }
+
+		#endregion
 	}
 
 	[Table(Schema="Users", Name="Friend")]
@@ -109,6 +134,7 @@ namespace DM.Database
 		[Column,     NotNull    ] public string         Name         { get; set; } // text
 		[Column,        Nullable] public string         Description  { get; set; } // text
 		[Column,     NotNull    ] public float          Calories     { get; set; } // real
+		[Column,     NotNull    ] public int            NumberOfUses { get; set; } // integer
 
 		#region Associations
 
@@ -117,6 +143,12 @@ namespace DM.Database
 		/// </summary>
 		[Association(ThisKey="CreatorId", OtherKey="Id", CanBeNull=true, Relationship=Relationship.ManyToOne, KeyName="FK_Meal_User", BackReferenceName="Meals")]
 		public User Creator { get; set; }
+
+		/// <summary>
+		/// fk_favourites_mealid_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="MealId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<Favourite> fkfavouritesmealids { get; set; }
 
 		/// <summary>
 		/// fk_usermeal_mealid_BackReference
@@ -315,6 +347,12 @@ namespace DM.Database
 		public IEnumerable<Friend> fk_friend_user1_BackReferences { get; set; }
 
 		/// <summary>
+		/// fk_favourites_userid_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="UserId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<Favourite> fkfavouritesuserids { get; set; }
+
+		/// <summary>
 		/// fk_friend_user2_BackReference
 		/// </summary>
 		[Association(ThisKey="Id", OtherKey="User2Id", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
@@ -349,6 +387,12 @@ namespace DM.Database
 
 	public static partial class TableExtensions
 	{
+		public static Favourite Find(this ITable<Favourite> table, Guid Id)
+		{
+			return table.FirstOrDefault(t =>
+				t.Id == Id);
+		}
+
 		public static Friend Find(this ITable<Friend> table, Guid Id)
 		{
 			return table.FirstOrDefault(t =>

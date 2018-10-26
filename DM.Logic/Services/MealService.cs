@@ -21,12 +21,15 @@ namespace DM.Logic.Services
         private readonly IMapper _mapper;
         private readonly IMealRepository _mealRepository;
         private readonly IMealIngredientRepository _mealIngredientRepository;
+        private readonly IFavouriteRepository _favouritesRepository;
 
-        public MealService(IMapper mapper, IMealRepository mealRepository, IMealIngredientRepository mealIngredientRepository)
+        public MealService(IMapper mapper, IMealRepository mealRepository, IMealIngredientRepository mealIngredientRepository, 
+            IFavouriteRepository favouritesRepository)
         {
             _mapper = mapper;
             _mealRepository = mealRepository;
             _mealIngredientRepository = mealIngredientRepository;
+            _favouritesRepository = favouritesRepository;
         }
 
         public async Task<MealVM> GetMealByIdAsync(Guid id)
@@ -48,10 +51,22 @@ namespace DM.Logic.Services
             dbMeal.CreatorId = userId;
 
             if (!await _mealRepository.AddMealAsync(dbMeal))
-                throw new DataAccessException(nameof(_mealRepository.AddMealAsync) + " failed for argument: " + JsonConvert.SerializeObject(dbMeal));
+            {
+                throw new DataAccessException(
+                    nameof(_mealRepository.AddMealAsync) + 
+                    " failed for argument: " + 
+                    JsonConvert.SerializeObject(dbMeal)
+                );
+            }
 
             if (!await _mealRepository.AddMealMealIngredientsAsync(GetMealMealIngredients(dbMeal.Id, mealVM.IngredientsIdsWithQuantity)))
-                throw new DataAccessException(nameof(_mealRepository.AddMealMealIngredientsAsync) + " failed for argument: " + JsonConvert.SerializeObject(GetMealMealIngredients(dbMeal.Id, mealVM.IngredientsIdsWithQuantity)));
+            {      
+                throw new DataAccessException(
+                    nameof(_mealRepository.AddMealMealIngredientsAsync) + 
+                    " failed for argument: " + 
+                    JsonConvert.SerializeObject(GetMealMealIngredients(dbMeal.Id, mealVM.IngredientsIdsWithQuantity))
+                );
+            }
 
             return dbMeal.Id;
         } 
@@ -63,7 +78,11 @@ namespace DM.Logic.Services
             await _mealRepository.DeleteMealAsync(mealId);
         }
 
-        public async Task<IndexedResult<MealPreviewVM>> GetMealPreviewsAsync(Guid userId, MealPreviewVM lastReturned, int takeAmount = DbConstants.DEFAULT_DB_TAKE_VALUE)
+        public async Task<IndexedResult<IEnumerable<MealPreviewVM>>> GetMealPreviewsAsync(
+            Guid userId, 
+            IndexedResult<MealPreviewVM> lastReturned, 
+            int takeAmount = DbConstants.DEFAULT_DB_TAKE_VALUE
+        )
         {
             //TODO: uncomment after auth implementation
 
@@ -71,25 +90,41 @@ namespace DM.Logic.Services
             //    (userId, nameof(userId))
             //    );
 
-            var mealPreviews = await _mealRepository.GetMealPreviewsAsync(userId, _mapper.Map<MealPreview>(lastReturned), takeAmount);
+            var mealPreviews = await _mealRepository.GetMealPreviewsAsync(userId, _mapper.Map<IndexedResult<MealPreview>>(lastReturned), takeAmount);
 
-            return new IndexedResult<MealPreviewVM>()
+            var mealFavouritesCounts = await _favouritesRepository.GetNumberOfFavouritesMarksAsync(mealPreviews.Select(m => m.Id));
+
+            if (mealFavouritesCounts.Any())
             {
-                Result = _mapper.Map<IList<MealPreviewVM>>(mealPreviews),
-                IsLast = mealPreviews.Count != takeAmount,
+                foreach (var mealPreview in mealPreviews)
+                {
+                    if (mealFavouritesCounts.TryGetValue(mealPreview.Id, out int favouritesCount))
+                    {
+                        mealPreview.NumberOfFavouriteMarks = favouritesCount;
+                    } 
+                }
+            }
+
+            return new IndexedResult<IEnumerable<MealPreviewVM>>()
+            {
+                Result = _mapper.Map<IEnumerable<MealPreviewVM>>(mealPreviews),
+                Index = lastReturned?.Index ?? 0 + mealPreviews.Count,
+                IsLast = mealPreviews.Count != takeAmount
             };           
         }
 
-        private IList<MealMealIngredient> GetMealMealIngredients(Guid mealId, IEnumerable<MealIngredientIdWithQuantityVM> mealIngredientsIDs) =>
-            mealIngredientsIDs.Select(m => 
-                new MealMealIngredient()
-                {
-                    Id = Guid.NewGuid(),
-                    MealId = mealId,
-                    MealIngredientId = m .Id,
-                    Quantity = m.Quantity
-                }).
-            ToList();
+        private IList<MealMealIngredient> GetMealMealIngredients(
+            Guid mealId, 
+            IEnumerable<MealIngredientIdWithQuantityVM> mealIngredientsIDs
+        ) =>    mealIngredientsIDs.Select(m => 
+                    new MealMealIngredient()
+                    {
+                        Id = Guid.NewGuid(),
+                        MealId = mealId,
+                        MealIngredientId = m .Id,
+                        Quantity = m.Quantity
+                    }).
+                ToList();
 
         private void ValidateArguments(params (Object value, string name)[] arguments)
         {

@@ -59,6 +59,7 @@ namespace Diet_Manager
             services.AddScoped<IMealRepository, MealRepository>();
             services.AddScoped<IMealIngredientRepository, MealIngredientRepository>();
             services.AddScoped<IImageRepository, ImageRepository>();
+            services.AddScoped<IFavouriteRepository, FavouriteRepository>();
 
             services.AddScoped<IMealService, MealService>();
             services.AddScoped<IMealIngredientService, MealIngredientService>();

@@ -32,6 +32,11 @@ namespace DM.Logic.Services
 
             var imageMetaData = await _imageRepository.GetImageByIdAsync(imageId);
 
+            if (imageMetaData == null)
+            {
+                return null;
+            }
+
             byte[] image = await ReadImageAsync(imageMetaData.Path);
 
             return image;

@@ -17,6 +17,12 @@ namespace DM.Models.ViewModels
         public int Calories { get; set; }
 
         [Required]
+        public int NumberOfFavouriteMarks { get; set; }
+
+        [Required]
+        public int NumberOfUses { get; set; }
+
+        [Required]
         public DateTimeOffset CreationDate { get; set; }
     }
 }

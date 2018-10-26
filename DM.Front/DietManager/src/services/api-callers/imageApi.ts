@@ -13,6 +13,16 @@ export default class ImageApiCaller {
       .catch(error => errorHandler(error));
   }
 
+  static get(
+    imageGuid: string,
+    successHandler: (imageString: string) => void,
+    errorHandler: (error: Error) => void = this.defaultErrorHandler
+  ) {
+    Axios.get("/api/image/" + imageGuid).then(response =>
+      successHandler(response.data)
+    );
+  }
+
   private static defaultErrorHandler(error: Error) {
     // eslint-disable-next-line no-console
     console.error(error);

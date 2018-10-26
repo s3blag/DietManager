@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
+using DM.Models.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DM.Web.Controllers
@@ -74,7 +75,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost("meal-previews")]
-        public async Task<IActionResult> GetMealPreviews([FromBody] MealPreviewVM lastReturned)
+        public async Task<IActionResult> GetMealPreviews([FromBody] IndexedResult<MealPreviewVM> lastReturned)
         {
             var userId = Guid.Empty;
 

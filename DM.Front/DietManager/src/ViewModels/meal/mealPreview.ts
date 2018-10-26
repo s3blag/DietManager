@@ -1,7 +1,10 @@
 export default interface MealPreview {
   id: string;
   imageId: string | null;
+  imageData: string | null;
   name: string;
   calories: number;
-  creationDate: Date;
+  numberOfUses: number;
+  numberOfFavouriteMarks: number;
+  creationDate: string;
 }

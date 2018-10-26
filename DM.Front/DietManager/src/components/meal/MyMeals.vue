@@ -1,10 +1,36 @@
 <template>
   <div class="meals-container">
-    <div class="meal" v-for="mealPreview in mealPreviews" :key="mealPreview.Id">
-      <img :src="'/api/image/' + mealPreview.imageId">
-      <span>{{mealPreview.Name}} </span>
-      <span>{{mealPreview.Calories}} </span>
+    <h1 class="main-color">My Meals</h1>
+    <div class="meal" v-for="mealPreview in mealPreviews" :key="mealPreview.id">
+      <div class="image-container">
+        <font-awesome-icon v-if="!mealPreview.imageData" class="main-color" icon="utensils" size="2x" />
+        <img v-else :src="mealPreview.imageData">
+      </div>
+      <div class="meal-info-element meal-name">
+        <div class="label">Name</div>
+        <div class="value">{{mealPreview.mealPreview.name}} </div>
+      </div>
+      <div class="meal-info-element">
+        <div class="label">Calories</div>
+        <div class="value">{{mealPreview.mealPreview.calories}} </div>
+      </div>
+      <span v-if="!isMobile" class="details">
+        <div class="meal-info-element">
+          <div class="label">Used by</div>
+          <div class="value">{{mealPreview.mealPreview.numberOfUses}} people</div>
+        </div>
+        <div class="meal-info-element">
+          <div class="label">Favourite by</div>
+          <div class="value">{{mealPreview.mealPreview.numberOfFavouriteMarks}} people</div>
+        </div>
+      </span>
+      <router-link class="go-to-meal" :to="'/meal/' + mealPreview.mealPreview.id">
+        <font-awesome-icon class="main-color" icon="arrow-alt-circle-right" size="2x" />
+      </router-link>
     </div>
+    <button @click="getMealPreviews" class="load-more-button main-background-color" v-if="elementsRemainingToLoad">
+      Load more...
+    </button>
   </div>
 </template>
 
@@ -13,16 +39,17 @@ import Vue from "vue";
 import Component from "vue-class-component";
 
 import MealPreview from "@/ViewModels/meal/mealPreview";
+import MealPreviewWithImage from "@/ViewModels/meal/mealPreviewWithImage";
 import MealApiCaller from "@/services/api-callers/mealApi";
 import IndexedResult from "@/ViewModels/wrappers/indexedResult";
+import ImageApiCaller from "@/services/api-callers/imageApi";
 
 Component.registerHooks(["beforeRouteEnter"]);
 
 @Component
 export default class MyMeals extends Vue {
-  private mealPreviews: MealPreview[] = [];
-  private lastReturned: MealPreview | null = null;
-  private isLast: boolean = false;
+  private mealPreviews: MealPreviewWithImage[] = [];
+  private lastReturned: IndexedResult<MealPreview> | null = null;
 
   beforeRouteEnter(
     to: any,
@@ -34,6 +61,22 @@ export default class MyMeals extends Vue {
     });
   }
 
+  get isMobile() {
+    if (window.innerWidth < 860) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  get elementsRemainingToLoad() {
+    if (!this.lastReturned) {
+      return true;
+    } else {
+      return !this.lastReturned.isLast;
+    }
+  }
+
   getMealPreviews() {
     MealApiCaller.getMealPreviews(
       this.lastReturned,
@@ -42,35 +85,157 @@ export default class MyMeals extends Vue {
   }
 
   getMealPreviewsSuccessHandler(
-    indexedMealPreviews: IndexedResult<MealPreview>
+    indexedMealPreviews: IndexedResult<MealPreview[]>
   ) {
-    // eslint-disable-next-line no-console
-    console.log(indexedMealPreviews);
     if (
-      !indexedMealPreviews.result === null ||
-      indexedMealPreviews.result.length === 0
+      !indexedMealPreviews.result !== null ||
+      indexedMealPreviews.result.length > 0
     ) {
-      this.handleNoMealsFound();
-    } else {
-      this.mealPreviews.push(...indexedMealPreviews.result);
-      this.lastReturned =
-        indexedMealPreviews.result[indexedMealPreviews.result.length - 1];
-      this.isLast = indexedMealPreviews.isLast;
+      this.mealPreviews.push(
+        ...indexedMealPreviews.result.map(mealPreview => {
+          const mealPreviewWithImage = {
+            mealPreview: mealPreview,
+            imageData: null
+          } as MealPreviewWithImage;
+          this.getMealPreviewImage(mealPreviewWithImage, mealPreview.imageId);
+          return mealPreviewWithImage;
+        })
+      );
+
+      this.lastReturned = {
+        result:
+          indexedMealPreviews.result[indexedMealPreviews.result.length - 1],
+        index: indexedMealPreviews.index,
+        isLast: indexedMealPreviews.isLast
+      };
     }
   }
 
-  handleNoMealsFound() {
-    // eslint-disable-next-line no-console
-    console.log("No meals found");
+  getMealPreviewImage(
+    mealPreviewWithImage: MealPreviewWithImage,
+    imageGuid: string | null
+  ) {
+    if (imageGuid !== null) {
+      ImageApiCaller.get(imageGuid, imageData => {
+        mealPreviewWithImage.imageData = imageData;
+      });
+    }
   }
 }
 </script>
 
 <style>
+h1 {
+  margin-bottom: 15px !important;
+}
 .meals-container {
   padding: 10px;
+  display: block;
 }
 .meal {
-  margin: 5px;
+  text-align: left;
+  background-color: white;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  padding: 5px;
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.image-container {
+  margin-top: auto;
+  margin-bottom: auto;
+  text-align: center;
+  vertical-align: center;
+  /* width: 135px;
+  height: 75px; */
+  width: 65px;
+  height: 65px;
+  min-width: 65px;
+}
+.image-container > * {
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+}
+.meal-info-element {
+  flex-grow: 1;
+  margin-left: 10px;
+  display: inline-block;
+  margin-top: auto;
+  margin-bottom: auto;
+  width: 100px;
+}
+.meal-name {
+  overflow: hidden;
+}
+.value {
+}
+.label {
+  color: #929191;
+}
+.go-to-meal {
+  margin-top: auto;
+  margin-bottom: auto;
+  text-align: center;
+  width: 65px;
+}
+.go-to-meal:hover {
+  position: relative;
+  animation-name: button-animation;
+  animation-duration: 0.1s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+}
+.details {
+  flex-grow: 2;
+  display: flex;
+  justify-content: space-between;
+}
+.details > * {
+  width: 100px;
+}
+.load-more-button {
+  border-radius: 7px;
+  padding: 5px 10px 28px 10px;
+  height: 30px;
+  text-align: center;
+  color: white;
+}
+@keyframes button-animation {
+  0% {
+    left: 0.6px;
+  }
+  10% {
+    left: 1.2px;
+  }
+  20% {
+    left: 1.8px;
+  }
+  30% {
+    left: 2.4px;
+  }
+  40% {
+    left: 3px;
+  }
+  50% {
+    left: 3.6px;
+  }
+  60% {
+    left: 4.2px;
+  }
+  70% {
+    left: 4.8px;
+  }
+  80% {
+    left: 5.4px;
+  }
+  90% {
+    left: 6px;
+  }
+  100% {
+    left: 6.6px;
+  }
 }
 </style>

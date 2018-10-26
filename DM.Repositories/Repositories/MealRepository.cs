@@ -1,5 +1,7 @@
 ﻿using DM.Database;
 using DM.Models.Models;
+using DM.Models.Wrappers;
+using DM.Repositories.Extensions;
 using DM.Repositories.Interfaces;
 using LinqToDB;
 using LinqToDB.Data;
@@ -85,29 +87,20 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<IList<MealPreview>> GetMealPreviewsAsync(Guid userId, MealPreview lastReturned, int takeAmount)
+        public async Task<IList<MealPreview>> GetMealPreviewsAsync(Guid userId, IndexedResult<MealPreview> lastReturned, int takeAmount)
         {
             using (var db = new DietManagerDB())
             {
                 var mealPreviewsQuery = db.Meals.
                     Where(m => m.CreatorId == userId).
-                    OrderBy(m => m.CreationDate).
-                    ThenBy(m => m.Name).
+                    OrderBy(m => m.Name).
+                    ThenBy(m => m.CreationDate).
+                    Skip(lastReturned?.Index ?? 0).
                     Take(takeAmount).
-                    Select(m => new MealPreview(m.Id, m.ImageId, m.Name, (int)m.Calories)).
-                    AsQueryable();
-
-                if (lastReturned != null)
-                {
-                    mealPreviewsQuery.
-                        Where(m => m.CreationDate >= lastReturned.CreationDate).
-                        Where(m => string.Compare(m.Name, lastReturned.Name, true) > 0);
-                }
+                    Select(m => new MealPreview(m.Id, m.ImageId, m.Name, (int)m.Calories, m.NumberOfUses, m.CreationDate)).AsQueryable();
 
                 return await mealPreviewsQuery.ToListAsync();
-                   
             }
         }
-
     }
 }

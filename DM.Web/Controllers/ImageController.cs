@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using DM.Logic.Interfaces;
@@ -21,11 +23,18 @@ namespace DM.Web.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetImage(Guid id)
         {
+            var request = Request;
             if (id == Guid.Empty)
             {
                 return BadRequest();
             }
-            return Ok (Encoding.UTF8.GetString(await _imageService.GetImageByIdAsync(id)));
+
+            byte[] image = await _imageService.GetImageByIdAsync(id);
+
+            if (image == null)
+                return NotFound("Image with the given id was not found.");
+
+            return Ok (Encoding.UTF8.GetString(image));
         }
 
         [HttpPost("add")]

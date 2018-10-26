@@ -8,11 +8,11 @@
         <form>
           <div class="form-group">
             <label for="mealName">Name</label>
-            <input type="text" class="form-control" id="mealName" placeholder="Enter meal name..." v-model="mealFormData.Name">
+            <input type="text" class="form-control" id="mealName" placeholder="Enter meal name..." v-model="mealFormData.name">
           </div>
           <div class="form-group">
             <label for="mealDescription">Description</label>
-            <textarea class="form-control" height="200" width="200" id="mealDescription" placeholder="Enter meal description..." rows="10" v-model="mealFormData.Description"></textarea>
+            <textarea class="form-control" height="200" width="200" id="mealDescription" placeholder="Enter meal description..." rows="10" v-model="mealFormData.description"></textarea>
           </div>
         </form>
       </div>
@@ -33,10 +33,10 @@
             </div>
           </div>
           <ul class="added-meal-ingredients">
-            <li class="meal-ingredient" v-for="mealIngredientWithQuantity in mealIngredients" :key="mealIngredientWithQuantity.MealIngredient.Id">
+            <li class="meal-ingredient" v-for="mealIngredientWithQuantity in mealIngredients" :key="mealIngredientWithQuantity.mealIngredient.id">
               <div class="image"></div>
-              <span class="name">{{mealIngredientWithQuantity.MealIngredient.Name}}</span>
-              <span class="quantity">{{mealIngredientWithQuantity.Quantity}}</span>
+              <span class="name">{{mealIngredientWithQuantity.mealIngredient.name}}</span>
+              <span class="quantity">{{mealIngredientWithQuantity.quantity}}</span>
             </li>
           </ul>
         </div>
@@ -154,8 +154,6 @@ export default class AddMeal extends Vue {
   padding: 20px;
   width: 13%;
   height: fit-content;
-  background-color: #e6e4e4;
-  border-radius: 10px;
 }
 .add-meal:after {
   content: "";

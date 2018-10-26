@@ -45,11 +45,11 @@ export default class MealApiCaller {
   }
 
   static getMealPreviews(
-    lastReturnedMealPreview: MealPreview | null,
-    successHandler: (indexedResult: IndexedResult<MealPreview>) => void,
+    lastReturnedMealPreview: IndexedResult<MealPreview> | null,
+    successHandler: (indexedResult: IndexedResult<MealPreview[]>) => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.post<IndexedResult<MealPreview>>(
+    Axios.post<IndexedResult<MealPreview[]>>(
       `/api/meal/meal-previews`,
       lastReturnedMealPreview,
       {

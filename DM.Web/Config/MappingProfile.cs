@@ -3,6 +3,7 @@ using DM.Database;
 using DM.Models;
 using DM.Models.Models;
 using DM.Models.ViewModels;
+using DM.Models.Wrappers;
 using System;
 
 namespace DM.Web.Config

@@ -6,14 +6,14 @@ CREATE SCHEMA "Users";
 CREATE SCHEMA "Images";
 CREATE SCHEMA "Meals";
 
-CREATE TABLE "Users"."Role" (
-    "Id"        UUID    PRIMARY KEY,
-    "RoleName"  TEXT    NOT NULL
-);
-
 CREATE TABLE "Images"."Image" (
     "Id"    UUID    PRIMARY KEY,
     "Path"  TEXT    NOT NULL
+);
+
+CREATE TABLE "Users"."Role" (
+    "Id"        UUID    PRIMARY KEY,
+    "RoleName"  TEXT    NOT NULL
 );
 
 CREATE TABLE "Users"."User" (
@@ -28,6 +28,33 @@ CREATE TABLE "Users"."User" (
 ALTER TABLE "Users"."User" 
 ADD CONSTRAINT FK_User_Image FOREIGN KEY ("ImageId") REFERENCES "Images"."Image"("Id"),
 ADD CONSTRAINT FK_User_Role FOREIGN KEY ("RoleId") REFERENCES "Users"."Role"("Id");
+
+INSERT INTO "Users"."Role"(
+    "Id",
+    "RoleName"
+)
+VALUES (
+    '00000000-0000-0000-0000-000000000000',
+    'DefaultRole'
+);
+
+INSERT INTO "Users"."User"(
+    "Id", 
+    "Email", 
+    "UserName", 
+    "Password", 
+    "CreationDate", 
+    "RoleId"
+)
+VALUES (
+    '00000000-0000-0000-0000-000000000000',
+    'ad@m.in',
+    'ad@m.in',
+    'password',
+    '25.10.2018 20:58:57 +02:00',
+    '00000000-0000-0000-0000-000000000000'
+);
+
 
 CREATE TABLE "Users"."Friend" (
     "Id"        UUID    PRIMARY KEY,
@@ -46,11 +73,22 @@ CREATE TABLE "Meals"."Meal" (
     "ImageId"       UUID        NULL,
     "Name"          TEXT        NOT NULL,
     "Description"   TEXT        NULL,
-    "Calories"      REAL        NOT NULL
+    "Calories"      REAL        NOT NULL,
+    -- races!
+    "NumberOfUses"  INTEGER     NOT NULL DEFAULT 0
 );
 ALTER TABLE "Meals"."Meal" 
 ADD CONSTRAINT "FK_Meal_Image" FOREIGN KEY ("ImageId") REFERENCES  "Images"."Image"("Id"),
 ADD CONSTRAINT "FK_Meal_User" FOREIGN KEY ("CreatorId") REFERENCES  "Users"."User"("Id");
+
+CREATE TABLE "Meals"."Favourites" (
+    "Id"            UUID        PRIMARY KEY,
+    "MealId"        UUID        NOT NULL,
+    "UserId"        UUID        NOT NULL
+);
+ALTER TABLE "Meals"."Favourites"
+ADD CONSTRAINT FK_Favourites_MealId FOREIGN KEY ("MealId") REFERENCES "Meals"."Meal"("Id") ON DELETE CASCADE,
+ADD CONSTRAINT FK_Favourites_UserId FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id") ON DELETE CASCADE;
 
 CREATE TABLE "Meals"."MealScheduleEntry" (
     "Id"        UUID            PRIMARY KEY,
