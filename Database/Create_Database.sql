@@ -1,10 +1,13 @@
 DROP SCHEMA "Users" CASCADE;
 DROP SCHEMA "Images" CASCADE;
 DROP SCHEMA "Meals" CASCADE;
+DROP SCHEMA "Socials" CASCADE;
 
 CREATE SCHEMA "Users";
 CREATE SCHEMA "Images";
 CREATE SCHEMA "Meals";
+CREATE SCHEMA "Socials";
+
 
 CREATE TABLE "Images"."Image" (
     "Id"    UUID    PRIMARY KEY,
@@ -18,26 +21,41 @@ CREATE TABLE "Users"."Role" (
 
 CREATE TABLE "Users"."User" (
     "Id"            UUID            PRIMARY KEY,
-    "Email"         varchar(254)    UNIQUE NOT NULL,
-    "UserName"      varchar(20)     UNIQUE NOT NULL,
+    "Email"         VARCHAR(254)    UNIQUE NULL,
+    "UserName"      VARCHAR(20)     UNIQUE NULL,
+    "Name"          VARCHAR(20)     NOT NULL,
+    "Surname"       VARCHAR(35)     NOT NULL,
+    "FullName"      VARCHAR(56)     NOT NULL,
     "Password"      TEXT            NOT NULL,
     "CreationDate"  TIMESTAMPTZ     NOT NULL,
     "ImageId"       UUID            NULL,
     "RoleId"        UUID            NOT NULL
 );
 ALTER TABLE "Users"."User" 
-ADD CONSTRAINT FK_User_Image FOREIGN KEY ("ImageId") REFERENCES "Images"."Image"("Id"),
-ADD CONSTRAINT FK_User_Role FOREIGN KEY ("RoleId") REFERENCES "Users"."Role"("Id");
+ADD CONSTRAINT FK_User_Image      FOREIGN KEY ("ImageId")     REFERENCES "Images"."Image"("Id"),
+ADD CONSTRAINT FK_User_Role       FOREIGN KEY ("RoleId")      REFERENCES "Users"."Role"("Id"),
+ADD CONSTRAINT UserName_Or_Email  CHECK (("Email" IS NOT NULL) OR ("UserName" IS NOT NULL));
 
-CREATE TABLE "Users"."Friend" (
-    "Id"        UUID    PRIMARY KEY,
-    "User1Id"   UUID    NOT NULL,
-    "User2Id"   UUID    NOT NULL
+CREATE TABLE "Socials"."Friend" (
+    PRIMARY KEY ("User1Id", "User2Id"),
+    "User1Id"       UUID        NOT NULL,
+    "User2Id"       UUID        NOT NULL,
+    "Confirmed"     BOOLEAN     NOT NULL DEFAULT FALSE,
+    "CreationDate"  TIMESTAMPTZ NOT NULL
 );
-ALTER TABLE "Users"."Friend" 
+ALTER TABLE "Socials"."Friend" 
 ADD CONSTRAINT FK_Friend_User1 FOREIGN KEY ("User1Id") REFERENCES "Users"."User"("Id"),
 ADD CONSTRAINT FK_Friend_User2 FOREIGN KEY ("User2Id") REFERENCES "Users"."User"("Id"),
 ADD CONSTRAINT Friend_FriendsIdsShouldBeDifferent CHECK ("User1Id" != "User2Id");
+
+CREATE TABLE "Socials"."UserActivity" (
+    "UserId"        UUID        PRIMARY KEY,
+    "ActivityType"  TEXT        NOT NULL,
+    "ContentId"     UUID        NOT NULL,
+    "ActivityDate"  TIMESTAMPTZ NOT NULL
+);
+ALTER TABLE "Socials"."UserActivity" 
+ADD CONSTRAINT FK_UserActivity_User FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id");
 
 CREATE TABLE "Meals"."Meal" (
     "Id"            UUID        PRIMARY KEY,
@@ -141,6 +159,7 @@ FROM "Meals"."Meal-MealIngredient" mmi
 JOIN "Meals"."MealIngredientsWithNutritions" min ON mmi."MealIngredientId" = min."Id";
 
 -- built in values
+
 INSERT INTO "Users"."Role"(
     "Id",
     "RoleName"
@@ -154,6 +173,9 @@ INSERT INTO "Users"."User"(
     "Id", 
     "Email", 
     "UserName", 
+    "Name",
+    "Surname",
+    "FullName",
     "Password", 
     "CreationDate", 
     "RoleId"
@@ -162,6 +184,9 @@ VALUES (
     '00000000-0000-0000-0000-000000000000',
     'ad@m.in',
     'ad@m.in',
+    'Sebastian',
+    'Łągiewski',
+    'Sebastian Łągiewski',
     'password',
     '25.10.2018 20:58:57 +02:00',
     '00000000-0000-0000-0000-000000000000'

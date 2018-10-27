@@ -7,7 +7,8 @@ namespace DM.Logic.Interfaces
 {
     public interface ISearchService
     {
-        Task<IndexedResult<IEnumerable<MealPreviewVM>>> SearchMealAsync(IndexedResult<MealSearchVM> searchArgumentsVM, int takeAmount = 10);
-        Task<IndexedResult<IEnumerable<MealIngredientVM>>> SearchMealIngredientAsync(IndexedResult<MealIngredientSearchVM> searchArgumentsVM, int takeAmount = 10);
+        Task<IndexedResult<IEnumerable<MealPreviewVM>>> SearchMealsAsync(IndexedResult<MealSearchVM> searchArgumentsVM, int takeAmount = DbConstants.DEFAULT_DB_TAKE_VALUE);
+        Task<IndexedResult<IEnumerable<MealIngredientVM>>> SearchMealIngredientsAsync(IndexedResult<MealIngredientSearchVM> searchArgumentsVM, int takeAmount = DbConstants.DEFAULT_DB_TAKE_VALUE);
+        Task<IndexedResult<IEnumerable<UserVM>>> SearchUsersAsync(IndexedResult<UserSearchVM> searchArgumentsVM, int takeAmount = DbConstants.DEFAULT_DB_TAKE_VALUE);
     }
 }

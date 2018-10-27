@@ -32,6 +32,7 @@ namespace DM.Database
 		public ITable<Nutrition>                    Nutritions                    { get { return this.GetTable<Nutrition>(); } }
 		public ITable<Role>                         Roles                         { get { return this.GetTable<Role>(); } }
 		public ITable<User>                         Users                         { get { return this.GetTable<User>(); } }
+		public ITable<UserActivity>                 UserActivities                { get { return this.GetTable<UserActivity>(); } }
 
 		public DietManagerDB()
 		{
@@ -71,12 +72,13 @@ namespace DM.Database
 		#endregion
 	}
 
-	[Table(Schema="Users", Name="Friend")]
+	[Table(Schema="Socials", Name="Friend")]
 	public partial class Friend
 	{
-		[PrimaryKey, NotNull] public Guid Id      { get; set; } // uuid
-		[Column,     NotNull] public Guid User1Id { get; set; } // uuid
-		[Column,     NotNull] public Guid User2Id { get; set; } // uuid
+		[PrimaryKey(1), NotNull] public Guid           User1Id      { get; set; } // uuid
+		[PrimaryKey(2), NotNull] public Guid           User2Id      { get; set; } // uuid
+		[Column,        NotNull] public bool           Confirmed    { get; set; } // boolean
+		[Column,        NotNull] public DateTimeOffset CreationDate { get; set; } // timestamp (6) with time zone
 
 		#region Associations
 
@@ -331,8 +333,11 @@ namespace DM.Database
 	public partial class User
 	{
 		[PrimaryKey, NotNull    ] public Guid           Id           { get; set; } // uuid
-		[Column,     NotNull    ] public string         Email        { get; set; } // character varying(254)
-		[Column,     NotNull    ] public string         UserName     { get; set; } // character varying(20)
+		[Column,        Nullable] public string         Email        { get; set; } // character varying(254)
+		[Column,        Nullable] public string         UserName     { get; set; } // character varying(20)
+		[Column,     NotNull    ] public string         Name         { get; set; } // character varying(20)
+		[Column,     NotNull    ] public string         Surname      { get; set; } // character varying(35)
+		[Column,     NotNull    ] public string         FullName     { get; set; } // character varying(56)
 		[Column,     NotNull    ] public string         Password     { get; set; } // text
 		[Column,     NotNull    ] public DateTimeOffset CreationDate { get; set; } // timestamp (6) with time zone
 		[Column,        Nullable] public Guid?          ImageId      { get; set; } // uuid
@@ -357,6 +362,12 @@ namespace DM.Database
 		/// </summary>
 		[Association(ThisKey="Id", OtherKey="User2Id", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
 		public IEnumerable<Friend> fkfriendusers { get; set; }
+
+		/// <summary>
+		/// fk_useractivity_user_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="UserId", CanBeNull=true, Relationship=Relationship.OneToOne, IsBackReference=true)]
+		public UserActivity fkuseractivityuser { get; set; }
 
 		/// <summary>
 		/// fk_usermeal_userid_BackReference
@@ -385,6 +396,25 @@ namespace DM.Database
 		#endregion
 	}
 
+	[Table(Schema="Socials", Name="UserActivity")]
+	public partial class UserActivity
+	{
+		[PrimaryKey, NotNull] public Guid           UserId       { get; set; } // uuid
+		[Column,     NotNull] public string         ActivityType { get; set; } // text
+		[Column,     NotNull] public Guid           ContentId    { get; set; } // uuid
+		[Column,     NotNull] public DateTimeOffset ActivityDate { get; set; } // timestamp (6) with time zone
+
+		#region Associations
+
+		/// <summary>
+		/// fk_useractivity_user
+		/// </summary>
+		[Association(ThisKey="UserId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.OneToOne, KeyName="fk_useractivity_user", BackReferenceName="fkuseractivityuser")]
+		public User User { get; set; }
+
+		#endregion
+	}
+
 	public static partial class TableExtensions
 	{
 		public static Favourite Find(this ITable<Favourite> table, Guid Id)
@@ -393,10 +423,11 @@ namespace DM.Database
 				t.Id == Id);
 		}
 
-		public static Friend Find(this ITable<Friend> table, Guid Id)
+		public static Friend Find(this ITable<Friend> table, Guid User1Id, Guid User2Id)
 		{
 			return table.FirstOrDefault(t =>
-				t.Id == Id);
+				t.User1Id == User1Id &&
+				t.User2Id == User2Id);
 		}
 
 		public static Image Find(this ITable<Image> table, Guid Id)
@@ -445,6 +476,12 @@ namespace DM.Database
 		{
 			return table.FirstOrDefault(t =>
 				t.Id == Id);
+		}
+
+		public static UserActivity Find(this ITable<UserActivity> table, Guid UserId)
+		{
+			return table.FirstOrDefault(t =>
+				t.UserId == UserId);
 		}
 	}
 }

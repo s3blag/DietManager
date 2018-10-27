@@ -106,7 +106,7 @@ namespace DM.Repositories
             using (var db = new DietManagerDB())
             {
                 var mealPreviewsQuery = db.Meals.
-                    Where(m => m.Name.ToLowerInvariant().Contains(query)).
+                    Where(m => m.Name.ToLower().Contains(query)).
                     OrderBy(m => m.Name).
                     ThenBy(m => m.CreationDate).
                     Skip(index).

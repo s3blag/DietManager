@@ -55,7 +55,7 @@ namespace DM.Web.Controllers
                 return NotFound("Invalid arguments");
             }
 
-            var result = await _searchService.SearchMealIngredientAsync(lastReturned);
+            var result = await _searchService.SearchMealIngredientsAsync(lastReturned);
 
             if (!result.Result.Any())
             {
@@ -64,5 +64,6 @@ namespace DM.Web.Controllers
 
             return Ok(result);
         }
+
     }
 }

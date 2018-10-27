@@ -14,18 +14,20 @@ namespace DM.Logic.Services
         private readonly IMealRepository _mealRepository;
         private readonly IMealIngredientRepository _mealIngredientRepository;
         private readonly IMealIngredientsApiCaller _mealIngredientsApi;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
         public SearchService(IMealRepository mealRepository, IMealIngredientRepository mealIngredientRepository, 
-            IMealIngredientsApiCaller mealIngredientsApi, IMapper mapper)
+            IMealIngredientsApiCaller mealIngredientsApi, IUserRepository userRepository, IMapper mapper)
         {
             _mealRepository = mealRepository;
             _mealIngredientRepository = mealIngredientRepository;
             _mealIngredientsApi = mealIngredientsApi;
+            _userRepository= userRepository;
             _mapper = mapper;
         }
 
-        public async Task<IndexedResult<IEnumerable<MealPreviewVM>>> SearchMealAsync(
+        public async Task<IndexedResult<IEnumerable<MealPreviewVM>>> SearchMealsAsync(
             IndexedResult<MealSearchVM> searchArgumentsVM,
             int takeAmount = DbConstants.DEFAULT_DB_TAKE_VALUE)
         {
@@ -44,7 +46,7 @@ namespace DM.Logic.Services
 
         }
 
-        public async Task<IndexedResult<IEnumerable<MealIngredientVM>>> SearchMealIngredientAsync(
+        public async Task<IndexedResult<IEnumerable<MealIngredientVM>>> SearchMealIngredientsAsync(
             IndexedResult<MealIngredientSearchVM> searchArgumentsVM,
             int takeAmount = DbConstants.DEFAULT_DB_TAKE_VALUE)
         {
@@ -62,6 +64,25 @@ namespace DM.Logic.Services
             }
 
             return new IndexedResult<IEnumerable<MealIngredientVM>>
+            {
+                Result = searchResult,
+                Index = searchArgumentsVM.Index + searchResult.Count,
+                IsLast = searchResult.Count != takeAmount
+            };
+        }
+
+        public async Task<IndexedResult<IEnumerable<UserVM>>> SearchUsersAsync(
+            IndexedResult<UserSearchVM> searchArgumentsVM,
+            int takeAmount = DbConstants.DEFAULT_DB_TAKE_VALUE)
+        {
+            var searchResult = _mapper.Map<IList<UserVM>>(
+                await _userRepository.GetUsersByQueryAsync(
+                    searchArgumentsVM.Result.Query,
+                    searchArgumentsVM.Index,
+                    takeAmount)
+            );
+
+            return new IndexedResult<IEnumerable<UserVM>>
             {
                 Result = searchResult,
                 Index = searchArgumentsVM.Index + searchResult.Count,

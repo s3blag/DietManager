@@ -106,7 +106,7 @@ namespace DM.Web.Controllers
                 return NotFound("Invalid arguments");
             }
 
-            var result = await _searchService.SearchMealAsync(lastReturned);
+            var result = await _searchService.SearchMealsAsync(lastReturned);
 
             if (!result.Result.Any())
             {
