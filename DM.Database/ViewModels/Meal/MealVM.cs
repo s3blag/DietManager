@@ -1,5 +1,4 @@
-﻿using DM.Models.ViewModels.Meal;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace DM.Models.ViewModels

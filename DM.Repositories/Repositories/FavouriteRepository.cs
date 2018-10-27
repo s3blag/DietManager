@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DM.Repositories
 {
-    public class FavouriteRepository : IFavouriteRepository
+    public class FavouriteRepository: BaseRepository<Favourite>, IFavouriteRepository
     {
         public async Task<IDictionary<Guid, int>> GetNumberOfFavouritesMarksAsync(IEnumerable<Guid> mealIds)
         {
@@ -18,16 +18,6 @@ namespace DM.Repositories
                     GroupBy(f => f.MealId).
                     Having(_ => mealIds.Contains(_.Key)).
                     ToDictionaryAsync(_ => _.Key, _ => _.Count());
-            }
-        }
-
-        public async Task<bool> AddToFavouritesAsync(Favourite favourite)
-        {
-            using (var db = new DietManagerDB())
-            {
-                var result = await db.InsertAsync(favourite);
-
-                return Convert.ToBoolean(result);
             }
         }
 

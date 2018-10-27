@@ -5,10 +5,8 @@ using DM.Database;
 
 namespace DM.Repositories.Interfaces
 {
-    public interface IUserRepository
+    public interface IUserRepository : IBaseRepository<User>
     {
-        Task AddUserAsync(User user);
-        Task DeleteUserAsync(Guid id);
         Task<User> GetUserAsync(Guid id);
         Task<IList<User>> GetUsersByQueryAsync(string query, int index, int takeAmount);
     }

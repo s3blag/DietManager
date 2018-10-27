@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DM.Repositories
 {
-    public class MealRepository : IMealRepository
+    public class MealRepository : BaseRepository<Meal>, IMealRepository
     {
         public MealRepository() {}
 
@@ -36,16 +36,6 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<bool> AddMealAsync(Meal meal)
-        {
-            using (var db = new DietManagerDB())
-            {
-                var result = await db.
-                    InsertAsync(meal);
-
-                return Convert.ToBoolean(result);
-            }
-        }
 
         public async Task<bool> AddMealMealIngredientsAsync(
             IEnumerable<MealMealIngredient> mealMealIngredients
@@ -68,18 +58,6 @@ namespace DM.Repositories
             {
                 var result = await db.
                     UpdateAsync(newMealData);
-
-                return Convert.ToBoolean(result);
-            }
-        }
-
-        public async Task<bool> DeleteMealAsync(Guid id)
-        {
-            using (var db = new DietManagerDB())
-            {
-                var result = await db.Meals.
-                    Where(m => m.Id == id).
-                    DeleteAsync();
 
                 return Convert.ToBoolean(result);
             }

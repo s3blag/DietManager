@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using DM.Database;
-using DM.Models.Enums;
+﻿using DM.Database;
 
 namespace DM.Repositories.Interfaces
 {
-    public interface IActivityRepository
+    public interface IActivityRepository: IBaseRepository<UserActivity>
     {
        
     }

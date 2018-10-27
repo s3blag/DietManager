@@ -13,7 +13,7 @@ namespace DM.Web.Controllers
     [Route("api/[controller]")]
     public class SocialController : Controller
     {
-        public SocialController(SocialService )
+        public SocialController()
         {
 
         }
@@ -26,14 +26,14 @@ namespace DM.Web.Controllers
                 return NotFound("Invalid arguments");
             }
 
-            var result = await _userService.SearchUsersAsync(lastReturned);
+            //var result = await _userService.SearchUsersAsync(lastReturned);
 
-            if (!result.Result.Any())
-            {
-                return NotFound();
-            }
+            //if (!result.Result.Any())
+            //{
+            //    return NotFound();
+            //}
 
-            return Ok(result);
+            return Ok();
         }
     }
 }

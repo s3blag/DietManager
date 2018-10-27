@@ -4,9 +4,8 @@ using DM.Database;
 
 namespace DM.Repositories.Interfaces
 {
-    public interface IImageRepository
+    public interface IImageRepository: IBaseRepository<Image>
     {
-        Task<bool> AddImageAsync(Image image);
         Task<Image> GetImageByIdAsync(Guid id);
         Task<int> CountAsync();
     }

@@ -54,7 +54,7 @@ namespace DM.Logic.Services
 
             var dbImage = _mapper.Map<Image>(imageCreation);
 
-            bool imagePathSaved = await _imageRepository.AddImageAsync(dbImage);
+            bool imagePathSaved = await _imageRepository.AddAsync(dbImage);
 
             if (!imagePathSaved)
             {

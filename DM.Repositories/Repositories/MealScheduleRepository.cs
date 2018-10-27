@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DM.Repositories.Repositories
 {
-    public class MealScheduleRepository : IMealScheduleRepository
+    public class MealScheduleRepository : BaseRepository<MealScheduleEntry>, IMealScheduleRepository
     {
         public async Task<IEnumerable<MealScheduleEntry>> GetMealScheduleEntriesInDateRangeAsync(Guid userId, DateTimeOffset from, DateTimeOffset to)
         {
@@ -21,28 +21,6 @@ namespace DM.Repositories.Repositories
                     ToListAsync();
 
                 return mealSchedule.OrderBy(m => m.Date);
-            }
-        }
-
-        public async Task<bool> AddMealScheduleEntryAsync(MealScheduleEntry mealScheduleEntry)
-        {
-            using (var db = new DietManagerDB())
-            {
-                var result = await db.InsertAsync(mealScheduleEntry);
-
-                return Convert.ToBoolean(result);
-            }
-        }
-
-        public async Task<bool> DeleteMealScheduleEntryAsync(Guid mealScheduleEntryId)
-        {
-            using (var db = new DietManagerDB())
-            {
-                var result = await db.MealScheduleEntries.
-                    Where(m => m.Id == mealScheduleEntryId).
-                    DeleteAsync();
-
-                return Convert.ToBoolean(result);
             }
         }
 

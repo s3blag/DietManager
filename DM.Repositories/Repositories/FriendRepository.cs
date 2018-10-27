@@ -1,4 +1,5 @@
 ﻿using DM.Database;
+using DM.Repositories.Interfaces;
 using LinqToDB;
 using System;
 using System.Collections.Generic;
@@ -7,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace DM.Repositories
 {
-    public class FriendRepository
+    public class FriendRepository : BaseRepository<Friend>, IFriendRepository
     {
-        public async Task<IEnumerable<User>> GetUserFriendsAsync(Guid userId, int index, int takeAmount)
+        public async Task<IEnumerable<User>> GetUserFriendsAsync(Guid userId, int index, int takeAmount, bool invitationAccepted = true)
         {
             using (var db = new DietManagerDB())
             {
@@ -17,7 +18,7 @@ namespace DM.Repositories
                     LoadWith(f => f.User2).
                     LoadWith(f => f.User1).
                     Where(f => f.User1Id == userId || f.User2Id == userId).
-                    Where(f => f.Confirmed).
+                    Where(f => f.Confirmed == invitationAccepted).
                     OrderBy(f => f.CreationDate).
                     Skip(index).
                     Take(takeAmount).
@@ -27,23 +28,17 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<bool> AddFriendAsync(Friend newFriend)
+        public async Task<bool> AcceptFriendInvitationAsync(Guid user1Id, Guid user2Id)
         {
             using (var db = new DietManagerDB())
             {
-                int result = await db.InsertAsync(newFriend);
+                var updateResult = await db.Friends.
+                    Where(f => (f.User1Id == user1Id && f.User2Id == user2Id) || (f.User1Id == user2Id && f.User2Id == user1Id)).
+                    Where(f => !f.Confirmed).
+                    Set(f => f.Confirmed, true).
+                    UpdateAsync();
 
-                return Convert.ToBoolean(result);
-            }
-        }
-
-        public async Task<bool> DeleteFriendAsync(Friend friendToDelete)
-        {
-            using (var db = new DietManagerDB())
-            {
-                int result = await db.DeleteAsync(friendToDelete);
-
-                return Convert.ToBoolean(result);
+                return Convert.ToBoolean(updateResult);
             }
         }
     }

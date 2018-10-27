@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DM.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : BaseRepository<User>, IUserRepository
     {
         public async Task<User> GetUserAsync(Guid id)
         {
@@ -17,24 +17,6 @@ namespace DM.Repositories
                 return await db.Users.
                     Where(u => u.Id == id).
                     FirstOrDefaultAsync();
-            }
-        }
-
-        public async Task AddUserAsync(User user)
-        {
-            using (var db = new DietManagerDB())
-            {
-                await db.InsertAsync(user);
-            }
-        }
-
-        public async Task DeleteUserAsync(Guid id)
-        {
-            using (var db = new DietManagerDB())
-            {
-                await db.Users.
-                    Where(u => u.Id == id).
-                    DeleteAsync();
             }
         }
 

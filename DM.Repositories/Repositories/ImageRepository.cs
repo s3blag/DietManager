@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DM.Repositories
 {
-    public class ImageRepository : IImageRepository
+    public class ImageRepository: BaseRepository<Image>, IImageRepository
     {
         public async Task<Image> GetImageByIdAsync(Guid id)
         {
@@ -16,16 +16,6 @@ namespace DM.Repositories
                     FirstOrDefaultAsync(i => i.Id == id);
 
                 return image;
-            }
-        }
-
-        public async Task<bool> AddImageAsync(Image image)
-        {
-            using (var db = new DietManagerDB())
-            {
-                var result = await db.InsertAsync(image);
-
-                return Convert.ToBoolean(result);
             }
         }
 

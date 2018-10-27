@@ -142,14 +142,15 @@ export default class AddMeal extends Vue {
   }
 
   searchMealIngredients() {
-    MealIngredientApiCaller.search(
-      {
-        isLast: false,
-        index: 0,
-        result: { query: this.mealIngredientSearchQuery }
-      },
-      this.mealIngredientFoundHandler
-    );
+    this.$modal.show("addMealIngredientModal");
+    // MealIngredientApiCaller.search(
+    //   {
+    //     isLast: false,
+    //     index: 0,
+    //     result: { query: this.mealIngredientSearchQuery }
+    //   },
+    //   this.mealIngredientFoundHandler
+    // );
   }
 
   loadMoreSearchMealIngredientResults() {

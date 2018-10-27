@@ -47,7 +47,7 @@ namespace DM.Logic.Services
             var dbMealScheduleEntry = _mapper.Map<MealScheduleEntry>(newMealScheduleEntry);
             dbMealScheduleEntry.UserId = userId;
 
-            var addedSuccessfully = await _mealScheduleRepository.AddMealScheduleEntryAsync(dbMealScheduleEntry);
+            var addedSuccessfully = await _mealScheduleRepository.AddAsync(dbMealScheduleEntry);
 
             if (addedSuccessfully)
             {

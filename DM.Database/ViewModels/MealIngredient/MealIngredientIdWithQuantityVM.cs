@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DM.Models.ViewModels.Meal
+namespace DM.Models.ViewModels
 {
     public class MealIngredientIdWithQuantityVM
     {

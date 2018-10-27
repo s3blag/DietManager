@@ -5,9 +5,8 @@ using DM.Database;
 
 namespace DM.Repositories.Interfaces
 {
-    public interface IFavouriteRepository
+    public interface IFavouriteRepository: IBaseRepository<Favourite>
     {
-        Task<bool> AddToFavouritesAsync(Favourite favourite);
         Task<IDictionary<Guid, int>> GetNumberOfFavouritesMarksAsync(IEnumerable<Guid> mealIds);
         Task<IEnumerable<Favourite>> GetUserFavouritesAsync(Guid userId);
         Task<bool> RemoveFromFavouritesAsync(Favourite favouriteToRemove);

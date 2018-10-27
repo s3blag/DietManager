@@ -5,10 +5,8 @@ using DM.Database;
 
 namespace DM.Repositories.Interfaces
 {
-    public interface IMealScheduleRepository
+    public interface IMealScheduleRepository : IBaseRepository<MealScheduleEntry>
     {
-        Task<bool> AddMealScheduleEntryAsync(MealScheduleEntry mealScheduleEntry);
-        Task<bool> DeleteMealScheduleEntryAsync(Guid mealScheduleEntryId);
         Task<IEnumerable<MealScheduleEntry>> GetMealScheduleEntriesInDateRangeAsync(Guid userId, DateTimeOffset from, DateTimeOffset to);
     }
 }

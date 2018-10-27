@@ -3,9 +3,7 @@ using DM.Database;
 using DM.Logic.Interfaces;
 using DM.Models;
 using DM.Models.Exceptions;
-using DM.Models.Models;
 using DM.Models.ViewModels;
-using DM.Models.ViewModels.Meal;
 using DM.Models.Wrappers;
 using DM.Repositories.Interfaces;
 using Newtonsoft.Json;
@@ -50,10 +48,10 @@ namespace DM.Logic.Services
             var dbMeal = _mapper.Map<Meal>(mealVM);
             dbMeal.CreatorId = userId;
 
-            if (!await _mealRepository.AddMealAsync(dbMeal))
+            if (!await _mealRepository.AddAsync(dbMeal))
             {
                 throw new DataAccessException(
-                    nameof(_mealRepository.AddMealAsync) + 
+                    nameof(_mealRepository.AddAsync) + 
                     " failed for argument: " + 
                     JsonConvert.SerializeObject(dbMeal)
                 );
@@ -71,11 +69,9 @@ namespace DM.Logic.Services
             return dbMeal.Id;
         } 
 
-        public async Task DeleteMealAsync(Guid mealId)
+        public async Task DeleteMealAsync(MealPreviewVM mealPreview)
         {
-            ValidateArguments((mealId, nameof(mealId)));
-
-            await _mealRepository.DeleteMealAsync(mealId);
+            await _mealRepository.DeleteAsync(_mapper.Map<Meal>(mealPreview));
         }
 
         public async Task<IndexedResult<IEnumerable<MealPreviewVM>>> GetMealPreviewsAsync(
@@ -90,12 +86,12 @@ namespace DM.Logic.Services
             //    (userId, nameof(userId))
             //    );
 
-            if (lastReturned.IsLast)
+            if (lastReturned != null && lastReturned.IsLast)
             {
                 return null;
             }
 
-            var mealPreviews = await _mealRepository.GetMealPreviewsAsync(userId, lastReturned.Index, takeAmount);
+            var mealPreviews = await _mealRepository.GetMealPreviewsAsync(userId, lastReturned?.Index ?? 0, takeAmount);
 
             var mealFavouritesCounts = await _favouritesRepository.GetNumberOfFavouritesMarksAsync(mealPreviews.Select(m => m.Id));
 

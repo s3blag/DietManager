@@ -6,9 +6,8 @@ using DM.Models.Models;
 
 namespace DM.Repositories.Interfaces
 {
-    public interface IMealIngredientRepository
+    public interface IMealIngredientRepository: IBaseRepository<MealIngredient>
     {
-        Task<bool> AddMealIngredientAsync(MealIngredient mealIngredient);
         Task<bool> AddMealIngredientsAsync(IEnumerable<MealIngredient> mealIngredients);
         Task<bool> AddMealIngredientNutritionsAsync(Nutrition nutritions);
         Task<MealIngredient> GetMealIngredientByIdAsync(Guid id);

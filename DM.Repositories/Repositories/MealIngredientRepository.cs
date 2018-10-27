@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DM.Repositories
 {
-    public class MealIngredientRepository : IMealIngredientRepository
+    public class MealIngredientRepository : BaseRepository<MealIngredient>, IMealIngredientRepository
     {
         public async Task<MealIngredient> GetMealIngredientByIdAsync(Guid id)
         {

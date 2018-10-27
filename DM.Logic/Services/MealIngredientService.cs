@@ -52,7 +52,7 @@ namespace DM.Logic.Services
 
             dbMealIngredient.NutritionsId = dbMealIngredient.Nutrition.Id;
 
-            bool mealIngredientAddedSuccesfully =  await _mealIngredientRepository.AddMealIngredientAsync(dbMealIngredient);
+            bool mealIngredientAddedSuccesfully =  await _mealIngredientRepository.AddAsync(dbMealIngredient);
 
             if (!mealIngredientAddedSuccesfully)
             {
