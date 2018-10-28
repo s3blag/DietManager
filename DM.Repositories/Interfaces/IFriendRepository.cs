@@ -9,5 +9,6 @@ namespace DM.Repositories.Interfaces
     {
         Task<IEnumerable<User>> GetUserFriendsAsync(Guid userId, int index, int takeAmount, bool invitationAccepted = true);
         Task<bool> AcceptFriendInvitationAsync(Guid user1Id, Guid user2Id);
+        Task<int> GetNumberOfFriends(Guid userId);
     }
 }

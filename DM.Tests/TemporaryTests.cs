@@ -5,12 +5,14 @@ using DM.Models.Config;
 using DM.Models.ViewModels;
 using DM.Repositories;
 using DM.Repositories.Extensions;
+using DM.Repositories.Repositories;
 using DM.Tests.TestsData;
 using DM.Web.Config;
 using LinqToDB;
 using LinqToDB.Data;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -152,7 +154,17 @@ namespace DM.Tests
             }
         }
 
+        [Fact]
+        public async Task Load()
+        {
+            string text= await File.ReadAllTextAsync("achievementsConfig.json");
+            var json = JObject.Parse(text);
+            var obj= json["AchievementsConfig"].ToString();
 
+            var deserializedText = JsonConvert.DeserializeObject<AchievementsConfig>(obj);
+
+
+        }
 
     }
 }

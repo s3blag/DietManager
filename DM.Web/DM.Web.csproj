@@ -24,4 +24,10 @@
     <ProjectReference Include="..\DM.Repositories\DM.Repositories.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="achievementsConfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

@@ -49,13 +49,21 @@ ADD CONSTRAINT FK_Friend_User2 FOREIGN KEY ("User2Id") REFERENCES "Users"."User"
 ADD CONSTRAINT Friend_FriendsIdsShouldBeDifferent CHECK ("User1Id" != "User2Id");
 
 CREATE TABLE "Socials"."UserActivity" (
-    "UserId"        UUID        PRIMARY KEY,
+    "Id"            UUID        PRIMARY KEY,
+    "UserId"        UUID        NOT NULL,
     "ActivityType"  TEXT        NOT NULL,
     "ContentId"     UUID        NOT NULL,
     "ActivityDate"  TIMESTAMPTZ NOT NULL
 );
 ALTER TABLE "Socials"."UserActivity" 
 ADD CONSTRAINT FK_UserActivity_User FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id");
+
+CREATE TABLE "Socials"."Achievement" (
+    "Id"                UUID    PRIMARY KEY,
+    "Category"          TEXT    NOT NULL,
+    "Type"              TEXT    NOT NULL,
+    "AchievementValue"  INTEGER NOT NULL
+);
 
 CREATE TABLE "Meals"."Meal" (
     "Id"            UUID        PRIMARY KEY,

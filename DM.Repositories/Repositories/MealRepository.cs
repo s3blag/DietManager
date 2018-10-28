@@ -36,6 +36,15 @@ namespace DM.Repositories
             }
         }
 
+        public async Task<int> GetMealsCreatedByUserCount(Guid userId)
+        {
+            using (var db = new DietManagerDB())
+            {
+                return await db.Meals.
+                    Where(m => m.CreatorId == userId).
+                    CountAsync();
+            }
+        }
 
         public async Task<bool> AddMealMealIngredientsAsync(
             IEnumerable<MealMealIngredient> mealMealIngredients
@@ -94,5 +103,7 @@ namespace DM.Repositories
                 return await mealPreviewsQuery.ToListAsync();
             }
         }
+
+
     }
 }

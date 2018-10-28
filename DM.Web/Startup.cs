@@ -23,7 +23,8 @@ namespace Diet_Manager
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("config.json", optional: true, reloadOnChange: true)
+                .AddJsonFile("config.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("achievementsConfig.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
             Configuration = builder.Build();
@@ -55,12 +56,15 @@ namespace Diet_Manager
                });
 
             services.Configure<ImageServiceConfig>(options => Configuration.GetSection("ImageServiceConfig").Bind(options));
+            services.Configure<AchievementsConfig>(options => Configuration.GetSection("AchievementsConfig").Bind(options));
 
             services.AddScoped<IMealRepository, MealRepository>();
             services.AddScoped<IMealIngredientRepository, MealIngredientRepository>();
             services.AddScoped<IImageRepository, ImageRepository>();
             services.AddScoped<IFavouriteRepository, FavouriteRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IAchievementRepository, AchievementRepository>();
+            
 
             services.AddScoped<IMealService, MealService>();
             services.AddScoped<IMealIngredientService, MealIngredientService>();

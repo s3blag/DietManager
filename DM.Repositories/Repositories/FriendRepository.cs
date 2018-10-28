@@ -41,5 +41,16 @@ namespace DM.Repositories
                 return Convert.ToBoolean(updateResult);
             }
         }
+
+        public async Task<int> GetNumberOfFriends(Guid userId)
+        {
+            using (var db = new DietManagerDB())
+            {
+                return await db.Friends.
+                    Where(f => f.User1Id == userId || f.User2Id == userId).
+                    Where(f => f.Confirmed).
+                    CountAsync();
+            }
+        }
     }
 }

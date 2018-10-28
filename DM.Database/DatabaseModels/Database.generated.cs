@@ -20,6 +20,7 @@ namespace DM.Database
 	/// </summary>
 	public partial class DietManagerDB : LinqToDB.Data.DataConnection
 	{
+		public ITable<Achievement>                  Achievements                  { get { return this.GetTable<Achievement>(); } }
 		public ITable<Favourite>                    Favourites                    { get { return this.GetTable<Favourite>(); } }
 		public ITable<Friend>                       Friends                       { get { return this.GetTable<Friend>(); } }
 		public ITable<Image>                        Images                        { get { return this.GetTable<Image>(); } }
@@ -46,6 +47,24 @@ namespace DM.Database
 		}
 
 		partial void InitDataContext();
+	}
+
+	[Table(Schema="Socials", Name="Achievement")]
+	public partial class Achievement
+	{
+		[PrimaryKey, NotNull] public Guid   UserId           { get; set; } // uuid
+		[Column,     NotNull] public string AchievementType  { get; set; } // text
+		[Column,     NotNull] public int    AchievementValue { get; set; } // integer
+
+		#region Associations
+
+		/// <summary>
+		/// fk_achievement_user
+		/// </summary>
+		[Association(ThisKey="UserId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.OneToOne, KeyName="fk_achievement_user", BackReferenceName="fkachievementuser")]
+		public User User { get; set; }
+
+		#endregion
 	}
 
 	[Table(Schema="Meals", Name="Favourites")]
@@ -352,6 +371,12 @@ namespace DM.Database
 		public IEnumerable<Friend> fk_friend_user1_BackReferences { get; set; }
 
 		/// <summary>
+		/// fk_achievement_user_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="UserId", CanBeNull=true, Relationship=Relationship.OneToOne, IsBackReference=true)]
+		public Achievement fkachievementuser { get; set; }
+
+		/// <summary>
 		/// fk_favourites_userid_BackReference
 		/// </summary>
 		[Association(ThisKey="Id", OtherKey="UserId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
@@ -417,6 +442,12 @@ namespace DM.Database
 
 	public static partial class TableExtensions
 	{
+		public static Achievement Find(this ITable<Achievement> table, Guid UserId)
+		{
+			return table.FirstOrDefault(t =>
+				t.UserId == UserId);
+		}
+
 		public static Favourite Find(this ITable<Favourite> table, Guid Id)
 		{
 			return table.FirstOrDefault(t =>

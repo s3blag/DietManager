@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DM.Logic.Services
 {
-    public class SocialService
+    public class FriendService
     {
-        public SocialService()
+        public FriendService()
         {
 
         }

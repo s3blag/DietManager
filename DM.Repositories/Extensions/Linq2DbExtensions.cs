@@ -16,5 +16,9 @@ namespace DM.Repositories.Extensions
 
         [Sql.Expression("{0} <= {1}", PreferServerSide = true, IsPredicate = true)]
         public static bool LessThanOrEqual<T>(this T x, T toCompare) where T : IComparable<T> => x.CompareTo(toCompare) <= 0;
+
+        [Sql.Expression("(EXTRACT(epoch from age({0}, {1})) / 86400)::int", PreferServerSide = true, IsPredicate = true)]
+        public static int SubtractWithResultInDays(this DateTimeOffset startDate, DateTimeOffset endDate) 
+            => (int)((startDate- endDate).TotalDays);
     }
 }
