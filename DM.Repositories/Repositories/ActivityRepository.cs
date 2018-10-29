@@ -11,7 +11,7 @@ namespace DM.Repositories
 {
     public class ActivityRepository : BaseRepository<UserActivity>, IActivityRepository
     {
-        public async Task<IEnumerable<UserActivity>> GetUsersActivities(IEnumerable<Guid> users, int index, int takeAmount, ActivityType? activityType = null)
+        public async Task<IEnumerable<UserActivity>> GetUsersActivitiesAsync(IEnumerable<Guid> users, int index, int takeAmount, ActivityType? activityType = null)
         {
             using (var db = new DietManagerDB())
             {

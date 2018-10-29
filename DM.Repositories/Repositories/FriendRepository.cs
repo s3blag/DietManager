@@ -42,7 +42,7 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<int> GetNumberOfFriends(Guid userId)
+        public async Task<int> GetNumberOfFriendsAsync(Guid userId)
         {
             using (var db = new DietManagerDB())
             {

@@ -36,7 +36,7 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<int> GetMealsCreatedByUserCount(Guid userId)
+        public async Task<int> GetMealsCreatedByUserCountAsync(Guid userId)
         {
             using (var db = new DietManagerDB())
             {

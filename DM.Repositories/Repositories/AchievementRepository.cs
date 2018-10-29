@@ -8,7 +8,7 @@ namespace DM.Repositories
 {
     public class AchievementRepository: BaseRepository<Achievement>, IAchievementRepository
     {
-        public async Task<IEnumerable<Achievement>> GetAll()
+        public async Task<IEnumerable<Achievement>> GetAllAsync()
         {
             using (var db = new DietManagerDB())
             {

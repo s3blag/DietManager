@@ -6,6 +6,6 @@ namespace DM.Repositories.Interfaces
 {
     public interface IAchievementRepository: IBaseRepository<Achievement>
     {
-        Task<IEnumerable<Achievement>> GetAll();
+        Task<IEnumerable<Achievement>> GetAllAsync();
     }
 }
