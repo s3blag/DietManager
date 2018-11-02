@@ -7,6 +7,8 @@ namespace DM.Models.Config
 {
     public class AchievementsConfig
     {
+        public Dictionary<FriendAchievement, int[]> FriendAchievements { get; set; }
+
         public Dictionary<MealAchievement, int[]> MealAchievements { get; set; }
 
         public Dictionary<MealIngredientAchievement, int[]> MealIngredientAchievements { get; set; }
@@ -15,6 +17,5 @@ namespace DM.Models.Config
 
         public Dictionary<MealScheduleAchievement, int[]> MealScheduleAchievements { get; set; }
 
-        public Dictionary<FriendAchievement, int[]> FriendAchievements { get; set; }
     }
 }

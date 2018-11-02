@@ -2,12 +2,14 @@ using AutoMapper;
 using DM.Database;
 using DM.Logic.Services;
 using DM.Models.Config;
+using DM.Models.Enums;
+using DM.Models.Models;
 using DM.Models.ViewModels;
 using DM.Repositories;
 using DM.Repositories.Extensions;
+using DM.Repositories.Interfaces;
 using DM.Repositories.Repositories;
 using DM.Tests.TestsData;
-using DM.Web.Config;
 using LinqToDB;
 using LinqToDB.Data;
 using Microsoft.Extensions.Options;
@@ -157,14 +159,23 @@ namespace DM.Tests
         [Fact]
         public async Task Load()
         {
-            string text= await File.ReadAllTextAsync("achievementsConfig.json");
-            var json = JObject.Parse(text);
-            var obj= json["AchievementsConfig"].ToString();
+            ObjectsFactory.InitDbConnection(Constants.ConnectionString);
 
-            var deserializedText = JsonConvert.DeserializeObject<AchievementsConfig>(obj);
+            //var obj = new AchievementsSetup();
 
-
+            //await obj.Setup(new AchievementsConfig()
+            //{
+            //    FriendAchievements = new Dictionary<Achievements.FriendAchievement, int[]>()
+            //    {
+            //        [Achievements.FriendAchievement.NumberOfFriends] = new [] { 1, 5, 10 }
+            //    },
+            //    MealScheduleAchievements = new Dictionary<Achievements.MealScheduleAchievement, int[]>()
+            //    {
+            //        [Achievements.MealScheduleAchievement.ConsequentScheduleUpdates] = new [] {2, 4, 6}
+            //    }
+            //}, new AchievementRepository(new AchievementsContainer()));
         }
+
 
     }
 }

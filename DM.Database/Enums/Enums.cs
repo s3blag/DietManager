@@ -7,6 +7,14 @@
         PictureChanged
     }
 
+    public enum FriendInvitationStatus
+    {
+        Accepted,
+        Ignored,
+        Awaiting
+    }
+
+#region Achievements
     public static class Achievements
     {
         public enum MealAchievement
@@ -35,6 +43,17 @@
         {
             NumberOfFriends
         }
-
     }
+    
+    public enum AchievementCategory
+    {
+        Meal,
+        MealIngredient,
+        User,
+        MealSchedule,
+        Friends
+    }
+
+#endregion
+
 }

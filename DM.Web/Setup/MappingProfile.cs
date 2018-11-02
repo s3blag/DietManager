@@ -3,10 +3,9 @@ using DM.Database;
 using DM.Models;
 using DM.Models.Models;
 using DM.Models.ViewModels;
-using DM.Models.Wrappers;
 using System;
 
-namespace DM.Web.Config
+namespace DM.Web
 {
     public class MappingProfile : Profile
     {
@@ -38,6 +37,11 @@ namespace DM.Web.Config
             CreateMap<ImageCreation, Image>().
                 ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid())).
                 ReverseMap();
+            CreateMap<UserAchievement, UserAchievementVM>().ReverseMap();
+            CreateMap<Achievement, AchievementVM>().ReverseMap();
+            CreateMap<UserAchievementCreation, UserAchievement>().
+                ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid()));
+
         }
     }
 }

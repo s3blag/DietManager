@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using DM.Database;
 using DM.Models.Config;
-using DM.Web.Config;
+using DM.Web;
 using LinqToDB.Data;
 using Microsoft.Extensions.Options;
 

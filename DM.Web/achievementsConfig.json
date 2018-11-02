@@ -1,5 +1,8 @@
 ﻿{
   "AchievementsConfig": {
+
+
+
     "MealAchievements": {
       "NumberOfUses": [
         1,
@@ -43,6 +46,9 @@
         100000
       ]
     },
+
+
+
     "MealIngredientAchievements": {
       "AdditionsCountOver": [
         1,
@@ -58,6 +64,9 @@
         10000
       ]
     },
+
+
+
     "UserAchievements": {
       "Anniversary": [
         1,
@@ -68,6 +77,9 @@
         10
       ]
     },
+
+
+
     "MealScheduleAchievements": {
       "ConsequentScheduleUpdates": [
         2,
@@ -85,6 +97,9 @@
         356
       ]
     },
+
+
+
     "FriendAchievements": {
       "NumberOfFriends": [
         1,
@@ -101,5 +116,8 @@
         10000
       ]
     }
+
+
+
   }
 }

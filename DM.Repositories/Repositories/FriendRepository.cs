@@ -1,4 +1,5 @@
 ﻿using DM.Database;
+using DM.Models.Enums;
 using DM.Repositories.Interfaces;
 using LinqToDB;
 using System;
@@ -10,7 +11,7 @@ namespace DM.Repositories
 {
     public class FriendRepository : BaseRepository<Friend>, IFriendRepository
     {
-        public async Task<IEnumerable<User>> GetUserFriendsAsync(Guid userId, int index, int takeAmount, bool invitationAccepted = true)
+        public async Task<IEnumerable<User>> GetUserFriendsAsync(Guid userId, int index, int takeAmount, FriendInvitationStatus status = FriendInvitationStatus.Accepted)
         {
             using (var db = new DietManagerDB())
             {
@@ -18,7 +19,7 @@ namespace DM.Repositories
                     LoadWith(f => f.User2).
                     LoadWith(f => f.User1).
                     Where(f => f.User1Id == userId || f.User2Id == userId).
-                    Where(f => f.Confirmed == invitationAccepted).
+                    Where(f => f.Status == status.ToString()).
                     OrderBy(f => f.CreationDate).
                     Skip(index).
                     Take(takeAmount).
@@ -28,14 +29,14 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<bool> AcceptFriendInvitationAsync(Guid user1Id, Guid user2Id)
+        public async Task<bool> SetFriendInvitationStatusAsync(Guid user1Id, Guid user2Id, FriendInvitationStatus status)
         {
             using (var db = new DietManagerDB())
             {
                 var updateResult = await db.Friends.
                     Where(f => (f.User1Id == user1Id && f.User2Id == user2Id) || (f.User1Id == user2Id && f.User2Id == user1Id)).
-                    Where(f => !f.Confirmed).
-                    Set(f => f.Confirmed, true).
+                    Where(f => f.Status != status.ToString()).
+                    Set(f => f.Status, status.ToString()).
                     UpdateAsync();
 
                 return Convert.ToBoolean(updateResult);
@@ -48,7 +49,7 @@ namespace DM.Repositories
             {
                 return await db.Friends.
                     Where(f => f.User1Id == userId || f.User2Id == userId).
-                    Where(f => f.Confirmed).
+                    Where(f => f.Status == FriendInvitationStatus.Accepted.ToString()).
                     CountAsync();
             }
         }

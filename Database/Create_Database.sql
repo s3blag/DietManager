@@ -28,6 +28,7 @@ CREATE TABLE "Users"."User" (
     "FullName"      VARCHAR(56)     NOT NULL,
     "Password"      TEXT            NOT NULL,
     "CreationDate"  TIMESTAMPTZ     NOT NULL,
+    "LastLoginDate" TIMESTAMPTZ     NOT NULL,
     "ImageId"       UUID            NULL,
     "RoleId"        UUID            NOT NULL
 );
@@ -40,7 +41,7 @@ CREATE TABLE "Socials"."Friend" (
     PRIMARY KEY ("User1Id", "User2Id"),
     "User1Id"       UUID        NOT NULL,
     "User2Id"       UUID        NOT NULL,
-    "Confirmed"     BOOLEAN     NOT NULL DEFAULT FALSE,
+    "Status"        TEXT        NOT NULL,
     "CreationDate"  TIMESTAMPTZ NOT NULL
 );
 ALTER TABLE "Socials"."Friend" 
@@ -62,13 +63,24 @@ CREATE TABLE "Socials"."Achievement" (
     "Id"                UUID    PRIMARY KEY,
     "Category"          TEXT    NOT NULL,
     "Type"              TEXT    NOT NULL,
-    "AchievementValue"  INTEGER NOT NULL
+    "Value"             INTEGER NOT NULL
 );
+
+CREATE TABLE "Socials"."UserAchievement" (
+    "Id"                UUID    PRIMARY KEY,
+    "AchievementId"     UUID    NOT NULL,
+    "UserId"            UUID    NOT NULL,
+    "Seen"              BOOL    NOT NULL DEFAULT FALSE
+);
+ALTER TABLE "Socials"."UserAchievement" 
+ADD CONSTRAINT FK_UserAchievement_User FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id"),
+ADD CONSTRAINT FK_UserAchievement_Achievement FOREIGN KEY ("AchievementId") REFERENCES "Socials"."Achievement"("Id"),
+ADD CONSTRAINT UQ_User_Achievement UNIQUE("UserId", "AchievementId");
 
 CREATE TABLE "Meals"."Meal" (
     "Id"            UUID        PRIMARY KEY,
     "CreationDate"  TIMESTAMPTZ NOT NULL,
-    "CreatorId"     UUID        NULL,
+    "CreatorId"     UUID        NOT NULL,
     "ImageId"       UUID        NULL,
     "Name"          TEXT        NOT NULL,
     "Description"   TEXT        NULL,
@@ -112,6 +124,7 @@ CREATE TABLE "Meals"."Nutritions" (
 
 CREATE TABLE "Meals"."MealIngredient" (
     "Id"            UUID        PRIMARY KEY,
+    "CreatorId"     UUID        NULL,
     "ImageId"       UUID        NULL,
     "Name"          TEXT        UNIQUE,
     "Calories"      INTEGER     NOT NULL,
@@ -119,7 +132,8 @@ CREATE TABLE "Meals"."MealIngredient" (
 );
 ALTER TABLE "Meals"."MealIngredient" 
 ADD CONSTRAINT "FK_MealIngredient_Image" FOREIGN KEY ("ImageId") REFERENCES  "Images"."Image"("Id"),
-ADD CONSTRAINT "FK_MealIngredient_Nutritions" FOREIGN KEY ("NutritionsId") REFERENCES  "Meals"."Nutritions"("Id");
+ADD CONSTRAINT "FK_MealIngredient_Nutritions" FOREIGN KEY ("NutritionsId") REFERENCES  "Meals"."Nutritions"("Id"),
+ADD CONSTRAINT "FK_MealIngredient_Creator" FOREIGN KEY ("CreatorId") REFERENCES  "Users"."User"("Id");
 
 CREATE TABLE "Meals"."Meal-MealIngredient" (
     "Id"                UUID    PRIMARY KEY,
@@ -185,6 +199,7 @@ INSERT INTO "Users"."User"(
     "Surname",
     "FullName",
     "Password", 
+    "LastLoginDate",
     "CreationDate", 
     "RoleId"
 )
@@ -196,6 +211,7 @@ VALUES (
     'Łągiewski',
     'Sebastian Łągiewski',
     'password',
+    '25.10.2018 20:58:57 +02:00',
     '25.10.2018 20:58:57 +02:00',
     '00000000-0000-0000-0000-000000000000'
 );

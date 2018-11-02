@@ -10,10 +10,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Diet_Manager
 {
@@ -37,7 +39,7 @@ namespace Diet_Manager
         {
             services.AddMvc();
 
-        services.AddAutoMapper();
+            services.AddAutoMapper();
             
             DataConnection.DefaultSettings = new DBConnectionSettings(Configuration["ConnectionStrings:PostgreSQLBaseConnection"]);
 
@@ -63,18 +65,20 @@ namespace Diet_Manager
             services.AddScoped<IImageRepository, ImageRepository>();
             services.AddScoped<IFavouriteRepository, FavouriteRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserAchievementRepository, UserAchievementRepository>();
             services.AddScoped<IAchievementRepository, AchievementRepository>();
-            
 
             services.AddScoped<IMealService, MealService>();
             services.AddScoped<IMealIngredientService, MealIngredientService>();
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<ISearchService, SearchService>();
             services.AddScoped<IMealIngredientsApiCaller, MealIngredientsApiCaller>();
+
+            services.AddSingleton<IAchievementsContainer, AchievementsContainer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -86,8 +90,13 @@ namespace Diet_Manager
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseStaticFiles();
+            AchievementsSetup.SetupAchievements(
+                serviceProvider.GetRequiredService<IOptions<AchievementsConfig>>().Value,
+                serviceProvider.GetRequiredService<IAchievementRepository>()
+                ).Wait();
 
+            app.UseStaticFiles();
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
