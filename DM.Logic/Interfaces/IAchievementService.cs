@@ -8,15 +8,25 @@ namespace DM.Logic.Interfaces
 {
     public interface IAchievementService
     {
-        Task<UserAchievementVM> CheckForConsequentScheduleUpdatesAchievementAsync(Guid userId);
-        Task CheckForNumberOfFavouriteMarksAchievementAsync(Meal mealAfterUpdate);
-        Task<UserAchievementVM> CheckForNumberOfFriendsAchievementAsync(Guid userId);
+        Task<UserAchievementVM> CheckForConsequentScheduleUpdatesAsync(Guid userId);
+
+        Task CheckForNumberOfFavouriteMarksAsync(Guid mealId);
+
+        Task<UserAchievementVM> CheckForNumberOfFriendsAsync(Guid userId);
+
         Task<UserAchievementVM> CheckForNumberOfMealAdditionsByUserAsync(Guid userId);
-        Task<UserAchievementVM> CheckForNumberOfMealIngredientAdditionsByUserAchievementAsync(Guid userId);
-        Task CheckForNumberOfMealUsesAchievementAsync(Meal mealAfterScheduleUpdate);
-        Task<UserAchievementVM> CheckForUserAnniversaryAchievementAsync(User userBeforeLastLoginUpdate);
+
+        Task<UserAchievementVM> CheckForNumberOfMealIngredientAdditionsByUserAsync(Guid userId);
+
+        Task CheckForNumberOfMealUsesAsync(Guid userId, Guid mealId);
+
+        Task<UserAchievementVM> CheckForUserAnniversaryAsync(User userBeforeLastLoginUpdate);
+
         Task<IEnumerable<UserAchievementVM>> GetUsersAchievements(Guid userId);
+
         Task<bool> MarkAchievementsAsReadAsync(IEnumerable<Guid> userAchievementIds, Guid userId);
+
         Task<IEnumerable<AchievementVM>> GetAllAchievementsAsync();
+
     }
 }

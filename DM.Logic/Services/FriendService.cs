@@ -18,12 +18,15 @@ namespace DM.Logic.Services
         private readonly IFriendRepository _friendRepository;
         private readonly IActivityRepository _activityRepository;
         private readonly IMapper _mapper;
+        private readonly IAchievementService _achievementService;
 
-        public FriendService(IFriendRepository friendRepository, IActivityRepository activityRepository, IMapper mapper)
+        public FriendService(IFriendRepository friendRepository, IActivityRepository activityRepository, 
+            IMapper mapper, IAchievementService achievementService)
         {
             _friendRepository = friendRepository;
             _activityRepository = activityRepository;
             _mapper = mapper;
+            _achievementService = achievementService;
         }
 
         public async Task<IndexedResult<IEnumerable<UserFriendsVM>>> GetUserFriendsAsync(
@@ -46,7 +49,6 @@ namespace DM.Logic.Services
             };
         }
 
-        //TODO
         public async Task<IndexedResult<IEnumerable<FriendActivityVM>>> GetFriendsActivitiesFeedAsync(
             Guid userId, 
             IndexedResult<FriendActivityVM> lastReturned,
@@ -102,6 +104,9 @@ namespace DM.Logic.Services
             {
                 throw new DataAccessException($"Accepting friend invitation failed for model: {JsonConvert.SerializeObject(friendInvitationVM)}");
             }
+
+            await _achievementService.CheckForNumberOfFriendsAsync(friendInvitationVM.UserId);
+            await _achievementService.CheckForNumberOfFriendsAsync(receiverId);
         }
 
         public async Task IgnoreFriendInvitationAsync(AwaitingFriendInvitationVM friendInvitationVM, Guid receiverId)

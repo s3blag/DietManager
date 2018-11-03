@@ -42,13 +42,15 @@ namespace DM.Web.Controllers
                 return NotFound();
             }
 
-            var mealIngredient = await _mealIngredientService.AddMealIngredientAsync(mealIngredientCreationVM);
+            var userId = Guid.Empty;
+
+            var mealIngredient = await _mealIngredientService.AddMealIngredientAsync(userId, mealIngredientCreationVM);
 
             return Ok(mealIngredient);
         }
 
         [HttpPost("search")]
-        public async Task<IActionResult> SearchMealIngredients([FromBody] IndexedResult<MealIngredientSearchVM> lastReturned)
+        public async Task<IActionResult> SearchMealIngredients([FromBody]IndexedResult<MealIngredientSearchVM> lastReturned)
         {
             if (lastReturned != null && lastReturned.IsLast)
             {

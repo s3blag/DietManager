@@ -78,7 +78,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost("meal-previews")]
-        public async Task<IActionResult> GetMealPreviewsForUser([FromBody] IndexedResult<MealPreviewVM> lastReturned)
+        public async Task<IActionResult> GetMealPreviewsForUser([FromBody]IndexedResult<MealPreviewVM> lastReturned)
         {
             if (lastReturned != null && lastReturned.IsLast)
             {
@@ -87,7 +87,7 @@ namespace DM.Web.Controllers
 
             var userId = Guid.Empty;
 
-            var result = await _mealService.GetMealPreviewsAsync(userId, lastReturned);
+            var result = await _mealService.GetUsersMealsPreviewsAsync(userId, lastReturned);
 
             if (result == null)
             {
@@ -99,7 +99,7 @@ namespace DM.Web.Controllers
 
         
         [HttpPost("search")]
-        public async Task<IActionResult> SearchMeals([FromBody] IndexedResult<MealSearchVM> lastReturned)
+        public async Task<IActionResult> SearchMeals([FromBody]IndexedResult<MealSearchVM> lastReturned)
         {
             if (lastReturned != null && lastReturned.IsLast)
             {

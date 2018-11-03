@@ -34,6 +34,7 @@ namespace DM.Web.Controllers
             }
         }
 
+        //TODO: indexed result
         [HttpGet("my-achievements")]
         public async Task<IActionResult> GetUserAchievements()
         {

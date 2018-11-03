@@ -64,13 +64,13 @@ namespace DM.Logic.Services
 
         #region MealAchievements
 
-        public async Task CheckForNumberOfMealUsesAchievementAsync(Meal mealAfterScheduleUpdate)
+        public async Task CheckForNumberOfMealUsesAsync(Guid userId, Guid mealId)
         {
-            int newValue = mealAfterScheduleUpdate.NumberOfUses;
+            int newValue = await _mealScheduleRepository.GetNumberOfMealUsesAsync(mealId);
 
             int[] achievementStages = achievementsConfig.MealAchievements[Achievements.MealAchievement.NumberOfUses];
 
-            await AddAchievementIfNextStageReachedAsync(mealAfterScheduleUpdate.CreatorId, achievementStages, newValue, Achievements.MealAchievement.NumberOfUses);
+            await AddAchievementIfNextStageReachedAsync(userId, achievementStages, newValue, Achievements.MealAchievement.NumberOfUses);
         }
 
 
@@ -83,20 +83,22 @@ namespace DM.Logic.Services
             return _mapper.Map<UserAchievementVM>(await AddAchievementIfNextStageReachedAsync(userId, achievementStages, newValue, Achievements.MealAchievement.AdditionsCountOver));
         }
 
-        public async Task CheckForNumberOfFavouriteMarksAchievementAsync(Meal mealAfterUpdate)
+        public async Task CheckForNumberOfFavouriteMarksAsync(Guid mealId)
         {
             int[] achievementStages = achievementsConfig.MealAchievements[Achievements.MealAchievement.NumberOfFavouriteMarks];
 
-            int newValue = (await _favouriteRepository.GetNumberOfFavouritesMarksAsync(new[] { mealAfterUpdate.Id })).First().Value;
+            int newValue = (await _favouriteRepository.GetNumberOfFavouritesMarksAsync(new[] { mealId })).First().Value;
 
-            await AddAchievementIfNextStageReachedAsync(mealAfterUpdate.CreatorId, achievementStages, newValue, Achievements.MealAchievement.NumberOfFavouriteMarks);
+            var creatorId = (await _mealRepository.GetMealByIdAsync(mealId)).CreatorId;
+           
+            await AddAchievementIfNextStageReachedAsync(creatorId, achievementStages, newValue, Achievements.MealAchievement.NumberOfFavouriteMarks);
         }
 
         #endregion
 
         #region MealIngredientAchievements
 
-        public async Task<UserAchievementVM> CheckForNumberOfMealIngredientAdditionsByUserAchievementAsync(Guid userId)
+        public async Task<UserAchievementVM> CheckForNumberOfMealIngredientAdditionsByUserAsync(Guid userId)
         {
             int newValue = await _mealIngredientRepository.GetMealIngredientsAddedByUserCountAsync(userId);
 
@@ -114,7 +116,7 @@ namespace DM.Logic.Services
 
         #region UserAchievements
 
-        public async Task<UserAchievementVM> CheckForUserAnniversaryAchievementAsync(User userBeforeLastLoginUpdate)
+        public async Task<UserAchievementVM> CheckForUserAnniversaryAsync(User userBeforeLastLoginUpdate)
         {
             int lastLoginAndCreationDifferenceInYears = Extensions.GetDifferenceInYears(
                                                             userBeforeLastLoginUpdate.LastLoginDate,
@@ -144,7 +146,7 @@ namespace DM.Logic.Services
 
         #region MealScheduleAchievements
 
-        public async Task<UserAchievementVM> CheckForConsequentScheduleUpdatesAchievementAsync(Guid userId)
+        public async Task<UserAchievementVM> CheckForConsequentScheduleUpdatesAsync(Guid userId)
         {
             int oldMaxStreak = await _userAchievementRepository.GetUserAchievementMaxValueAsync(
                                    userId,
@@ -172,7 +174,7 @@ namespace DM.Logic.Services
 
         #region FriendAchievements
 
-        public async Task<UserAchievementVM> CheckForNumberOfFriendsAchievementAsync(Guid userId)
+        public async Task<UserAchievementVM> CheckForNumberOfFriendsAsync(Guid userId)
         {
             int newValue = await _friendRepository.GetNumberOfFriendsAsync(userId);
 

@@ -20,14 +20,16 @@ namespace DM.Logic.Services
         private readonly IMealRepository _mealRepository;
         private readonly IMealIngredientRepository _mealIngredientRepository;
         private readonly IFavouriteRepository _favouritesRepository;
+        private readonly IAchievementService _achievementService;
 
         public MealService(IMapper mapper, IMealRepository mealRepository, IMealIngredientRepository mealIngredientRepository, 
-            IFavouriteRepository favouritesRepository)
+            IFavouriteRepository favouritesRepository, IAchievementService achievementService)
         {
             _mapper = mapper;
             _mealRepository = mealRepository;
             _mealIngredientRepository = mealIngredientRepository;
             _favouritesRepository = favouritesRepository;
+            _achievementService = achievementService;
         }
 
         public async Task<MealVM> GetMealByIdAsync(Guid id)
@@ -66,15 +68,12 @@ namespace DM.Logic.Services
                 );
             }
 
+            await _achievementService.CheckForNumberOfMealAdditionsByUserAsync(userId);
+
             return dbMeal.Id;
         } 
 
-        public async Task DeleteMealAsync(MealPreviewVM mealPreview)
-        {
-            await _mealRepository.DeleteAsync(_mapper.Map<Meal>(mealPreview));
-        }
-
-        public async Task<IndexedResult<IEnumerable<MealPreviewVM>>> GetMealPreviewsAsync(
+        public async Task<IndexedResult<IEnumerable<MealPreviewVM>>> GetUsersMealsPreviewsAsync(
             Guid userId, 
             IndexedResult<MealPreviewVM> lastReturned, 
             int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE
@@ -85,11 +84,6 @@ namespace DM.Logic.Services
             //ValidateArguments(
             //    (userId, nameof(userId))
             //    );
-
-            if (lastReturned != null && lastReturned.IsLast)
-            {
-                return null;
-            }
 
             var mealPreviews = await _mealRepository.GetMealPreviewsAsync(userId, lastReturned?.Index ?? 0, takeAmount);
 

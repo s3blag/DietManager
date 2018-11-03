@@ -103,7 +103,5 @@ namespace DM.Repositories
                 return await mealPreviewsQuery.ToListAsync();
             }
         }
-
-
     }
 }

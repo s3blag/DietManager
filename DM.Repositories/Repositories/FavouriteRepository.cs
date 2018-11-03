@@ -21,22 +21,17 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<IEnumerable<Favourite>> GetUserFavouritesAsync(Guid userId)
+        public async Task<IList<Favourite>> GetUserFavouritesAsync(Guid userId, int index, int takeAmount)
         {
             using (var db = new DietManagerDB())
             {
                 return await db.Favourites.
                     LoadWith(f => f.Meal).
+                    LoadWith(f => f.User).
                     Where(f => f.UserId == userId).
+                    Skip(index).
+                    Take(takeAmount).
                     ToListAsync();
-            }
-        }
-
-        public async Task<bool> RemoveFromFavouritesAsync(Favourite favouriteToRemove)
-        {
-            using (var db = new DietManagerDB())
-            {
-                return Convert.ToBoolean(await db.DeleteAsync(favouriteToRemove));
             }
         }
     }

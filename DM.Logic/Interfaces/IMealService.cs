@@ -10,6 +10,6 @@ namespace DM.Logic.Interfaces
     {
         Task<Guid> AddMealAsync(MealCreationVM mealVM, Guid userId);
         Task<MealVM> GetMealByIdAsync(Guid id);
-        Task<IndexedResult<IEnumerable<MealPreviewVM>>> GetMealPreviewsAsync(Guid userId, IndexedResult<MealPreviewVM> lastReturned, int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE);
+        Task<IndexedResult<IEnumerable<MealPreviewVM>>> GetUsersMealsPreviewsAsync(Guid userId, IndexedResult<MealPreviewVM> lastReturned, int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE);
     }
 }

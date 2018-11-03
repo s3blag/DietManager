@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using DM.Database;
 using DM.Logic.Interfaces;
+using DM.Models.Exceptions;
 using DM.Models.ViewModels;
 using DM.Repositories.Interfaces;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,11 +15,13 @@ namespace DM.Logic.Services
     {
         private readonly IMapper _mapper;
         private readonly IMealScheduleRepository _mealScheduleRepository;
+        private readonly IAchievementService _achievementService;
 
-        public MealScheduleService(IMapper mapper, IMealScheduleRepository mealScheduleRepository)
+        public MealScheduleService(IMapper mapper, IMealScheduleRepository mealScheduleRepository, IAchievementService achievementService)
         {
             _mapper = mapper;
             _mealScheduleRepository = mealScheduleRepository;
+            _achievementService = achievementService;
         }
 
         public async Task<IEnumerable<MealScheduleEntryVM>> GetUpcomingMealSchedule(Guid userId, DateTimeOffset dateOffset)
@@ -49,13 +53,16 @@ namespace DM.Logic.Services
 
             if (addedSuccessfully)
             {
-                return dbMealScheduleEntry.Id;
+                throw new DataAccessException($"Adding meal schedule entry failed for model: {JsonConvert.SerializeObject(dbMealScheduleEntry)}");
             }
 
-            return Guid.Empty;
+            await _achievementService.CheckForNumberOfMealUsesAsync(userId, dbMealScheduleEntry.MealId);
+            await _achievementService.CheckForConsequentScheduleUpdatesAsync(userId);
+
+            return dbMealScheduleEntry.Id;
         }
 
-        private void ValidateArgument(params (Object value, string name)[] arguments)
+        private void ValidateArgument(params (object value, string name)[] arguments)
         {
             foreach (var (value, name) in arguments)
             {

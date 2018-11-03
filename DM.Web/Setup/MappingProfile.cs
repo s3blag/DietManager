@@ -58,6 +58,10 @@ namespace DM.Web
                 ForMember(target => target.Activity, config => config.MapFrom(src => (ActivityType)Enum.Parse(typeof(ActivityType), src.ActivityType, true))).
                 ReverseMap().
                 ForPath(target => target.ActivityType, config => config.MapFrom(src => src.Activity.ToString()));
+            CreateMap<FavouriteCreationVM, Favourite>().
+                ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
+                ReverseMap();
+            CreateMap<FavouriteVM, Favourite>().ReverseMap();
         }
     }
 }

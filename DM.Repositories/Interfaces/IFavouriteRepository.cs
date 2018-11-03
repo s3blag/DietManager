@@ -8,7 +8,6 @@ namespace DM.Repositories.Interfaces
     public interface IFavouriteRepository: IBaseRepository<Favourite>
     {
         Task<IDictionary<Guid, int>> GetNumberOfFavouritesMarksAsync(IEnumerable<Guid> mealIds);
-        Task<IEnumerable<Favourite>> GetUserFavouritesAsync(Guid userId);
-        Task<bool> RemoveFromFavouritesAsync(Favourite favouriteToRemove);
+        Task<IList<Favourite>> GetUserFavouritesAsync(Guid userId, int index, int takeAmount);
     }
 }

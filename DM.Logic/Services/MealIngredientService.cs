@@ -15,11 +15,13 @@ namespace DM.Logic.Services
     {
         private readonly IMapper _mapper;
         private readonly IMealIngredientRepository _mealIngredientRepository;
+        private readonly IAchievementService _achievementService;
 
-        public MealIngredientService(IMapper mapper, IMealIngredientRepository mealIngredientRepository)
+        public MealIngredientService(IMapper mapper, IMealIngredientRepository mealIngredientRepository, IAchievementService achievementService)
         {
             _mapper = mapper;
             _mealIngredientRepository = mealIngredientRepository;
+            _achievementService = achievementService;
         }
 
         public async Task<IEnumerable<MealIngredientVM>> GetMealIngredientsForMealAsync(Guid mealId)
@@ -36,11 +38,12 @@ namespace DM.Logic.Services
             return _mapper.Map<MealIngredientVM>(await _mealIngredientRepository.GetMealIngredientByIdAsync(mealIgredientId));
         }
 
-        public async Task<Guid> AddMealIngredientAsync(MealIngredientCreationVM mealIngredient)
+        public async Task<Guid> AddMealIngredientAsync(Guid userId, MealIngredientCreationVM mealIngredient)
         {
             ValidateArgument(mealIngredient, nameof(mealIngredient));
 
             var dbMealIngredient = _mapper.Map<MealIngredient>(mealIngredient);
+            dbMealIngredient.CreatorId = userId;
 
             bool mealIngredientNutritionsAddedSuccessfully = await _mealIngredientRepository.AddMealIngredientNutritionsAsync(dbMealIngredient.Nutrition);
 
@@ -58,6 +61,8 @@ namespace DM.Logic.Services
             {
                 throw new DataAccessException("MealIngredient couldn't be added. MealIngredient:" + JsonConvert.SerializeObject(dbMealIngredient));
             }
+
+            await _achievementService.CheckForNumberOfMealIngredientAdditionsByUserAsync(userId);
 
             return dbMealIngredient.Id;
         }
