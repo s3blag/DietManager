@@ -51,6 +51,8 @@ namespace DM.Logic.Services
             _mapper = mapper;
         }
 
+        public async Task<IEnumerable<AchievementVM>> GetAllAchievementsAsync() => 
+            _mapper.Map<IEnumerable<AchievementVM>>(await _achievementRepository.GetAllAsync());
 
         public async Task<IEnumerable<UserAchievementVM>> GetUsersAchievements(Guid userId) => 
             _mapper.Map<IEnumerable<UserAchievementVM>>(await _userAchievementRepository.GetUsersAchievementsAsync(userId));

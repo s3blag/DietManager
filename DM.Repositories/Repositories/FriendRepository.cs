@@ -11,7 +11,7 @@ namespace DM.Repositories
 {
     public class FriendRepository : BaseRepository<Friend>, IFriendRepository
     {
-        public async Task<IEnumerable<User>> GetUserFriendsAsync(Guid userId, int index, int takeAmount, FriendInvitationStatus status = FriendInvitationStatus.Accepted)
+        public async Task<IList<User>> GetUserFriendsAsync(Guid userId, int index, int takeAmount, FriendInvitationStatus status = FriendInvitationStatus.Accepted)
         {
             using (var db = new DietManagerDB())
             {
@@ -44,6 +44,17 @@ namespace DM.Repositories
         }
 
         public async Task<int> GetNumberOfFriendsAsync(Guid userId)
+        {
+            using (var db = new DietManagerDB())
+            {
+                return await db.Friends.
+                    Where(f => f.User1Id == userId || f.User2Id == userId).
+                    Where(f => f.Status == FriendInvitationStatus.Accepted.ToString()).
+                    CountAsync();
+            }
+        }
+
+        public async Task<int> GetFriend(Guid userId)
         {
             using (var db = new DietManagerDB())
             {

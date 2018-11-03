@@ -29,7 +29,7 @@ namespace DM.Logic.Services
 
         public async Task<IndexedResult<IEnumerable<MealPreviewVM>>> SearchMealsAsync(
             IndexedResult<MealSearchVM> searchArgumentsVM,
-            int takeAmount = DbConstants.DEFAULT_DB_TAKE_VALUE)
+            int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE)
         {
             var searchResult = await _mealRepository.GetMealPreviewsByQueryAsync(
                 searchArgumentsVM.Result.Query, 
@@ -48,7 +48,7 @@ namespace DM.Logic.Services
 
         public async Task<IndexedResult<IEnumerable<MealIngredientVM>>> SearchMealIngredientsAsync(
             IndexedResult<MealIngredientSearchVM> searchArgumentsVM,
-            int takeAmount = DbConstants.DEFAULT_DB_TAKE_VALUE)
+            int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE)
         {
             var searchResult = _mapper.Map<IList<MealIngredientVM>>(
                 await _mealIngredientRepository.GetMealIngredientsByQueryAsync(
@@ -73,7 +73,7 @@ namespace DM.Logic.Services
 
         public async Task<IndexedResult<IEnumerable<UserVM>>> SearchUsersAsync(
             IndexedResult<UserSearchVM> searchArgumentsVM,
-            int takeAmount = DbConstants.DEFAULT_DB_TAKE_VALUE)
+            int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE)
         {
             var searchResult = _mapper.Map<IList<UserVM>>(
                 await _userRepository.GetUsersByQueryAsync(

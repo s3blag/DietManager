@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DM.Models.ViewModels
 {
-    public class UserVM
+    public class AwaitingFriendInvitationVM
     {
         [Required]
-        public Guid Id { get; set; }
+        public Guid UserId { get; set; }
 
         [Required]
         public string Name { get; set; }
@@ -15,7 +15,5 @@ namespace DM.Models.ViewModels
         public string Surname { get; set; }
 
         public Guid? ImageId { get; set; }
-
-        public int? MutualFriendsCount { get; set; }
     }
 }

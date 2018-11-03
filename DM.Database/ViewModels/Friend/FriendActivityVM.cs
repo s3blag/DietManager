@@ -1,11 +1,24 @@
-﻿using System;
+﻿using DM.Models.Enums;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace DM.Models.ViewModels
 {
     public class FriendActivityVM
     {
-        public UserVM Friend { get; set; }
-        public object Activity { get; set; }
-        public DateTimeOffset ActivityDateTime { get; set; }
+        [Required]
+        public Guid ContentId { get; set; }
+
+        [Required]
+        public Guid Id { get; set; }
+
+        [Required]
+        public UserVM User { get; set; }
+
+        [Required]
+        public ActivityType Activity { get; set; }
+
+        [Required]
+        public DateTimeOffset ActivityDate { get; set; }
     }
 }

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DM.Web.Controllers
 {
     [Produces("application/json")]
-    [Route("api/user")]
+    [Route("api/[controller]")]
     public class UserController : Controller
     {
         private readonly ISearchService _searchService;
@@ -35,7 +35,5 @@ namespace DM.Web.Controllers
 
             return Ok(result);
         }
-
-      
     }
 }

@@ -176,6 +176,30 @@ namespace DM.Tests
             //}, new AchievementRepository(new AchievementsContainer()));
         }
 
+        [Fact]
+        public async Task Mapper()
+        {
+            var mapper = ObjectsFactory.GetMapperInstance();
 
+            var user = new User
+            {
+                Id = new Guid("d887c539-741d-482d-a031-806830bcb1e2"),
+                Name = "Sebastian",
+                Surname = "Łągiewski" 
+            };
+
+            var activity = new UserActivity()
+            {
+                ActivityDate = DateTimeOffset.Now,
+                ActivityType = "NewMealIngredientAdded",
+                ContentId= new Guid("d887c539-741d-0000-a031-806830bcb1e2"),
+                Id = new Guid("d887c539-741d-1111-a031-806830bcb1e2"),
+                User = user,
+                UserId = user.Id
+            };
+
+            var afterTransform = mapper.Map<FriendActivityVM>(activity);
+            var again = mapper.Map<UserActivity>(afterTransform);
+        }
     }
 }

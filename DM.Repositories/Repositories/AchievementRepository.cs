@@ -2,7 +2,6 @@
 using DM.Repositories.Interfaces;
 using LinqToDB;
 using LinqToDB.Data;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,9 +10,9 @@ namespace DM.Repositories
 {
     public class AchievementRepository: IAchievementRepository
     {
-        private readonly IAchievementsContainer _achievmentsCacheContainer;
+        private readonly ICacheContainer _achievmentsCacheContainer;
 
-        public AchievementRepository(IAchievementsContainer achievementsContainer)
+        public AchievementRepository(ICacheContainer achievementsContainer)
         {
             _achievmentsCacheContainer = achievementsContainer;
         }

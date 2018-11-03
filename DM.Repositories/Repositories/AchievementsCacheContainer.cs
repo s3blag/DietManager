@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DM.Repositories
 {
-    public class AchievementsContainer : IAchievementsContainer
+    public class AchievementsCacheContainer : ICacheContainer
     {
         private readonly List<Achievement> _achievements = new List<Achievement>();
         

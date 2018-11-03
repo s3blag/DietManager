@@ -11,8 +11,6 @@ namespace DM.Logic.Services
 {
     public class MealScheduleService : IMealScheduleService
     {
-        private const int MEAL_SCHEDULE_FETCH_RANGE_IN_DAYS = 7;
-
         private readonly IMapper _mapper;
         private readonly IMealScheduleRepository _mealScheduleRepository;
 
@@ -33,7 +31,7 @@ namespace DM.Logic.Services
                 await _mealScheduleRepository.GetMealScheduleEntriesInDateRangeAsync(
                     userId, 
                     dateOffset, 
-                    DateTimeOffset.Now.AddDays(MEAL_SCHEDULE_FETCH_RANGE_IN_DAYS)
+                    DateTimeOffset.Now.AddDays(Constants.MEAL_SCHEDULE_FETCH_RANGE_IN_DAYS)
                     ));
         }
 

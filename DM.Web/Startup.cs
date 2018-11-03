@@ -12,10 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Serialization;
 using System;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Diet_Manager
 {
@@ -74,7 +72,7 @@ namespace Diet_Manager
             services.AddScoped<ISearchService, SearchService>();
             services.AddScoped<IMealIngredientsApiCaller, MealIngredientsApiCaller>();
 
-            services.AddSingleton<IAchievementsContainer, AchievementsContainer>();
+            services.AddSingleton<ICacheContainer, AchievementsCacheContainer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

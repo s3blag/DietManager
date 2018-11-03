@@ -77,7 +77,7 @@ namespace DM.Logic.Services
         public async Task<IndexedResult<IEnumerable<MealPreviewVM>>> GetMealPreviewsAsync(
             Guid userId, 
             IndexedResult<MealPreviewVM> lastReturned, 
-            int takeAmount = DbConstants.DEFAULT_DB_TAKE_VALUE
+            int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE
         )
         {
             //TODO: uncomment after auth implementation

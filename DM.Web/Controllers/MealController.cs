@@ -89,7 +89,7 @@ namespace DM.Web.Controllers
 
             var result = await _mealService.GetMealPreviewsAsync(userId, lastReturned);
 
-            if (!result.Result.Any())
+            if (result == null)
             {
                 return NotFound();
             }

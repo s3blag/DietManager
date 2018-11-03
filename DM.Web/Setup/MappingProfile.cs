@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DM.Database;
 using DM.Models;
+using DM.Models.Enums;
 using DM.Models.Models;
 using DM.Models.ViewModels;
 using System;
@@ -39,9 +40,24 @@ namespace DM.Web
                 ReverseMap();
             CreateMap<UserAchievement, UserAchievementVM>().ReverseMap();
             CreateMap<Achievement, AchievementVM>().ReverseMap();
+            CreateMap<User, UserVM>().ReverseMap();
             CreateMap<UserAchievementCreation, UserAchievement>().
                 ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid()));
-
+            CreateMap<User, AwaitingFriendInvitationVM>().
+                ForMember(target => target.UserId, config => config.MapFrom(src => src.Id)).
+                ForMember(target => target.Name, config => config.MapFrom(src => src.Name)).
+                ForMember(target => target.Surname, config => config.MapFrom(src => src.Surname)).
+                ForMember(target => target.ImageId, config => config.MapFrom(src => src.ImageId)).
+                ReverseMap();
+            CreateMap<FriendInvitationCreationVM, Friend>().
+                ForMember(target => target.User1Id, config => config.MapFrom(src => src.InvitingUserId)).
+                ForMember(target => target.User2Id, config => config.MapFrom(src => src.InvitedUserId)).
+                ForMember(target => target.Status, config => config.MapFrom(src => FriendInvitationStatus.Awaiting)).
+                ForMember(target => target.CreationDate, config => config.MapFrom(_ => DateTimeOffset.Now));
+            CreateMap<UserActivity, FriendActivityVM>().
+                ForMember(target => target.Activity, config => config.MapFrom(src => (ActivityType)Enum.Parse(typeof(ActivityType), src.ActivityType, true))).
+                ReverseMap().
+                ForPath(target => target.ActivityType, config => config.MapFrom(src => src.Activity.ToString()));
         }
     }
 }

@@ -4,7 +4,8 @@
     {
         NewMealAdded,
         NewMealIngredientAdded,
-        PictureChanged
+        PictureChanged,
+        AchievementReached
     }
 
     public enum FriendInvitationStatus
@@ -14,7 +15,6 @@
         Awaiting
     }
 
-#region Achievements
     public static class Achievements
     {
         public enum MealAchievement
@@ -44,16 +44,4 @@
             NumberOfFriends
         }
     }
-    
-    public enum AchievementCategory
-    {
-        Meal,
-        MealIngredient,
-        User,
-        MealSchedule,
-        Friends
-    }
-
-#endregion
-
 }

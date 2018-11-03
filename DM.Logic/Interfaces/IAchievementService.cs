@@ -17,5 +17,6 @@ namespace DM.Logic.Interfaces
         Task<UserAchievementVM> CheckForUserAnniversaryAchievementAsync(User userBeforeLastLoginUpdate);
         Task<IEnumerable<UserAchievementVM>> GetUsersAchievements(Guid userId);
         Task<bool> MarkAchievementsAsReadAsync(IEnumerable<Guid> userAchievementIds, Guid userId);
+        Task<IEnumerable<AchievementVM>> GetAllAchievementsAsync();
     }
 }
