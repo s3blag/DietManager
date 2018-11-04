@@ -27,6 +27,7 @@ namespace DM.Logic.Services
         private readonly IMealIngredientRepository _mealIngredientRepository;
         private readonly IFriendRepository _friendRepository;
         private readonly IMealScheduleRepository _mealScheduleRepository;
+        private readonly IActivityService _activityService;
         private readonly IMapper _mapper;
 
         public AchievementService(
@@ -38,6 +39,7 @@ namespace DM.Logic.Services
             IMealIngredientRepository mealIngredientRepository,
             IFriendRepository friendRepository,
             IMealScheduleRepository mealScheduleRepository,
+            IActivityService activityService,
             IMapper mapper)
         {
             achievementsConfig = options.Value;
@@ -48,6 +50,7 @@ namespace DM.Logic.Services
             _mealIngredientRepository = mealIngredientRepository;
             _friendRepository = friendRepository;
             _mealScheduleRepository = mealScheduleRepository;
+            _activityService = activityService;
             _mapper = mapper;
         }
 
@@ -217,6 +220,8 @@ namespace DM.Logic.Services
             ThrowIfNotCompleted(insertCompleted, dbUserAchievement);
 
             dbUserAchievement.Achievement = achievement;
+
+            await _activityService.LogNewAchievementReachedAsync(dbUserAchievement.UserId, dbUserAchievement.Id);
 
             return dbUserAchievement;
         }

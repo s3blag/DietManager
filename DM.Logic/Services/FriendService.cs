@@ -2,6 +2,7 @@
 using DM.Database;
 using DM.Logic.Interfaces;
 using DM.Models.Exceptions;
+using DM.Models.Models;
 using DM.Models.ViewModels;
 using DM.Models.Wrappers;
 using DM.Repositories.Interfaces;
@@ -16,15 +17,15 @@ namespace DM.Logic.Services
     public class FriendService : IFriendService
     {
         private readonly IFriendRepository _friendRepository;
-        private readonly IActivityRepository _activityRepository;
+        private readonly IActivityService _activityService;
         private readonly IMapper _mapper;
         private readonly IAchievementService _achievementService;
 
-        public FriendService(IFriendRepository friendRepository, IActivityRepository activityRepository, 
+        public FriendService(IFriendRepository friendRepository, IActivityService activityService, 
             IMapper mapper, IAchievementService achievementService)
         {
             _friendRepository = friendRepository;
-            _activityRepository = activityRepository;
+            _activityService = activityService;
             _mapper = mapper;
             _achievementService = achievementService;
         }
@@ -49,24 +50,19 @@ namespace DM.Logic.Services
             };
         }
 
-        public async Task<IndexedResult<IEnumerable<FriendActivityVM>>> GetFriendsActivitiesFeedAsync(
+        public async Task<IndexedResult<IEnumerable<UserActivityVM>>> GetFriendsActivitiesFeedAsync(
             Guid userId, 
-            IndexedResult<FriendActivityVM> lastReturned,
+            IndexedResult<UserActivityVM> lastReturned,
             int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE)
         {
-            if (lastReturned != null && lastReturned.IsLast)
-            {
-                return null;
-            }
-
             var friends = await _friendRepository.GetUserFriendsAsync(userId, 0, int.MaxValue);
-            var friendsActivities = await _activityRepository.GetUsersActivitiesAsync(friends.Select(f => f.Id).ToList(), lastReturned.Index, takeAmount);
+            var indexedFriendsActivities = await _activityService.GetUsersActivitiesFeedAsync(friends.Select(f => f.Id).ToList(), lastReturned, takeAmount);
 
-            return new IndexedResult<IEnumerable<FriendActivityVM>>()
+            return new IndexedResult<IEnumerable<UserActivityVM>>()
             {
-                Result = _mapper.Map<IEnumerable<FriendActivityVM>>(friendsActivities),
-                Index = lastReturned?.Index ?? 0 + friendsActivities.Count,
-                IsLast = friendsActivities.Count != takeAmount
+                Result = _mapper.Map<IEnumerable<UserActivityVM>>(indexedFriendsActivities.Result),
+                Index = lastReturned?.Index ?? 0 + indexedFriendsActivities.Result.Count,
+                IsLast = indexedFriendsActivities.Result.Count != takeAmount
             };
         }
 

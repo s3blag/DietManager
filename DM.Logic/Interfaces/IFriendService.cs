@@ -8,7 +8,7 @@ namespace DM.Logic.Interfaces
 {
     public interface IFriendService
     {
-        Task<IndexedResult<IEnumerable<FriendActivityVM>>> GetFriendsActivitiesFeedAsync(Guid userId, IndexedResult<FriendActivityVM> lastReturned, int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE);
+        Task<IndexedResult<IEnumerable<UserActivityVM>>> GetFriendsActivitiesFeedAsync(Guid userId, IndexedResult<UserActivityVM> lastReturned, int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE);
         Task<IndexedResult<IEnumerable<UserFriendsVM>>> GetUserFriendsAsync(Guid userId, IndexedResult<UserFriendsVM> lastReturned, int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE);
         Task<IndexedResult<IEnumerable<AwaitingFriendInvitationVM>>> GetFriendInvitationsAsync(Guid userId, IndexedResult<AwaitingFriendInvitationVM> lastReturned, int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE);
         Task SendFriendInvitationAsync(FriendInvitationCreationVM friendInvitation);

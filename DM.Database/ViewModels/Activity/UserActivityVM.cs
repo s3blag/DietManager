@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DM.Models.ViewModels
 {
-    public class FriendActivityVM
+    public class UserActivityVM
     {
         [Required]
         public Guid ContentId { get; set; }

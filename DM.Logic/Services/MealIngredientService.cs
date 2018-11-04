@@ -16,12 +16,15 @@ namespace DM.Logic.Services
         private readonly IMapper _mapper;
         private readonly IMealIngredientRepository _mealIngredientRepository;
         private readonly IAchievementService _achievementService;
+        private readonly IActivityService _activityService;
 
-        public MealIngredientService(IMapper mapper, IMealIngredientRepository mealIngredientRepository, IAchievementService achievementService)
+        public MealIngredientService(IMapper mapper, IMealIngredientRepository mealIngredientRepository,
+                                     IAchievementService achievementService, IActivityService activityService)
         {
             _mapper = mapper;
             _mealIngredientRepository = mealIngredientRepository;
             _achievementService = achievementService;
+            _activityService = activityService;
         }
 
         public async Task<IEnumerable<MealIngredientVM>> GetMealIngredientsForMealAsync(Guid mealId)
@@ -62,6 +65,7 @@ namespace DM.Logic.Services
                 throw new DataAccessException("MealIngredient couldn't be added. MealIngredient:" + JsonConvert.SerializeObject(dbMealIngredient));
             }
 
+            await _activityService.LogNewMealIngredientAddedAsync(userId, dbMealIngredient.Id);
             await _achievementService.CheckForNumberOfMealIngredientAdditionsByUserAsync(userId);
 
             return dbMealIngredient.Id;

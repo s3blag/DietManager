@@ -198,7 +198,7 @@ namespace DM.Tests
                 UserId = user.Id
             };
 
-            var afterTransform = mapper.Map<FriendActivityVM>(activity);
+            var afterTransform = mapper.Map<UserActivityVM>(activity);
             var again = mapper.Map<UserActivity>(afterTransform);
         }
     }

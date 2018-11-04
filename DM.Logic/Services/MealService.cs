@@ -2,7 +2,9 @@
 using DM.Database;
 using DM.Logic.Interfaces;
 using DM.Models;
+using DM.Models.Enums;
 using DM.Models.Exceptions;
+using DM.Models.Models;
 using DM.Models.ViewModels;
 using DM.Models.Wrappers;
 using DM.Repositories.Interfaces;
@@ -21,15 +23,17 @@ namespace DM.Logic.Services
         private readonly IMealIngredientRepository _mealIngredientRepository;
         private readonly IFavouriteRepository _favouritesRepository;
         private readonly IAchievementService _achievementService;
+        private readonly IActivityService _activityService;
 
         public MealService(IMapper mapper, IMealRepository mealRepository, IMealIngredientRepository mealIngredientRepository, 
-            IFavouriteRepository favouritesRepository, IAchievementService achievementService)
+            IFavouriteRepository favouritesRepository, IAchievementService achievementService, IActivityService activityService)
         {
             _mapper = mapper;
             _mealRepository = mealRepository;
             _mealIngredientRepository = mealIngredientRepository;
             _favouritesRepository = favouritesRepository;
             _achievementService = achievementService;
+            _activityService = activityService;
         }
 
         public async Task<MealVM> GetMealByIdAsync(Guid id)
@@ -68,6 +72,7 @@ namespace DM.Logic.Services
                 );
             }
 
+            await _activityService.LogNewMealAddedAsync(userId, dbMeal.Id);
             await _achievementService.CheckForNumberOfMealAdditionsByUserAsync(userId);
 
             return dbMeal.Id;

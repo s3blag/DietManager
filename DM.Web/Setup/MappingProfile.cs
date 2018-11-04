@@ -54,7 +54,7 @@ namespace DM.Web
                 ForMember(target => target.User2Id, config => config.MapFrom(src => src.InvitedUserId)).
                 ForMember(target => target.Status, config => config.MapFrom(src => FriendInvitationStatus.Awaiting)).
                 ForMember(target => target.CreationDate, config => config.MapFrom(_ => DateTimeOffset.Now));
-            CreateMap<UserActivity, FriendActivityVM>().
+            CreateMap<UserActivity, UserActivityVM>().
                 ForMember(target => target.Activity, config => config.MapFrom(src => (ActivityType)Enum.Parse(typeof(ActivityType), src.ActivityType, true))).
                 ReverseMap().
                 ForPath(target => target.ActivityType, config => config.MapFrom(src => src.Activity.ToString()));
@@ -62,6 +62,10 @@ namespace DM.Web
                 ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
                 ReverseMap();
             CreateMap<FavouriteVM, Favourite>().ReverseMap();
+            CreateMap<ActivityCreation, UserActivity>().
+                ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
+                ForMember(target => target.ActivityType, config => config.MapFrom(src => src.ActivityType.ToString())).
+                ForMember(target => target.ActivityDate, config => config.MapFrom(src => DateTimeOffset.Now));
         }
     }
 }

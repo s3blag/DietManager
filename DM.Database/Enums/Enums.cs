@@ -4,8 +4,9 @@
     {
         NewMealAdded,
         NewMealIngredientAdded,
-        PictureChanged,
-        AchievementReached
+        AchievementReached,
+        NewFriend,
+        AddToFavourites,
     }
 
     public enum FriendInvitationStatus

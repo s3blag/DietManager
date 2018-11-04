@@ -16,13 +16,15 @@ namespace DM.Logic.Services
         private readonly IFavouriteRepository _favouriteRepository;
         private readonly IAchievementService _achievementService;
         private readonly IMapper _mapper;
+        private readonly IActivityService _activityService;
 
         public FavouritesService(IFavouriteRepository favouriteRepository, IAchievementService achievementService,
-            IMapper mapper)
+            IMapper mapper, IActivityService activityService)
         {
             _favouriteRepository = favouriteRepository;
             _achievementService = achievementService;
             _mapper = mapper;
+            _activityService = activityService;
         }
 
         public async Task<IndexedResult<IEnumerable<FavouriteVM>>> GetFavouriteMealsAsync(
@@ -51,6 +53,7 @@ namespace DM.Logic.Services
             }
 
             await _achievementService.CheckForNumberOfFavouriteMarksAsync(dbFavourite.MealId);
+            await _activityService.LogNewFavouriteMealAddedAsync(dbFavourite.UserId, dbFavourite.Id);
 
             return dbFavourite.Id;
         }

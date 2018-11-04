@@ -25,7 +25,7 @@ namespace DM.Repositories
             {
                 using (var db = new DietManagerDB())
                 {
-                    var rowsCopied = db.BulkCopy(new BulkCopyOptions() { KeepIdentity = false }, achievements);
+                    var rowsCopied = db.BulkCopy(achievements);
 
                     return achievements.Count() == (int)rowsCopied.RowsCopied;
                 }

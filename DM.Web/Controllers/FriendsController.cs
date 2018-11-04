@@ -89,7 +89,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost("news-feed")]
-        public async Task<IActionResult> GetNewsFeed([FromBody]IndexedResult<FriendActivityVM> lastReturned)
+        public async Task<IActionResult> GetNewsFeed([FromBody]IndexedResult<UserActivityVM> lastReturned)
         {
             if (lastReturned != null && lastReturned.IsLast)
             {
