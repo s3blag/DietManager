@@ -29,7 +29,7 @@
             <div class="meal-ingredients-search">
               <input type="text" class="form-control" id="mealIngredientSearchName" placeholder="Search..." v-model="mealIngredientSearchQuery">
               <button id="searchMealIngredients" class="btn main-background-color" @click="searchMealIngredients">
-                <font-awesome-icon id="search-icon" class="option-icon" icon="search" /></button>
+                <font-awesome-icon id="search-icon" icon="search" /></button>
             </div>
           </div>
           <ul class="added-meal-ingredients">

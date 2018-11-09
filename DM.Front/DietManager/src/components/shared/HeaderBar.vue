@@ -3,7 +3,7 @@
     <router-link class="header-element" to="/">
       <font-awesome-icon class="site-logo main-color" icon="apple-alt" />
     </router-link>
-    <router-link class="header-element hover" to="/my-friends">
+    <router-link class="header-element hover" to="/friend-manager">
       Friends
     </router-link>
     <router-link class="header-element hover" to="/my-schedule">

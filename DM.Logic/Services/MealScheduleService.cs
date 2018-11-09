@@ -7,6 +7,7 @@ using DM.Repositories.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DM.Logic.Services
@@ -24,22 +25,28 @@ namespace DM.Logic.Services
             _achievementService = achievementService;
         }
 
-        public async Task<IEnumerable<MealScheduleEntryVM>> GetUpcomingMealSchedule(Guid userId, DateTimeOffset dateOffset)
+        public async Task<Dictionary<DayOfWeek, IEnumerable<MealScheduleEntryVM>>> GetUpcomingMealSchedule(Guid userId, DateTimeOffset dateOffset)
         {
             ValidateArgument(
                 (userId, nameof(userId)), 
                 (dateOffset, nameof(dateOffset))
                 );
 
-            return _mapper.Map<IEnumerable<MealScheduleEntryVM>>(
-                await _mealScheduleRepository.GetMealScheduleEntriesInDateRangeAsync(
-                    userId, 
-                    dateOffset, 
-                    DateTimeOffset.Now.AddDays(Constants.MEAL_SCHEDULE_FETCH_RANGE_IN_DAYS)
-                    ));
+            var mealScheduleEntries = _mapper.Map<IEnumerable<MealScheduleEntryVM>>(
+                        await _mealScheduleRepository.GetMealScheduleEntriesInDateRangeAsync(
+                                                        userId,
+                                                        dateOffset,
+                                                        DateTimeOffset.Now.AddDays(Constants.MEAL_SCHEDULE_FETCH_RANGE_IN_DAYS))
+            );
+
+            var groupedMealScheduleEntries = mealScheduleEntries.
+                                                GroupBy(m => m.Date.DayOfWeek).
+                                                ToDictionary(kv => kv.Key, kv => kv.AsEnumerable());
+
+            return groupedMealScheduleEntries;
         }
 
-        public async Task<Guid> AddMealScheduleEntry(Guid userId, NewMealScheduleEntryVM newMealScheduleEntry)
+        public async Task<Guid> AddMealScheduleEntry(Guid userId, MealScheduleEntryCreationVM newMealScheduleEntry)
         {
             ValidateArgument(
                 (userId, nameof(userId)),
@@ -56,8 +63,10 @@ namespace DM.Logic.Services
                 throw new DataAccessException($"Adding meal schedule entry failed for model: {JsonConvert.SerializeObject(dbMealScheduleEntry)}");
             }
 
-            await _achievementService.CheckForNumberOfMealUsesAsync(userId, dbMealScheduleEntry.MealId);
-            await _achievementService.CheckForConsequentScheduleUpdatesAsync(userId);
+            var checkNumberOfMealUsesTask = _achievementService.CheckForNumberOfMealUsesAsync(userId, dbMealScheduleEntry.MealId);
+            var checkConsequentUpdatesTask =  _achievementService.CheckForConsequentScheduleUpdatesAsync(userId);
+
+            await Task.WhenAll(checkNumberOfMealUsesTask, checkConsequentUpdatesTask);
 
             return dbMealScheduleEntry.Id;
         }

@@ -52,8 +52,10 @@ namespace DM.Logic.Services
                 throw new DataAccessException($"Adding to favourites failed for model: {dbFavourite}");
             }
 
-            await _achievementService.CheckForNumberOfFavouriteMarksAsync(dbFavourite.MealId);
-            await _activityService.LogNewFavouriteMealAddedAsync(dbFavourite.UserId, dbFavourite.Id);
+            var checkForNumberOfFavouriteMarksTask = _achievementService.CheckForNumberOfFavouriteMarksAsync(dbFavourite.MealId);
+            var LogNewFavouriteAddedTask = _activityService.LogNewFavouriteMealAddedAsync(dbFavourite.UserId, dbFavourite.Id);
+
+            await Task.WhenAll(checkForNumberOfFavouriteMarksTask, LogNewFavouriteAddedTask);
 
             return dbFavourite.Id;
         }

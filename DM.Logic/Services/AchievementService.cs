@@ -65,7 +65,7 @@ namespace DM.Logic.Services
             return await _userAchievementRepository.MarkAsReadAsync(userAchievementIds, userId);
         }
 
-        #region MealAchievements
+        #region Meal Achievements
 
         public async Task CheckForNumberOfMealUsesAsync(Guid userId, Guid mealId)
         {
@@ -99,7 +99,7 @@ namespace DM.Logic.Services
 
         #endregion
 
-        #region MealIngredientAchievements
+        #region MealIngredient Achievements
 
         public async Task<UserAchievementVM> CheckForNumberOfMealIngredientAdditionsByUserAsync(Guid userId)
         {
@@ -117,7 +117,7 @@ namespace DM.Logic.Services
 
         #endregion
 
-        #region UserAchievements
+        #region User Achievements
 
         public async Task<UserAchievementVM> CheckForUserAnniversaryAsync(User userBeforeLastLoginUpdate)
         {
@@ -147,7 +147,7 @@ namespace DM.Logic.Services
 
         #endregion
 
-        #region MealScheduleAchievements
+        #region Meal Schedule Achievements
 
         public async Task<UserAchievementVM> CheckForConsequentScheduleUpdatesAsync(Guid userId)
         {
@@ -175,7 +175,7 @@ namespace DM.Logic.Services
 
         #endregion
 
-        #region FriendAchievements
+        #region Friend Achievements
 
         public async Task<UserAchievementVM> CheckForNumberOfFriendsAsync(Guid userId)
         {
@@ -192,6 +192,8 @@ namespace DM.Logic.Services
         }
 
         #endregion
+
+        #region Private Methods
 
         private async Task<UserAchievement> AddAchievementIfNextStageReachedAsync(Guid userId, int[] achievementStages, int newValue, object achievement)
         {
@@ -234,5 +236,6 @@ namespace DM.Logic.Services
             }
         }
 
+        #endregion
     }
 }

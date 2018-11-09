@@ -2,9 +2,7 @@
 using DM.Database;
 using DM.Logic.Interfaces;
 using DM.Models;
-using DM.Models.Enums;
 using DM.Models.Exceptions;
-using DM.Models.Models;
 using DM.Models.ViewModels;
 using DM.Models.Wrappers;
 using DM.Repositories.Interfaces;
@@ -72,8 +70,10 @@ namespace DM.Logic.Services
                 );
             }
 
-            await _activityService.LogNewMealAddedAsync(userId, dbMeal.Id);
-            await _achievementService.CheckForNumberOfMealAdditionsByUserAsync(userId);
+            var logNewMealAddedTask = _activityService.LogNewMealAddedAsync(userId, dbMeal.Id);
+            var checkForNumberOfAdditionsTask = _achievementService.CheckForNumberOfMealAdditionsByUserAsync(userId);
+
+            await Task.WhenAll(logNewMealAddedTask, checkForNumberOfAdditionsTask);
 
             return dbMeal.Id;
         } 
@@ -108,7 +108,7 @@ namespace DM.Logic.Services
             return new IndexedResult<IEnumerable<MealPreviewVM>>()
             {
                 Result = _mapper.Map<IEnumerable<MealPreviewVM>>(mealPreviews),
-                Index = lastReturned?.Index ?? 0 + mealPreviews.Count,
+                Index = (lastReturned?.Index ?? 0) + mealPreviews.Count,
                 IsLast = mealPreviews.Count != takeAmount
             };           
         }
@@ -116,23 +116,25 @@ namespace DM.Logic.Services
         private IList<MealMealIngredient> GetMealMealIngredients(
             Guid mealId, 
             IEnumerable<MealIngredientIdWithQuantityVM> mealIngredientsIDs
-        ) =>    mealIngredientsIDs.Select(m => 
-                    new MealMealIngredient()
-                    {
-                        Id = Guid.NewGuid(),
-                        MealId = mealId,
-                        MealIngredientId = m .Id,
-                        Quantity = m.Quantity
-                    }).
-                ToList();
+        ) =>    mealIngredientsIDs.
+                    Select(m => 
+                        new MealMealIngredient()
+                        {
+                            Id = Guid.NewGuid(),
+                            MealId = mealId,
+                            MealIngredientId = m .Id,
+                            Quantity = m.Quantity
+                        }
+                    ).
+                    ToList();
 
         private void ValidateArguments(params (Object value, string name)[] arguments)
         {
             foreach (var (value, name) in arguments)
             {
-                if (value is Guid)
+                if (value is Guid id)
                 {
-                    if ((Guid)value == Guid.Empty)
+                    if (id == Guid.Empty)
                     {
                         throw new ArgumentNullException(name);
                     }

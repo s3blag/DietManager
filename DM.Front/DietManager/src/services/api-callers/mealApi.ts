@@ -68,15 +68,19 @@ export default class MealApiCaller {
   }
 
   static search(
-    lastReturnedIndexedSearch: IndexedResult<MealSearch> | null,
+    lastReturnedIndexedSearch: IndexedResult<MealSearch>,
     successHandler: (indexedResult: IndexedResult<MealPreview[]>) => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.post<IndexedResult<MealPreview[]>>("/api/meal/search", {
-      headers: {
-        "Content-Type": "application/json"
+    Axios.post<IndexedResult<MealPreview[]>>(
+      "/api/meal/search",
+      lastReturnedIndexedSearch,
+      {
+        headers: {
+          "Content-Type": "application/json"
+        }
       }
-    })
+    )
       .then(response => {
         successHandler(response.data);
       })

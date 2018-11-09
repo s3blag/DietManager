@@ -65,12 +65,18 @@ namespace Diet_Manager
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserAchievementRepository, UserAchievementRepository>();
             services.AddScoped<IAchievementRepository, AchievementRepository>();
+            services.AddScoped<IFriendRepository, FriendRepository>();
+            services.AddScoped<IMealScheduleRepository, MealScheduleRepository>();
+            services.AddScoped<IActivityRepository, ActivityRepository>();
 
             services.AddScoped<IMealService, MealService>();
             services.AddScoped<IMealIngredientService, MealIngredientService>();
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<ISearchService, SearchService>();
             services.AddScoped<IMealIngredientsApiCaller, MealIngredientsApiCaller>();
+            services.AddScoped<IAchievementService, AchievementService>();
+            services.AddScoped<IMealScheduleService, MealScheduleService>();
+            services.AddScoped<IActivityService, ActivityService>();
 
             services.AddSingleton<ICacheContainer, AchievementsCacheContainer>();
         }

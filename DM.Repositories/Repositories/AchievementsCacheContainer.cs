@@ -18,7 +18,7 @@ namespace DM.Repositories
         public Achievement Get(object achievement, int value)
         {
             return _achievements.
-                Where(a => a.Category == achievement.GetType().ToString()).
+                Where(a => a.Category == achievement.GetType().Name).
                 Where(a => a.Type == achievement.ToString()).
                 Where(a => a.Value == value).
                 FirstOrDefault();             

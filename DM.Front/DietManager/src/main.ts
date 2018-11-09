@@ -11,7 +11,9 @@ import {
   faPlusCircle,
   faBook,
   faArrowAltCircleRight,
-  faUtensils
+  faUtensils,
+  faNewspaper,
+  faUserFriends
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(faAppleAlt);
@@ -21,6 +23,8 @@ library.add(faPlusCircle);
 library.add(faBook);
 library.add(faArrowAltCircleRight);
 library.add(faUtensils);
+library.add(faNewspaper);
+library.add(faUserFriends);
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 
 import BootstrapVue from "bootstrap-vue";

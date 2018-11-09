@@ -1,23 +1,11 @@
-using AutoMapper;
 using DM.Database;
-using DM.Logic.Services;
-using DM.Models.Config;
 using DM.Models.Enums;
-using DM.Models.Models;
 using DM.Models.ViewModels;
-using DM.Repositories;
 using DM.Repositories.Extensions;
-using DM.Repositories.Interfaces;
-using DM.Repositories.Repositories;
+
 using DM.Tests.TestsData;
 using LinqToDB;
-using LinqToDB.Data;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -161,45 +149,23 @@ namespace DM.Tests
         {
             ObjectsFactory.InitDbConnection(Constants.ConnectionString);
 
-            //var obj = new AchievementsSetup();
+            object obj = Achievements.FriendAchievement.NumberOfFriends;
 
-            //await obj.Setup(new AchievementsConfig()
-            //{
-            //    FriendAchievements = new Dictionary<Achievements.FriendAchievement, int[]>()
-            //    {
-            //        [Achievements.FriendAchievement.NumberOfFriends] = new [] { 1, 5, 10 }
-            //    },
-            //    MealScheduleAchievements = new Dictionary<Achievements.MealScheduleAchievement, int[]>()
-            //    {
-            //        [Achievements.MealScheduleAchievement.ConsequentScheduleUpdates] = new [] {2, 4, 6}
-            //    }
-            //}, new AchievementRepository(new AchievementsContainer()));
+            string category = obj.GetType().Name;
+
+            string type = obj.ToString();
         }
 
         [Fact]
         public async Task Mapper()
         {
-            var mapper = ObjectsFactory.GetMapperInstance();
-
-            var user = new User
-            {
-                Id = new Guid("d887c539-741d-482d-a031-806830bcb1e2"),
-                Name = "Sebastian",
-                Surname = "Łągiewski" 
-            };
-
-            var activity = new UserActivity()
-            {
-                ActivityDate = DateTimeOffset.Now,
-                ActivityType = "NewMealIngredientAdded",
-                ContentId= new Guid("d887c539-741d-0000-a031-806830bcb1e2"),
-                Id = new Guid("d887c539-741d-1111-a031-806830bcb1e2"),
-                User = user,
-                UserId = user.Id
-            };
-
-            var afterTransform = mapper.Map<UserActivityVM>(activity);
-            var again = mapper.Map<UserActivity>(afterTransform);
-        }
+            string date = "2018-11-04T23:00:00.000Z";
+            string date2 = "2018-11-04T22:00:00.000-01";
+            var now = DateTimeOffset.Now;
+            var dateOffset = DateTimeOffset.Parse(date);
+            var dateOffset2 = DateTimeOffset.Parse(date2);
+            bool result = dateOffset == dateOffset2;
+            var str = dateOffset.ToString();
+       }
     }
 }

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DM.Repositories.Repositories
+namespace DM.Repositories
 {
     public class MealScheduleRepository : BaseRepository<MealScheduleEntry>, IMealScheduleRepository
     {

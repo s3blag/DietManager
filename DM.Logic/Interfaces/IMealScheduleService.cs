@@ -7,7 +7,7 @@ namespace DM.Logic.Interfaces
 {
     public interface IMealScheduleService
     {
-        Task<Guid> AddMealScheduleEntry(Guid userId, NewMealScheduleEntryVM newMealScheduleEntry);
-        Task<IEnumerable<MealScheduleEntryVM>> GetUpcomingMealSchedule(Guid userId, DateTimeOffset dateOffset);
+        Task<Guid> AddMealScheduleEntry(Guid userId, MealScheduleEntryCreationVM newMealScheduleEntry);
+        Task<Dictionary<DayOfWeek, IEnumerable<MealScheduleEntryVM>>> GetUpcomingMealSchedule(Guid userId, DateTimeOffset dateOffset);
     }
 }

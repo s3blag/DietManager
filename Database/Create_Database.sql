@@ -84,9 +84,7 @@ CREATE TABLE "Meals"."Meal" (
     "ImageId"       UUID        NULL,
     "Name"          TEXT        NOT NULL,
     "Description"   TEXT        NULL,
-    "Calories"      REAL        NOT NULL,
-    -- races!
-    "NumberOfUses"  INTEGER     NOT NULL DEFAULT 0
+    "Calories"      REAL        NOT NULL
 );
 ALTER TABLE "Meals"."Meal" 
 ADD CONSTRAINT "FK_Meal_Image" FOREIGN KEY ("ImageId") REFERENCES  "Images"."Image"("Id"),
@@ -95,7 +93,8 @@ ADD CONSTRAINT "FK_Meal_User" FOREIGN KEY ("CreatorId") REFERENCES  "Users"."Use
 CREATE TABLE "Meals"."Favourites" (
     "Id"            UUID        PRIMARY KEY,
     "MealId"        UUID        NOT NULL,
-    "UserId"        UUID        NOT NULL
+    "UserId"        UUID        NOT NULL,
+    "CreationDate"  TIMESTAMPTZ NOT NULL
 );
 ALTER TABLE "Meals"."Favourites"
 ADD CONSTRAINT FK_Favourites_MealId FOREIGN KEY ("MealId") REFERENCES "Meals"."Meal"("Id") ON DELETE CASCADE,
@@ -116,10 +115,10 @@ CREATE TABLE "Meals"."Nutritions" (
     "Protein"       REAL    NOT NULL,
     "Carbohydrates" REAL    NOT NULL,
     "Fats"          REAL    NOT NULL,
-    "VitaminA"      REAL,
-    "VitaminC"      REAL,
-    "VitaminB6"     REAL,
-    "VitaminD"      REAL
+    "VitaminA"      REAL    NULL,
+    "VitaminC"      REAL    NULL,
+    "VitaminB6"     REAL    NULL,
+    "VitaminD"      REAL    NULL
 );
 
 CREATE TABLE "Meals"."MealIngredient" (

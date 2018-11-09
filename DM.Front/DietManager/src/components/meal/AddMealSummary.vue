@@ -207,6 +207,8 @@ export default class AddMealSummary extends Vue {
 <style scoped>
 ul {
   list-style: none;
+  background-color: #e6e4e4;
+  border-radius: 10px;
 }
 li {
   justify-content: space-between;

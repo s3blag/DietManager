@@ -11,7 +11,7 @@ namespace DM.Models.ViewModels
 
         public string Name { get; set; }
 
-        public string Calories { get; set; }
+        public int Calories { get; set; }
 
         public IEnumerable<MealIngredientWithQuantityVM> Ingredients { get; set; }
     }
