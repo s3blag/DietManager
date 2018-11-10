@@ -1,5 +1,5 @@
 <template>
-  <ul>
+  <ul class="content-background">
     <li>
       <div class="element-name">Calories</div>
       <div class="element-value">{{caloriesSummary}}</div>
@@ -9,7 +9,7 @@
       <div class="element-value">{{proteinsSummary}}</div>
     </li>
     <li>
-      <div class="element-name">Carbohydrates</div>
+      <div class="element-name">Carbohydr.</div>
       <div class="element-value">{{carbohydratesSummary}}</div>
     </li>
     <li>
@@ -17,19 +17,19 @@
       <div class="element-value">{{fatsSummary}}</div>
     </li>
     <li>
-      <div class="element-name">Vitamin A</div>
+      <div class="element-name">Vit. A</div>
       <div class="element-value">{{vitaminASummary}}</div>
     </li>
     <li>
-      <div class="element-name">Vitamin C</div>
+      <div class="element-name">Vit. C</div>
       <div class="element-value">{{vitaminCSummary}}</div>
     </li>
     <li>
-      <div class="element-name">Vitamin B6</div>
+      <div class="element-name">Vit. B6</div>
       <div class="element-value">{{vitaminB6Summary}}</div>
     </li>
     <li>
-      <div class="element-name">Vitamin D</div>
+      <div class="element-name">Vit. D</div>
       <div class="element-value">{{vitaminDSummary}}</div>
     </li>
   </ul>
@@ -44,9 +44,10 @@ import _ from "lodash";
 import MealIngredientWithQuantity from "@/ViewModels/meal-ingredient/mealIngredientWithQuantity";
 
 @Component
-export default class AddMealSummary extends Vue {
+export default class MealSummary extends Vue {
   @Prop({
-    type: Array
+    type: Array,
+    required: true
   })
   private mealIngredients!: MealIngredientWithQuantity[];
 
@@ -207,7 +208,6 @@ export default class AddMealSummary extends Vue {
 <style scoped>
 ul {
   list-style: none;
-  background-color: #e6e4e4;
   border-radius: 10px;
 }
 li {

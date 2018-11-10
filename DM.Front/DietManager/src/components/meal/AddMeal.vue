@@ -3,7 +3,7 @@
     <modal name="addMealIngredientModal" height="auto" class="modal-window" :adaptive="true">
       <add-meal-ingredient @meal-ingredient-added="mealIngredientAddedHandler"></add-meal-ingredient>
     </modal>
-    <div class="form-container">
+    <div class="form-container content-background">
       <div class="column left">
         <form>
           <div class="form-group">
@@ -29,7 +29,8 @@
             <div class="meal-ingredients-search">
               <input type="text" class="form-control" id="mealIngredientSearchName" placeholder="Search..." v-model="mealIngredientSearchQuery">
               <button id="searchMealIngredients" class="btn main-background-color" @click="searchMealIngredients">
-                <font-awesome-icon id="search-icon" icon="search" /></button>
+                <font-awesome-icon id="search-icon" icon="search" />
+              </button>
             </div>
           </div>
           <ul class="added-meal-ingredients">
@@ -43,7 +44,7 @@
       </div>
       <button id="addMealButton" type="submit" class="btn main-background-color" @click="submit">Add Meal</button>
     </div>
-    <add-meal-summary class="summary" :mealIngredients="addedMealIngredients"></add-meal-summary>
+    <meal-summary class="summary" :mealIngredients="addedMealIngredients" />
   </div>
 </template>
 
@@ -58,7 +59,7 @@ import MealIngredient from "@/ViewModels/meal-ingredient/mealIngredient";
 import MealApiCaller from "@/services/api-callers/mealApi";
 import imageApiCaller from "@/services/api-callers/imageApi";
 import MealLookup from "@/ViewModels/meal/mealLookup";
-import AddMealSummary from "@/components/meal/AddMealSummary.vue";
+import MealSummary from "@/components/meal/MealSummary.vue";
 import AddMealIngredient from "@/components/meal-ingredient/AddMealIngredient.vue";
 import MealIngredientWithQuantity from "@/ViewModels/meal-ingredient/mealIngredientWithQuantity";
 import MealIngredientIdWithQuantity from "@/ViewModels/meal-ingredient/mealIngredientIdWithQuantity";
@@ -68,7 +69,7 @@ import MealIngredientSearch from "@/ViewModels/meal-ingredient/mealIngredientSea
 
 @Component({
   components: {
-    "add-meal-summary": AddMealSummary,
+    "meal-summary": MealSummary,
     "add-meal-ingredient": AddMealIngredient,
     "picture-input": PictureInput
   }
@@ -186,7 +187,6 @@ export default class AddMeal extends Vue {
   padding: 10px;
   width: 82%;
   height: 750px;
-  background-color: #e6e4e4;
   border-radius: 10px;
 }
 .summary {
@@ -272,5 +272,11 @@ label {
 .modal-window {
   opacity: 1;
   z-index: 10004;
+}
+</style>
+
+<style lang="less">
+.content-background {
+  background-color: #e6e4e4;
 }
 </style>

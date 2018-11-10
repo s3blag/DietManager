@@ -1,4 +1,4 @@
-export default interface MealScheduleEntryCreatiion {
+export default interface MealScheduleEntryCreation {
   mealId: string;
   date: Date;
 }

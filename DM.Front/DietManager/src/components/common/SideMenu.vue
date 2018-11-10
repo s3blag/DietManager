@@ -70,6 +70,7 @@ li:hover {
   color: white;
 }
 .link {
+  cursor: pointer;
   text-decoration: none;
   color: inherit;
   border-radius: 5px;
