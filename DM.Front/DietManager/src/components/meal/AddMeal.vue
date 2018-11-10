@@ -1,7 +1,7 @@
 <template>
   <div class="add-meal">
-    <modal name="addMealIngredientModal" height="auto" class="modal-window" :adaptive="true">
-      <add-meal-ingredient @meal-ingredient-added="mealIngredientAddedHandler"></add-meal-ingredient>
+    <modal v-if="showAddMealIngredientModal" class="modal-window">
+      <add-meal-ingredient id="add-meal-ingredient" @cancel="showAddMealIngredientModal = false" @meal-ingredient-added="mealIngredientAddedHandler"></add-meal-ingredient>
     </modal>
     <div class="form-container content-background">
       <div class="column left">
@@ -66,15 +66,18 @@ import MealIngredientIdWithQuantity from "@/ViewModels/meal-ingredient/mealIngre
 import MealIngredientApiCaller from "@/services/api-callers/mealIngredientApi";
 import IndexedResult from "@/ViewModels/wrappers/indexedResult";
 import MealIngredientSearch from "@/ViewModels/meal-ingredient/mealIngredientSearch";
+import Modal from "@/components/common/Modal.vue";
 
 @Component({
   components: {
+    modal: Modal,
     "meal-summary": MealSummary,
     "add-meal-ingredient": AddMealIngredient,
     "picture-input": PictureInput
   }
 })
 export default class AddMeal extends Vue {
+  private showAddMealIngredientModal: boolean = false;
   private mealFormData: MealCreation = {
     name: "",
     description: ""
@@ -139,11 +142,11 @@ export default class AddMeal extends Vue {
     addedMealIngredientWithQuantity: MealIngredientWithQuantity
   ) {
     this.addedMealIngredients.push(addedMealIngredientWithQuantity);
-    this.$modal.hide("addMealIngredientModal");
+    this.showAddMealIngredientModal = false;
   }
 
   searchMealIngredients() {
-    this.$modal.show("addMealIngredientModal");
+    this.showAddMealIngredientModal = true;
     // MealIngredientApiCaller.search(
     //   {
     //     isLast: false,
@@ -175,7 +178,7 @@ export default class AddMeal extends Vue {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 .add-meal {
   font-size: 18px;
   width: 100%;
@@ -269,9 +272,28 @@ label {
   padding-top: 50px;
   padding-left: 0px;
 }
-.modal-window {
-  opacity: 1;
-  z-index: 10004;
+#add-meal-ingredient {
+  width: 400px;
+  min-width: 320px;
+  height: 98%;
+}
+@media screen and (max-width: 860px) {
+  .form-container {
+    width: 98%;
+  }
+  .summary {
+    width: 98%;
+    margin-bottom: 20px;
+  }
+
+  .add-meal {
+    display: flex;
+    flex-wrap: wrap-reverse;
+  }
+  #add-meal-ingredient {
+    max-width: 250px !important;
+    overflow: scroll;
+  }
 }
 </style>
 

@@ -1,12 +1,17 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace DM.Models.ViewModels
 {
     public class MealScheduleEntryVM
     {
-        public Guid Id { get; set; }
+        [Required]
+        public Guid? Id { get; set; }
 
+        [Required]
         public MealVM Meal { get; set; }
 
-        public DateTimeOffset Date { get; set; }
+        [Required]
+        public DateTimeOffset? Date { get; set; }
     }
 }

@@ -10,5 +10,7 @@ namespace DM.Repositories.Interfaces
         Task<IEnumerable<MealScheduleEntry>> GetMealScheduleEntriesInDateRangeAsync(Guid userId, DateTimeOffset from, DateTimeOffset to);
         Task<int> GetNumberOfMealUsesAsync(Guid mealId);
         Task<int> GetMealScheduleUpdatesStreakInDaysAsync(Guid userId);
+        Task<bool> DeleteAsync(Guid userId, Guid mealScheduleEntryId);
+        Task<bool> UpdateAsync(MealScheduleEntry model);
     }
 }

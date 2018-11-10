@@ -55,7 +55,7 @@ namespace DM.Web.Controllers
 
             var userId = Guid.Empty;
 
-            var result = await _achievementService.MarkAchievementsAsReadAsync(userAchievements.Select(ua => ua.Id).ToList(), userId);
+            var result = await _achievementService.MarkAchievementsAsReadAsync(userAchievements.Select(ua => ua.Id.Value).ToList(), userId);
 
             return Ok(result);
         }

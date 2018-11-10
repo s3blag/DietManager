@@ -44,7 +44,7 @@
     </div>
     <div id="buttons-container">
       <button class="btn main-background-color" @click="addMealIngredient">Add</button>
-      <button class="btn main-background-color" @click="$modal.hide('addMealIngredientModal')">Close</button>
+      <button class="btn main-background-color" @click="cancel">Close</button>
     </div>
   </div>
 </template>
@@ -55,6 +55,7 @@ import MealIngredientApiCaller from "@/services/api-callers/mealIngredientApi";
 import MealIngredient from "@/ViewModels/meal-ingredient/mealIngredient";
 import MealIngredientCreationWithQuantity from "@/ViewModels/meal-ingredient/mealIngredientCreationWithQuantity";
 import MealIngredientWithQuantity from "@/ViewModels/meal-ingredient/mealIngredientWithQuantity";
+import { Emit } from "vue-property-decorator";
 
 @Component
 export default class AddMealIngredient extends Vue {
@@ -92,24 +93,42 @@ export default class AddMealIngredient extends Vue {
 
     this.$emit("meal-ingredient-added", addedMealIngredientWithQuantity);
   }
+
+  @Emit()
+  cancel() {
+    return;
+  }
 }
 </script>
-<style scoped>
+<style lang="less" scoped>
+#add-meal-ingredient-form {
+  height: 100%;
+  flex-wrap: wrap;
+  width: 90%;
+  margin: 0 auto;
+}
 #buttons-container {
   margin: 15px 0px 5px 0px;
   width: 100%;
+  height: 50px;
   justify-content: center;
   display: flex;
-}
-#buttons-container > button {
-  margin: 0px 25px 0px 25px;
-  width: 100px;
-  color: white;
+
+  button {
+    margin: 0px 25px 0px 25px;
+    width: 100px;
+    color: white;
+  }
 }
 #add-meal-ingredient {
   padding: 15px;
 }
 .form-input {
+  height: 65px;
   margin-bottom: 10px;
+  width: 100%;
+}
+.label {
+  text-align: left;
 }
 </style>

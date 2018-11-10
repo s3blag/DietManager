@@ -6,7 +6,7 @@ namespace DM.Models.ViewModels
     public class MealPreviewVM
     {
         [Required]
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         public Guid? ImageId { get; set; }
 
@@ -14,15 +14,15 @@ namespace DM.Models.ViewModels
         public string Name { get; set; }
 
         [Required]
-        public int Calories { get; set; }
+        public int? Calories { get; set; }
 
         [Required]
-        public int NumberOfFavouriteMarks { get; set; }
+        public int? NumberOfFavouriteMarks { get; set; }
 
         [Required]
-        public int NumberOfUses { get; set; }
+        public int? NumberOfUses { get; set; }
 
         [Required]
-        public DateTimeOffset CreationDate { get; set; }
+        public DateTimeOffset? CreationDate { get; set; }
     }
 }

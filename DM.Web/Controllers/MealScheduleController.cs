@@ -53,5 +53,49 @@ namespace DM.Web.Controllers
 
             return Ok(entryId);
         }
+
+        [HttpDelete("entry/{scheduleEntryId}")]
+        public async Task<IActionResult> DeleteMealScheduleEntry (Guid scheduleEntryId)
+        {
+            return Ok();
+
+            if (scheduleEntryId == Guid.Empty)
+            {
+                return NotFound();
+            }
+
+            var userId = Guid.Empty;
+
+            bool deleted = await _mealScheduleService.DeleteMealScheduleEntryAsync(userId, scheduleEntryId);
+
+            if (deleted)
+            {
+                return Ok();
+            }
+            else
+            {
+                return Unauthorized();
+            }
+        }
+
+        [HttpPatch("entry")]
+        public async Task<IActionResult> UpdateMealScheduleEntry([FromBody] MealScheduleEntryUpdateVM scheduleEntryUpdate)
+        {
+            
+
+            var userId = Guid.Empty;
+
+            return Ok();
+            bool updated = await _mealScheduleService.UpdateMealScheduleEntryAsync(userId, scheduleEntryUpdate);
+
+            if (updated)
+            {
+                return Ok();
+            }
+            else
+            {
+                return Unauthorized();
+            }
+        }
     }
 }

@@ -6,9 +6,9 @@ namespace DM.Models.ViewModels
     public class MealScheduleEntryCreationVM
     {
         [Required]
-        public Guid MealId { get; set; }
+        public Guid? MealId { get; set; }
 
         [Required]
-        public DateTimeOffset Date { get; set; }
+        public DateTimeOffset? Date { get; set; }
     }
 }

@@ -145,18 +145,6 @@ namespace DM.Tests
         }
 
         [Fact]
-        public async Task Load()
-        {
-            ObjectsFactory.InitDbConnection(Constants.ConnectionString);
-
-            object obj = Achievements.FriendAchievement.NumberOfFriends;
-
-            string category = obj.GetType().Name;
-
-            string type = obj.ToString();
-        }
-
-        [Fact]
         public async Task Mapper()
         {
             string date = "2018-11-04T23:00:00.000Z";

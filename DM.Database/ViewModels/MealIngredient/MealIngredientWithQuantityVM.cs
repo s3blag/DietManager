@@ -1,8 +1,13 @@
-﻿namespace DM.Models.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DM.Models.ViewModels
 {
     public class MealIngredientWithQuantityVM
     {
-        public int Quantity { get; set; }
+        [Required]
+        public int? Quantity { get; set; }
+
+        [Required]
         public MealIngredientVM MealIngredient { get; set; }
     }
 }

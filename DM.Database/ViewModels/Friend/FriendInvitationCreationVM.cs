@@ -6,10 +6,10 @@ namespace DM.Models.ViewModels
     public class FriendInvitationCreationVM
     {
         [Required]
-        public Guid InvitingUserId { get; set; }
+        public Guid? InvitingUserId { get; set; }
 
         [Required]
-        public Guid InvitedUserId { get; set; }
+        public Guid? InvitedUserId { get; set; }
 
     }
 }

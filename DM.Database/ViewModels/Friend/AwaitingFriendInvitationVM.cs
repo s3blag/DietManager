@@ -6,7 +6,7 @@ namespace DM.Models.ViewModels
     public class AwaitingFriendInvitationVM
     {
         [Required]
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
 
         [Required]
         public string Name { get; set; }

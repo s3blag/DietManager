@@ -3,7 +3,7 @@ using DM.Database;
 using DM.Logic.Interfaces;
 using DM.Models.Config;
 using DM.Models.Exceptions;
-using DM.Models.ViewModels;
+using DM.Models.Models;
 using DM.Repositories.Interfaces;
 using Microsoft.Extensions.Options;
 using System;

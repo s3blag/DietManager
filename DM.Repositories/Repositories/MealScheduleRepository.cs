@@ -66,5 +66,32 @@ namespace DM.Repositories
                 return -dayDifferenceIndex;
             }    
         }
+
+        public async Task<bool> DeleteAsync(Guid userId, Guid mealScheduleEntryId)
+        {
+            using (var db = new DietManagerDB())
+            {
+                var result = await db.MealScheduleEntries.
+                    Where(m => m.Id == mealScheduleEntryId).
+                    Where(m => m.UserId == userId).
+                    DeleteAsync();
+
+                return result == 1;
+            }
+        }
+
+        public async Task<bool> UpdateAsync(MealScheduleEntry model)
+        {
+            using (var db = new DietManagerDB())
+            {
+                var result = await db.MealScheduleEntries.
+                    Where(m => m.Id == model.Id).
+                    Where(m => m.UserId == model.UserId).
+                    Set(m => m.Date, model.Date).
+                    UpdateAsync();
+
+                return result == 1;
+            }
+        }
     }
 }

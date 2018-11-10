@@ -15,8 +15,7 @@ namespace DM.Models.ViewModels
         public Guid? ImageId { get; set; }
 
         [Required]
-        public int Calories { get; set; }
-
+        public int? Calories { get; set; }
 
         [Required]
         [MinLength(2)]

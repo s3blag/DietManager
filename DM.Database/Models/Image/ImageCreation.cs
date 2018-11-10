@@ -1,4 +1,4 @@
-﻿namespace DM.Models.ViewModels
+﻿namespace DM.Models.Models
 {
     public class ImageCreation
     {

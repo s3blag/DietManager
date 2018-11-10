@@ -6,7 +6,7 @@ namespace DM.Models.ViewModels
     public class FavouriteVM
     {
         [Required]
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         [Required]
         public UserVM User { get; set; }

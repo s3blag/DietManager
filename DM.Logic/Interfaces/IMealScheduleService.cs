@@ -9,5 +9,7 @@ namespace DM.Logic.Interfaces
     {
         Task<Guid> AddMealScheduleEntry(Guid userId, MealScheduleEntryCreationVM newMealScheduleEntry);
         Task<Dictionary<DayOfWeek, IEnumerable<MealScheduleEntryVM>>> GetUpcomingMealSchedule(Guid userId, DateTimeOffset dateOffset);
+        Task<bool> DeleteMealScheduleEntryAsync(Guid userId, Guid mealScheduleEntryId);
+        Task<bool> UpdateMealScheduleEntryAsync(Guid userId, MealScheduleEntryUpdateVM scheduleEntryUpdateVM);
     }
 }

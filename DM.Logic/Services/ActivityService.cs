@@ -30,11 +30,6 @@ namespace DM.Logic.Services
             IndexedResult<UserActivityVM> lastReturned,
             int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE)
         {
-            if (lastReturned != null && lastReturned.IsLast)
-            {
-                return null;
-            }
-
             var usersActivities = await _activityRepository.GetUsersActivitiesAsync(userIds, lastReturned.Index, takeAmount);
 
             return new IndexedResult<IList<UserActivityVM>>()

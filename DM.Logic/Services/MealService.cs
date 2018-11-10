@@ -122,8 +122,8 @@ namespace DM.Logic.Services
                         {
                             Id = Guid.NewGuid(),
                             MealId = mealId,
-                            MealIngredientId = m .Id,
-                            Quantity = m.Quantity
+                            MealIngredientId = m .Id.Value,
+                            Quantity = m.Quantity.Value
                         }
                     ).
                     ToList();

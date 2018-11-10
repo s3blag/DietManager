@@ -40,7 +40,7 @@ namespace DM.Logic.Services
             );
 
             var groupedMealScheduleEntries = mealScheduleEntries.
-                                                GroupBy(m => m.Date.DayOfWeek).
+                                                GroupBy(m => m.Date.Value.DayOfWeek).
                                                 ToDictionary(kv => kv.Key, kv => kv.AsEnumerable());
 
             return groupedMealScheduleEntries;
@@ -56,7 +56,7 @@ namespace DM.Logic.Services
             var dbMealScheduleEntry = _mapper.Map<MealScheduleEntry>(newMealScheduleEntry);
             dbMealScheduleEntry.UserId = userId;
 
-            var addedSuccessfully = await _mealScheduleRepository.AddAsync(dbMealScheduleEntry);
+            bool addedSuccessfully = await _mealScheduleRepository.AddAsync(dbMealScheduleEntry);
 
             if (addedSuccessfully)
             {
@@ -69,6 +69,19 @@ namespace DM.Logic.Services
             await Task.WhenAll(checkNumberOfMealUsesTask, checkConsequentUpdatesTask);
 
             return dbMealScheduleEntry.Id;
+        }
+
+        public async Task<bool> DeleteMealScheduleEntryAsync(Guid userId, Guid mealScheduleEntryId)
+        {
+            return await _mealScheduleRepository.DeleteAsync(userId, mealScheduleEntryId);
+        }
+
+        public async Task<bool> UpdateMealScheduleEntryAsync(Guid userId, MealScheduleEntryUpdateVM scheduleEntryUpdateVM)
+        {
+            var mealScheduleEntry = _mapper.Map<MealScheduleEntry>(scheduleEntryUpdateVM);
+            mealScheduleEntry.UserId = userId;
+
+            return await _mealScheduleRepository.UpdateAsync(mealScheduleEntry);
         }
 
         private void ValidateArgument(params (object value, string name)[] arguments)

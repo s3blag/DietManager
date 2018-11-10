@@ -13,7 +13,7 @@ namespace DM.Models.ViewModels
 
         [Required]
         [Range(0, int.MaxValue)]
-        public int Calories { get; set; }
+        public int? Calories { get; set; }
 
         [Required]
         public NutritionsVM Nutrition { get; set; }

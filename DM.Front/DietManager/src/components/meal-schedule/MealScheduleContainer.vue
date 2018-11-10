@@ -7,8 +7,8 @@
       </span>
     </div>
     <div class="content">
-      <div class="schedule-entry" v-for="(scheduleEntry, index) in sortedMealScheduleEntries" :key="index">
-        <meal-schedule-item :mealScheduleEntry="scheduleEntry" @deleteMealScheduleEntry="deleteMealScheduleEntry" />
+      <div id="schedule-entry" v-for="scheduleEntry in sortedMealScheduleEntries" :key="scheduleEntry.id">
+        <meal-schedule-item :mealScheduleEntry="scheduleEntry" @schedule-changed="onScheduleChanged" />
       </div>
     </div>
   </div>
@@ -17,11 +17,12 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { Prop } from "vue-property-decorator";
+import { Prop, Emit } from "vue-property-decorator";
 import MealScheduleEntry from "@/ViewModels/meal-schedule/mealScheduleEntry";
 import MealScheduleItem from "./MealScheduleItem.vue";
 import { DaysOfWeek } from "@/ViewModels/enums/daysOfWeek";
 import _ from "lodash";
+import { Actions } from "@/ViewModels/enums/actions";
 
 @Component({
   components: {
@@ -92,13 +93,46 @@ export default class MealScheduleContainer extends Vue {
     return _.sortBy(this.mealSchedule, entry => entry.date);
   }
 
-  addMealScheduleEntry() {}
+  onScheduleChanged(data: {
+    action: string;
+    id: string;
+    newDate: Date | null;
+  }) {
+    if (data.action === Actions[Actions.Update] && data.newDate !== null) {
+      this.updateEntry(data.id, data.newDate!);
+    } else {
+      if (data.action === Actions[Actions.Delete]) {
+        this.deleteEntry(data.id);
+      }
+    }
+  }
 
-  deleteMealScheduleEntry(id: string) {}
+  updateEntry(id: string, newDate: Date) {
+    const indexOfUpdatedItem = this.mealSchedule.findIndex(e => e.id == id);
+    const oldValue = this.mealSchedule[indexOfUpdatedItem];
+    const newEntry = {
+      id: oldValue.id,
+      meal: oldValue.meal,
+      date: newDate
+    } as MealScheduleEntry;
+
+    this.$set(this.mealSchedule, indexOfUpdatedItem, newEntry);
+  }
+
+  deleteEntry(id: string) {
+    const indexOfDeletedItem = this.mealSchedule.findIndex(e => e.id == id);
+
+    this.mealSchedule.splice(indexOfDeletedItem, 1);
+  }
+
+  addMealScheduleEntry() {}
 }
 </script>
 
 <style lang="less" scoped>
+#schedule-container {
+  overflow: hidden;
+}
 #label {
   text-align: center;
 }
@@ -113,11 +147,16 @@ export default class MealScheduleContainer extends Vue {
   border-bottom-left-radius: 1px;
 }
 .content {
+  margin-right: -17px;
   overflow-y: scroll;
   height: 95%;
 }
 #add-icon {
   cursor: pointer;
+}
+#schedule-entry {
+  position: relative;
+  left: -2px;
 }
 button {
   color: white;

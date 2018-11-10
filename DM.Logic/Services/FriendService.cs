@@ -95,12 +95,12 @@ namespace DM.Logic.Services
 
         public async Task AcceptFriendInvitationAsync(AwaitingFriendInvitationVM friendInvitation, Guid receiverId)
         {
-            if (!await _friendRepository.SetFriendInvitationStatusAsync(friendInvitation.UserId, receiverId, Models.Enums.FriendInvitationStatus.Accepted))
+            if (!await _friendRepository.SetFriendInvitationStatusAsync(friendInvitation.UserId.Value, receiverId, Models.Enums.FriendInvitationStatus.Accepted))
             {
                 throw new DataAccessException($"Accepting friend invitation failed for model: {JsonConvert.SerializeObject(friendInvitation)}");
             }
 
-            var checkInvitersNumberOfFriendsTask = _achievementService.CheckForNumberOfFriendsAsync(friendInvitation.UserId);
+            var checkInvitersNumberOfFriendsTask = _achievementService.CheckForNumberOfFriendsAsync(friendInvitation.UserId.Value);
             var checkReceiversNumberOfFriendsTask = _achievementService.CheckForNumberOfFriendsAsync(receiverId);
 
             await Task.WhenAll(checkInvitersNumberOfFriendsTask, checkReceiversNumberOfFriendsTask);
@@ -108,7 +108,7 @@ namespace DM.Logic.Services
 
         public async Task IgnoreFriendInvitationAsync(AwaitingFriendInvitationVM friendInvitation, Guid receiverId)
         {
-            if (!await _friendRepository.SetFriendInvitationStatusAsync(friendInvitation.UserId, receiverId, Models.Enums.FriendInvitationStatus.Ignored))
+            if (!await _friendRepository.SetFriendInvitationStatusAsync(friendInvitation.UserId.Value, receiverId, Models.Enums.FriendInvitationStatus.Ignored))
             {
                 throw new DataAccessException($"Ignoring friend invitation failed for model: {JsonConvert.SerializeObject(friendInvitation)}");
             }

@@ -7,18 +7,18 @@ namespace DM.Models.ViewModels
     public class UserActivityVM
     {
         [Required]
-        public Guid ContentId { get; set; }
+        public Guid? ContentId { get; set; }
 
         [Required]
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         [Required]
         public UserVM User { get; set; }
 
         [Required]
-        public ActivityType Activity { get; set; }
+        public ActivityType? Activity { get; set; }
 
         [Required]
-        public DateTimeOffset ActivityDate { get; set; }
+        public DateTimeOffset? ActivityDate { get; set; }
     }
 }

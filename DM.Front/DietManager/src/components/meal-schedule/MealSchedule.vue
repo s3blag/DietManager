@@ -11,7 +11,7 @@
         </button>
       </div>
       <div id="calendar">
-        <meal-schedule-container class="daily-schedule" v-for="(day, index) in daysOfWeek" :key="index" :mealSchedule="mealSchedule[day]" :label="day" :class="{'current-day': index+1 === currentDayOfWeek}" />
+        <meal-schedule-container class="daily-schedule" v-for="(day, index) in daysOfWeek" :key="index" :mealSchedule="mealSchedule[day]" :label="day" :class="{'current-day': index+1 === currentDayOfWeek}" @on-schedule-changed="getMealSchedule" />
       </div>
     </div>
     <meal-schedule-summary id="meal-schedule-summary" :mealIngredients="mealIngredients" />

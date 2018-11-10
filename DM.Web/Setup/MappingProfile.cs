@@ -32,9 +32,6 @@ namespace DM.Web
             CreateMap<MealIngredientCreationVM, MealIngredient>().
                 ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid())).
                 ReverseMap();
-            CreateMap<NewMealVM, Meal>().
-                ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid())).
-                ReverseMap();
             CreateMap<ImageCreation, Image>().
                 ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid())).
                 ReverseMap();
@@ -66,6 +63,8 @@ namespace DM.Web
                 ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
                 ForMember(target => target.ActivityType, config => config.MapFrom(src => src.ActivityType.ToString())).
                 ForMember(target => target.ActivityDate, config => config.MapFrom(src => DateTimeOffset.Now));
+            CreateMap<MealScheduleEntryUpdateVM, MealScheduleEntry>().
+                ForMember(target => target.Date, config => config.MapFrom(src => src.NewDate));
         }
     }
 }
