@@ -1,4 +1,6 @@
 export default interface User {
-  username: string;
-  avatarId: number;
+  id: string;
+  name: string;
+  surname: string;
+  imageId: number;
 }

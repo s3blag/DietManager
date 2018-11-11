@@ -41,10 +41,10 @@ export default class Header extends Vue {
   }
 
   get avatarId() {
-    if (!this.user || !this.user.avatarId) {
+    if (!this.user || !this.user.imageId) {
       return null;
     } else {
-      return this.user.avatarId;
+      return this.user.imageId;
     }
   }
 }

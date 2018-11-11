@@ -77,6 +77,8 @@ namespace Diet_Manager
             services.AddScoped<IAchievementService, AchievementService>();
             services.AddScoped<IMealScheduleService, MealScheduleService>();
             services.AddScoped<IActivityService, ActivityService>();
+            services.AddScoped<IFavouritesService, FavouritesService>();
+            
 
             services.AddSingleton<ICacheContainer, AchievementsCacheContainer>();
         }

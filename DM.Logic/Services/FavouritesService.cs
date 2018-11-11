@@ -60,14 +60,9 @@ namespace DM.Logic.Services
             return dbFavourite.Id;
         }
 
-        public async Task RemoveFromFavouritesAsync(FavouriteVM favourite)
+        public async Task<bool> RemoveFromFavouritesAsync(Guid userId, Guid mealId)
         {
-            var dbFavourite = _mapper.Map<Favourite>(favourite);
-
-            if (!await _favouriteRepository.DeleteAsync(dbFavourite))
-            {
-                throw new DataAccessException($"Adding to favourites failed for model: {dbFavourite}");
-            }
+            return await _favouriteRepository.DeleteAsync(userId, mealId);
         }
     }
 }

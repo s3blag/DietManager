@@ -98,7 +98,8 @@ CREATE TABLE "Meals"."Favourites" (
 );
 ALTER TABLE "Meals"."Favourites"
 ADD CONSTRAINT FK_Favourites_MealId FOREIGN KEY ("MealId") REFERENCES "Meals"."Meal"("Id") ON DELETE CASCADE,
-ADD CONSTRAINT FK_Favourites_UserId FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id") ON DELETE CASCADE;
+ADD CONSTRAINT FK_Favourites_UserId FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id") ON DELETE CASCADE,
+ADD CONSTRAINT UQ_User_Meal UNIQUE("UserId", "MealId");
 
 CREATE TABLE "Meals"."MealScheduleEntry" (
     "Id"        UUID            PRIMARY KEY,

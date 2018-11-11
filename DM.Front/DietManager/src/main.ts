@@ -20,7 +20,8 @@ import {
   faEdit,
   faSquare,
   faPenSquare,
-  faPencilAlt
+  faPencilAlt,
+  faStar
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(faAppleAlt);
@@ -36,6 +37,7 @@ library.add(faArrowRight);
 library.add(faArrowLeft);
 library.add(faTrashAlt);
 library.add(faPencilAlt);
+library.add(faStar);
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 
 import BootstrapVue from "bootstrap-vue";

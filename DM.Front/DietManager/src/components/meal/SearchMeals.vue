@@ -6,7 +6,7 @@
         <font-awesome-icon id="search-icon" icon="search" />
       </button>
     </div>
-    <meal-preview-item class="meal" v-for="mealPreview in mealPreviews" :key="mealPreview.id" :mealPreview="mealPreview" />
+    <meal-preview-item class="meal" v-for="mealPreview in mealPreviews" :key="mealPreview.id" :mealPreview="mealPreview" :enableFavouriteMarkToggling="true" />
     <button v-if="!isLast && lastReturned" @click="loadMore" class="load-more-button main-background-color">
       Load more...
     </button>

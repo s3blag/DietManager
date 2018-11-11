@@ -10,6 +10,6 @@ namespace DM.Logic.Interfaces
     {
         Task<Guid> AddToFavouritesAsync(FavouriteCreationVM favouriteCreation);
         Task<IndexedResult<IEnumerable<FavouriteVM>>> GetFavouriteMealsAsync(Guid userId, IndexedResult<FavouriteVM> lastReturned, int takeAmount = 10);
-        Task RemoveFromFavouritesAsync(FavouriteVM favourite);
+        Task<bool> RemoveFromFavouritesAsync(Guid userId, Guid mealId);
     }
 }

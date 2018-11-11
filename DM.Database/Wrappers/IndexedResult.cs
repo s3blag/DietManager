@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DM.Models.Wrappers
 {
@@ -10,6 +12,5 @@ namespace DM.Models.Wrappers
         public bool IsLast { get; set; }
 
         public int Index { get; set; }
-
     }
 }

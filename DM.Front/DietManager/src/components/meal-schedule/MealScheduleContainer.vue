@@ -1,5 +1,8 @@
 <template>
   <div id="schedule-container">
+    <modal v-if="showAddNewEntryModal">
+
+    </modal>
     <div class="label">
       <span id="label">{{label}}</span>
       <span id="add-icon" @click="addMealScheduleEntry">
@@ -23,17 +26,20 @@ import MealScheduleItem from "./MealScheduleItem.vue";
 import { DaysOfWeek } from "@/ViewModels/enums/daysOfWeek";
 import _ from "lodash";
 import { Actions } from "@/ViewModels/enums/actions";
+import MealScheduleEntryCreation from "@/ViewModels/meal-schedule/mealScheduleEntryCreation";
+import Modal from "@/components/common/Modal.vue";
 
 @Component({
   components: {
-    "meal-schedule-item": MealScheduleItem
+    "meal-schedule-item": MealScheduleItem,
+    modal: Modal
   }
 })
 export default class MealScheduleContainer extends Vue {
   @Prop({
     required: true
   })
-  mealSchedule: MealScheduleEntry[] = [
+  private mealSchedule: MealScheduleEntry[] = [
     {
       id: "1",
       date: new Date(),
@@ -87,7 +93,10 @@ export default class MealScheduleContainer extends Vue {
   @Prop({
     required: true
   })
-  label!: string;
+  private label!: string;
+
+  private showAddNewEntryModal = false;
+  private entryCreation: MealScheduleEntryCreation = {} as MealScheduleEntryCreation;
 
   get sortedMealScheduleEntries() {
     return _.sortBy(this.mealSchedule, entry => entry.date);

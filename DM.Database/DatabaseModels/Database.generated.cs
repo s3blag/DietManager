@@ -75,13 +75,14 @@ namespace DM.Database
 		[PrimaryKey, NotNull] public Guid Id     { get; set; } // uuid
 		[Column,     NotNull] public Guid MealId { get; set; } // uuid
 		[Column,     NotNull] public Guid UserId { get; set; } // uuid
+        [Column, NotNull] public DateTimeOffset CreationDate { get; set; } // timestamp (6) with time zone
 
-		#region Associations
+        #region Associations
 
-		/// <summary>
-		/// fk_favourites_mealid
-		/// </summary>
-		[Association(ThisKey="MealId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_favourites_mealid", BackReferenceName="fkfavouritesmealids")]
+        /// <summary>
+        /// fk_favourites_mealid
+        /// </summary>
+        [Association(ThisKey="MealId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_favourites_mealid", BackReferenceName="fkfavouritesmealids")]
 		public Meal Meal { get; set; }
 
 		/// <summary>

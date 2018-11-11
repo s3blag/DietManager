@@ -69,11 +69,20 @@ namespace DM.Logic.Services
 
         public async Task CheckForNumberOfMealUsesAsync(Guid userId, Guid mealId)
         {
-            int newValue = await _mealScheduleRepository.GetNumberOfMealUsesAsync(mealId);
+            var newValueTask = _mealScheduleRepository.GetNumberOfMealUsesAsync(mealId);
+
+            var currentlyBestValueTask = _userAchievementRepository.GetUserAchievementMaxValueAsync(userId, Achievements.MealAchievement.NumberOfUses);
+
+            await Task.WhenAll(newValueTask, currentlyBestValueTask);
+
+            if (newValueTask.Result <= currentlyBestValueTask.Result)
+            {
+                return;
+            }
 
             int[] achievementStages = achievementsConfig.MealAchievements[Achievements.MealAchievement.NumberOfUses];
 
-            await AddAchievementIfNextStageReachedAsync(userId, achievementStages, newValue, Achievements.MealAchievement.NumberOfUses);
+            await AddAchievementIfNextStageReachedAsync(userId, achievementStages, newValueTask.Result, Achievements.MealAchievement.NumberOfUses);
         }
 
 
@@ -90,10 +99,22 @@ namespace DM.Logic.Services
         {
             int[] achievementStages = achievementsConfig.MealAchievements[Achievements.MealAchievement.NumberOfFavouriteMarks];
 
-            int newValue = (await _favouriteRepository.GetNumberOfFavouritesMarksAsync(new[] { mealId })).First().Value;
+            var newValueTask = _favouriteRepository.GetNumberOfFavouritesMarksAsync(new[] { mealId });
 
-            var creatorId = (await _mealRepository.GetMealByIdAsync(mealId)).CreatorId;
-           
+            var creatorIdTask =  _mealRepository.GetMealByIdAsync(mealId);
+
+            await Task.WhenAll(newValueTask, creatorIdTask);
+
+            var creatorId = creatorIdTask.Result.CreatorId;
+            int newValue = newValueTask.Result.First().Value;
+
+            int currentlyBestValue = await _userAchievementRepository.GetUserAchievementMaxValueAsync(creatorId, Achievements.MealAchievement.NumberOfFavouriteMarks);
+
+            if (newValue <= currentlyBestValue)
+            {
+                return;
+            }
+
             await AddAchievementIfNextStageReachedAsync(creatorId, achievementStages, newValue, Achievements.MealAchievement.NumberOfFavouriteMarks);
         }
 
@@ -158,7 +179,7 @@ namespace DM.Logic.Services
 
             int newStreak = await _mealScheduleRepository.GetMealScheduleUpdatesStreakInDaysAsync(userId);
 
-            if (newStreak < oldMaxStreak)
+            if (newStreak <= oldMaxStreak)
             {
                 return null;
             }
@@ -179,14 +200,23 @@ namespace DM.Logic.Services
 
         public async Task<UserAchievementVM> CheckForNumberOfFriendsAsync(Guid userId)
         {
-            int newValue = await _friendRepository.GetNumberOfFriendsAsync(userId);
+            var newValueTask = _friendRepository.GetNumberOfFriendsAsync(userId);
+
+            var currentlyBestValueTask = _userAchievementRepository.GetUserAchievementMaxValueAsync(userId, Achievements.MealAchievement.NumberOfFavouriteMarks);
+
+            await Task.WhenAll(newValueTask, currentlyBestValueTask);
+
+            if (newValueTask.Result <= currentlyBestValueTask.Result)
+            {
+                return null;
+            }
 
             int[] achievementStages = achievementsConfig.FriendAchievements[Achievements.FriendAchievement.NumberOfFriends];
 
             return _mapper.Map<UserAchievementVM>(await AddAchievementIfNextStageReachedAsync(
                 userId,
                 achievementStages,
-                newValue,
+                newValueTask.Result,
                 Achievements.FriendAchievement.NumberOfFriends
                 ));
         }

@@ -43,7 +43,7 @@ export default class MealScheduleApiCaller {
 
   static update(
     mealScheduleEntryUpdate: MealScheduleEntryUpdate,
-    successHandler: (arg: Actions) => void,
+    successHandler: (actionType: Actions) => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
     Axios.patch("/api/meal-schedule/entry/", mealScheduleEntryUpdate)

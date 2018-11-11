@@ -1,8 +1,11 @@
 <template>
-  <div>
+  <div id="preview-item">
     <div class="image-container">
       <font-awesome-icon v-if="!mealPreview.imageData" class="main-color" icon="utensils" size="2x" />
       <img v-else :src="mealPreview.imageData">
+      <div v-if="mealPreview.mealPreview.isFavourite" id="favourite-mark">
+        <font-awesome-icon class="main-color" icon="star" />
+      </div>
     </div>
     <div class="meal-info-element meal-name">
       <div class="label">Name</div>
@@ -22,6 +25,13 @@
         <div class="value">{{mealPreview.mealPreview.numberOfFavouriteMarks}} people</div>
       </div>
     </span>
+    <div id="add-to-favourites-wrapper">
+      <div v-if="enableFavouriteMarkToggling && mealPreview.mealPreview.isFavourite !== null" id="add-to-favourites-button" @click="toggleFavouriteMark">
+        <font-awesome-icon id="add-icon" class="option-icon" icon="plus-circle" />
+
+      </div>
+    </div>
+
     <router-link class="go-to-meal" :to="'/meal/' + mealPreview.mealPreview.id">
       <font-awesome-icon class="main-color" icon="arrow-alt-circle-right" size="2x" />
     </router-link>
@@ -36,18 +46,22 @@ import MealPreviewWithImage from "@/ViewModels/meal/mealPreviewWithImage";
 import MealApiCaller from "@/services/api-callers/mealApi";
 import IndexedResult from "@/ViewModels/wrappers/indexedResult";
 import ImageApiCaller from "@/services/api-callers/imageApi";
+import FavouritesApiCaller from "@/services/api-callers/favouritesApi";
+import { Prop } from "vue-property-decorator";
 
 Component.registerHooks(["beforeRouteEnter"]);
 
-@Component({
-  props: {
-    mealPreview: {
-      required: true
-    }
-  }
-})
+@Component
 export default class MyMeals extends Vue {
+  @Prop({
+    required: true
+  })
   private mealPreview!: MealPreviewWithImage;
+
+  @Prop({
+    required: true
+  })
+  private enableFavouriteMarkToggling!: boolean;
 
   get isMobile() {
     if (window.innerWidth < 860) {
@@ -56,11 +70,34 @@ export default class MyMeals extends Vue {
       return false;
     }
   }
+
+  toggleFavouriteMark() {
+    if (this.mealPreview.mealPreview.isFavourite) {
+      FavouritesApiCaller.delete(
+        this.mealPreview.mealPreview.id,
+        this.toggleFavouriteMarkSuccessHandler
+      );
+    } else {
+      FavouritesApiCaller.add(
+        this.mealPreview.mealPreview.id,
+        this.toggleFavouriteMarkSuccessHandler
+      );
+    }
+  }
+
+  toggleFavouriteMarkSuccessHandler() {
+    if (this.mealPreview.mealPreview.isFavourite) {
+      this.mealPreview.mealPreview.isFavourite = false;
+    } else {
+      this.mealPreview.mealPreview.isFavourite = true;
+    }
+  }
 }
 </script>
 
 <style>
 .image-container {
+  position: relative;
   margin-top: auto;
   margin-bottom: auto;
   text-align: center;
@@ -70,6 +107,11 @@ export default class MyMeals extends Vue {
   width: 65px;
   height: 65px;
   min-width: 65px;
+}
+#favourite-mark {
+  position: absolute;
+  top: -10px;
+  left: 25px;
 }
 .image-container > * {
   border-radius: 50%;
@@ -111,6 +153,14 @@ export default class MyMeals extends Vue {
 .details > * {
   width: 100px;
 }
+#add-to-favourites-wrapper {
+  position: relative;
+  width: 60px;
+}
+#add-to-favourites-button {
+  padding: 20px;
+}
+
 @keyframes button-animation {
   0% {
     left: 0.6px;

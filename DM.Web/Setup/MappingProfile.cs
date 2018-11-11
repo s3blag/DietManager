@@ -57,7 +57,7 @@ namespace DM.Web
                 ForPath(target => target.ActivityType, config => config.MapFrom(src => src.Activity.ToString()));
             CreateMap<FavouriteCreationVM, Favourite>().
                 ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
-                ReverseMap();
+                ForMember(target => target.CreationDate, config => config.MapFrom(source => DateTimeOffset.Now));
             CreateMap<FavouriteVM, Favourite>().ReverseMap();
             CreateMap<ActivityCreation, UserActivity>().
                 ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).

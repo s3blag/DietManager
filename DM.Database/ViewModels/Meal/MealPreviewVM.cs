@@ -24,5 +24,9 @@ namespace DM.Models.ViewModels
 
         [Required]
         public DateTimeOffset? CreationDate { get; set; }
+
+        public UserVM Creator { get; set; }
+
+        public bool? IsFavourite { get; set; }
     }
 }

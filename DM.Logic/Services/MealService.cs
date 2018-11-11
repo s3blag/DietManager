@@ -84,33 +84,58 @@ namespace DM.Logic.Services
             int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE
         )
         {
-            //TODO: uncomment after auth implementation
+            var userMealPreviews = await _mealRepository.GetMealPreviewsAsync(userId, lastReturned?.Index ?? 0, takeAmount);
 
-            //ValidateArguments(
-            //    (userId, nameof(userId))
-            //    );
+            var mealFavouriteCountsTask = _favouritesRepository.GetNumberOfFavouritesMarksAsync(userMealPreviews.Select(m => m.Id));
 
-            var mealPreviews = await _mealRepository.GetMealPreviewsAsync(userId, lastReturned?.Index ?? 0, takeAmount);
+            var userFavouritesTask = _favouritesRepository.GetUserFavouritesAsync(
+                                   userId,
+                                   0,
+                                   int.MaxValue);
 
-            var mealFavouritesCounts = await _favouritesRepository.GetNumberOfFavouritesMarksAsync(mealPreviews.Select(m => m.Id));
+            await Task.WhenAll(mealFavouriteCountsTask, userFavouritesTask);
 
-            if (mealFavouritesCounts.Any())
-            {
-                foreach (var mealPreview in mealPreviews)
-                {
-                    if (mealFavouritesCounts.TryGetValue(mealPreview.Id, out int favouritesCount))
-                    {
-                        mealPreview.NumberOfFavouriteMarks = favouritesCount;
-                    } 
-                }
-            }
+            SetNumberOfFavouriteMarks(userMealPreviews, mealFavouriteCountsTask.Result);
+
+            var mealPreviewsVM = _mapper.Map<IEnumerable<MealPreviewVM>>(userMealPreviews);
+
+            SetIsFavourite(userFavouritesTask.Result, mealPreviewsVM);
 
             return new IndexedResult<IEnumerable<MealPreviewVM>>()
             {
-                Result = _mapper.Map<IEnumerable<MealPreviewVM>>(mealPreviews),
-                Index = (lastReturned?.Index ?? 0) + mealPreviews.Count,
-                IsLast = mealPreviews.Count != takeAmount
-            };           
+                Result = mealPreviewsVM,
+                Index = (lastReturned?.Index ?? 0) + userMealPreviews.Count,
+                IsLast = userMealPreviews.Count != takeAmount
+            };
+        }
+
+        private void SetIsFavourite(IList<Favourite> favourites, IEnumerable<MealPreviewVM> mealPreviewsVM)
+        {
+            var commonMealIds = mealPreviewsVM.Select(m => m.Id.Value).
+                            Intersect(favourites.Select(f => f.MealId)).
+                            ToList();
+
+            if (commonMealIds.Any())
+            {
+                foreach (var mealPreview in mealPreviewsVM.Where(m => commonMealIds.Contains(m.Id.Value)))
+                {
+                    mealPreview.IsFavourite = true;
+                }
+            }
+        }
+
+        private void SetNumberOfFavouriteMarks(IList<Models.Models.MealPreview> userMealPreviews, IDictionary<Guid, int> mealFavouriteCounts)
+        {
+            if (mealFavouriteCounts.Any())
+            {
+                foreach (var mealPreview in userMealPreviews)
+                {
+                    if (mealFavouriteCounts.TryGetValue(mealPreview.Id, out int favouritesCount))
+                    {
+                        mealPreview.NumberOfFavouriteMarks = favouritesCount;
+                    }
+                }
+            }
         }
 
         private IList<MealMealIngredient> GetMealMealIngredients(

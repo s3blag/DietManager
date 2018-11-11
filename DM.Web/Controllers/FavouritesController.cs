@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace DM.Web.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Favourites")]
+    [Route("api/[controller]")]
     public class FavouritesController : Controller
     {
         private readonly IFavouritesService _favouritesService;
@@ -39,7 +39,23 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddToFavourites([FromBody]Guid mealId)
+        public async Task<IActionResult> AddToFavourites([FromBody]FavouriteCreationVM favouriteCreation)
+        {
+            if (favouriteCreation.MealId == null || favouriteCreation.MealId == Guid.Empty)
+            {
+                return NotFound();
+            }
+
+            var userId = Guid.Empty;
+            favouriteCreation.UserId = userId;
+
+            var favouriteId = await _favouritesService.AddToFavouritesAsync(favouriteCreation);
+
+            return Ok(favouriteId);
+        }
+
+        [HttpDelete("{mealId}")]
+        public async Task<IActionResult> DeleteFromFavourites(Guid mealId)
         {
             if (mealId == Guid.Empty)
             {
@@ -48,22 +64,16 @@ namespace DM.Web.Controllers
 
             var userId = Guid.Empty;
 
-            var favouriteId = await _favouritesService.AddToFavouritesAsync(new FavouriteCreationVM() { MealId = mealId, UserId = userId });
+            bool deleted = await _favouritesService.RemoveFromFavouritesAsync(userId, mealId);
 
-            return Ok(favouriteId);
-        }
-
-        [HttpDelete]
-        public async Task<IActionResult> AddToFavourites([FromBody]FavouriteVM favouriteToDelete)
-        {
-            if (favouriteToDelete == null || favouriteToDelete.Id == Guid.Empty)
+            if (deleted)
             {
-                return NotFound();
+                return Ok();
+            } 
+            else
+            {
+                return Unauthorized();
             }
-
-            await _favouritesService.RemoveFromFavouritesAsync(favouriteToDelete);
-
-            return Ok();
         }
     }
 }
