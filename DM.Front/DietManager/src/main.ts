@@ -21,13 +21,15 @@ import {
   faSquare,
   faPenSquare,
   faPencilAlt,
-  faStar
+  faStar,
+  faMinusCircle
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(faAppleAlt);
 library.add(faUserCircle);
 library.add(faSearch);
 library.add(faPlusCircle);
+library.add(faMinusCircle);
 library.add(faBook);
 library.add(faArrowAltCircleRight);
 library.add(faUtensils);

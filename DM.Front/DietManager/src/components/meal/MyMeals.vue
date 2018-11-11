@@ -1,7 +1,7 @@
 <template>
   <div class="meals-container">
     <h1 class="main-color">My Meals</h1>
-    <meal-preview-item class="meal" v-for="mealPreview in mealPreviews" :key="mealPreview.id" :mealPreview="mealPreview" />
+    <meal-preview-item class="meal" v-for="mealPreview in mealPreviews" :key="mealPreview.id" :mealPreview="mealPreview" :enableFavouriteMarkToggling="false" />
     <button @click="getMealPreviews" class="load-more-button main-background-color" v-if="elementsRemainingToLoad">
       Load more...
     </button>

@@ -6,6 +6,9 @@
       <div v-if="mealPreview.mealPreview.isFavourite" id="favourite-mark">
         <font-awesome-icon class="main-color" icon="star" />
       </div>
+      <div v-else-if="createdByUser && enableFavouriteMarkToggling" id="favourite-mark">
+        <font-awesome-icon class="main-color" icon="user-circle" />
+      </div>
     </div>
     <div class="meal-info-element meal-name">
       <div class="label">Name</div>
@@ -25,10 +28,10 @@
         <div class="value">{{mealPreview.mealPreview.numberOfFavouriteMarks}} people</div>
       </div>
     </span>
-    <div id="add-to-favourites-wrapper">
+    <div id="add-to-favourites-wrapper" v-if="enableFavouriteMarkToggling">
       <div v-if="enableFavouriteMarkToggling && mealPreview.mealPreview.isFavourite !== null" id="add-to-favourites-button" @click="toggleFavouriteMark">
-        <font-awesome-icon id="add-icon" class="option-icon" icon="plus-circle" />
-
+        <font-awesome-icon v-if="mealPreview.mealPreview.isFavourite === false" id="add-icon" class="option-icon" icon="plus-circle" />
+        <font-awesome-icon v-else id="delete-icon" class="option-icon" icon="minus-circle" />
       </div>
     </div>
 
@@ -71,6 +74,10 @@ export default class MyMeals extends Vue {
     }
   }
 
+  get createdByUser() {
+    return this.mealPreview.mealPreview.isFavourite === null;
+  }
+
   toggleFavouriteMark() {
     if (this.mealPreview.mealPreview.isFavourite) {
       FavouritesApiCaller.delete(
@@ -88,8 +95,10 @@ export default class MyMeals extends Vue {
   toggleFavouriteMarkSuccessHandler() {
     if (this.mealPreview.mealPreview.isFavourite) {
       this.mealPreview.mealPreview.isFavourite = false;
+      this.mealPreview.mealPreview.numberOfFavouriteMarks--;
     } else {
       this.mealPreview.mealPreview.isFavourite = true;
+      this.mealPreview.mealPreview.numberOfFavouriteMarks++;
     }
   }
 }
