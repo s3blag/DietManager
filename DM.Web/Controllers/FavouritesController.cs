@@ -19,7 +19,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost("get")]
-        public async Task<IActionResult> GetFavouriteMeals(IndexedResult<FavouriteVM> lastReturned)
+        public async Task<IActionResult> GetFavouriteMeals(IndexedResult<MealPreviewVM> lastReturned)
         {
             if (lastReturned != null && lastReturned.IsLast)
             {

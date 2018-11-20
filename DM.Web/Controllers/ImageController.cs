@@ -1,53 +1,55 @@
 ﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using DM.Logic.Interfaces;
 using DM.Models.ViewModels.Image;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace DM.Web.Controllers
 {
-    [Produces("application/json")]
     [Route("api/[controller]/")]
     public class ImageController : Controller
     {
         private readonly IImageService _imageService;
+        private readonly IContentTypeProvider _contentTypeProvider;
 
-        public ImageController(IImageService imageService)
+        public ImageController(IImageService imageService, IContentTypeProvider contentTypeProvider)
         {
             _imageService = imageService;
+            _contentTypeProvider = contentTypeProvider;
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetImage(Guid id)
         {
-            var request = Request;
             if (id == Guid.Empty)
             {
                 return BadRequest();
             }
 
-            byte[] image = await _imageService.GetImageByIdAsync(id);
+            var image = await _imageService.GetImageByIdAsync(id);
 
             if (image == null)
                 return NotFound("Image with the given id was not found.");
 
-            return Ok (Encoding.UTF8.GetString(image));
+            if (!_contentTypeProvider.TryGetContentType(image.Extension, out var contentType))
+            {
+                throw new IOException("Content type could not be evaluated from file extension.");
+            }
+
+            return File(image.Content, contentType);
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddImage([FromBody] ImageVM image)
+        public async Task<IActionResult> AddImage([FromBody] ImageCreationVM image)
         {
             if (String.IsNullOrEmpty(image.Image))
             {
                 return BadRequest();
             }
 
-            byte[] byteImage = Encoding.UTF8.GetBytes(image.Image);
-
-            return Ok (await _imageService.AddImageAsync(byteImage));
+            return Ok (await _imageService.AddImageAsync(image.Image));
         }
 
     }

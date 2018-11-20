@@ -59,6 +59,15 @@ namespace DM.Web
                 ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
                 ForMember(target => target.CreationDate, config => config.MapFrom(source => DateTimeOffset.Now));
             CreateMap<FavouriteVM, Favourite>().ReverseMap();
+            //!
+            CreateMap<Favourite, MealPreviewVM>().
+                ForMember(target => target.Id, config => config.MapFrom(src => src.Meal.Id)).
+                ForMember(target => target.ImageId, config => config.MapFrom(src => src.Meal.ImageId)).
+                ForMember(target => target.Name, config => config.MapFrom(src => src.Meal.Name)).
+                ForMember(target => target.Calories, config => config.MapFrom(src => src.Meal.Calories)).
+                ForMember(target => target.CreationDate, config => config.MapFrom(src => src.CreationDate)).
+                ForMember(target => target.Creator, config => config.MapFrom(src => src.Meal.Creator)).
+                ForMember(target => target.IsFavourite, config => config.MapFrom(_ => true));
             CreateMap<ActivityCreation, UserActivity>().
                 ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
                 ForMember(target => target.ActivityType, config => config.MapFrom(src => src.ActivityType.ToString())).

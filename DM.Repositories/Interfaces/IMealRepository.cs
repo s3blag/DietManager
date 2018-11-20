@@ -13,8 +13,8 @@ namespace DM.Repositories.Interfaces
         Task<IEnumerable<Meal>> GetAllMealsAsync();
         Task<Meal> GetMealByIdAsync(Guid id);
         Task<bool> UpdateMealAsync(Meal newMealData);
-        Task<IList<MealPreview>> GetMealPreviewsAsync(Guid userId, int index, int takeAmount);
-        Task<IList<MealPreview>> GetMealPreviewsByQueryAsync(string query, int index, int takeAmount);
-        Task<int> GetMealsCreatedByUserCountAsync(Guid userId);
+        Task<ICollection<MealPreview>> GetMealPreviewsAsync(Guid userId, int index, int takeAmount);
+        Task<ICollection<MealPreview>> GetMealPreviewsByQueryAsync(string query, int index, int takeAmount);
+        //Task<int> GetMealsCreatedByUserCountAsync(Guid userId);
     }
 }

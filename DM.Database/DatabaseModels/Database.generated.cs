@@ -16,7 +16,7 @@ namespace DM.Database
 	/// <summary>
 	/// Database       : DietManager
 	/// Data Source    : tcp://localhost:5432
-	/// Server Version : 10.4
+	/// Server Version : 9.5.14
 	/// </summary>
 	public partial class DietManagerDB : LinqToDB.Data.DataConnection
 	{
@@ -72,17 +72,17 @@ namespace DM.Database
 	[Table(Schema="Meals", Name="Favourites")]
 	public partial class Favourite
 	{
-		[PrimaryKey, NotNull] public Guid Id     { get; set; } // uuid
-		[Column,     NotNull] public Guid MealId { get; set; } // uuid
-		[Column,     NotNull] public Guid UserId { get; set; } // uuid
-        [Column, NotNull] public DateTimeOffset CreationDate { get; set; } // timestamp (6) with time zone
+		[PrimaryKey, NotNull] public Guid           Id           { get; set; } // uuid
+		[Column,     NotNull] public Guid           MealId       { get; set; } // uuid
+		[Column,     NotNull] public Guid           UserId       { get; set; } // uuid
+		[Column,     NotNull] public DateTimeOffset CreationDate { get; set; } // timestamp (6) with time zone
 
-        #region Associations
+		#region Associations
 
-        /// <summary>
-        /// fk_favourites_mealid
-        /// </summary>
-        [Association(ThisKey="MealId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_favourites_mealid", BackReferenceName="fkfavouritesmealids")]
+		/// <summary>
+		/// fk_favourites_mealid
+		/// </summary>
+		[Association(ThisKey="MealId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_favourites_mealid", BackReferenceName="fkfavouritesmealids")]
 		public Meal Meal { get; set; }
 
 		/// <summary>
@@ -151,14 +151,15 @@ namespace DM.Database
 	[Table(Schema="Meals", Name="Meal")]
 	public partial class Meal
 	{
-		[PrimaryKey, NotNull    ] public Guid           Id           { get; set; } // uuid
-		[Column,     NotNull    ] public DateTimeOffset CreationDate { get; set; } // timestamp (6) with time zone
-		[Column,     NotNull    ] public Guid           CreatorId    { get; set; } // uuid
-		[Column,        Nullable] public Guid?          ImageId      { get; set; } // uuid
-		[Column,     NotNull    ] public string         Name         { get; set; } // text
-		[Column,        Nullable] public string         Description  { get; set; } // text
-		[Column,     NotNull    ] public float          Calories     { get; set; } // real
-		[Column,     NotNull    ] public int            NumberOfUses { get; set; } // integer
+		[PrimaryKey, NotNull    ] public Guid           Id                     { get; set; } // uuid
+		[Column,     NotNull    ] public DateTimeOffset CreationDate           { get; set; } // timestamp (6) with time zone
+		[Column,     NotNull    ] public Guid           CreatorId              { get; set; } // uuid
+		[Column,        Nullable] public Guid?          ImageId                { get; set; } // uuid
+		[Column,     NotNull    ] public string         Name                   { get; set; } // text
+		[Column,        Nullable] public string         Description            { get; set; } // text
+		[Column,     NotNull    ] public float          Calories               { get; set; } // real
+		[Column,     NotNull    ] public int            NumberOfFavouriteMarks { get; set; } // integer
+		[Column,     NotNull    ] public int            NumberOfUses           { get; set; } // integer
 
 		#region Associations
 
@@ -222,6 +223,7 @@ namespace DM.Database
 		[Column,        Nullable] public string Name         { get; set; } // text
 		[Column,     NotNull    ] public int    Calories     { get; set; } // integer
 		[Column,     NotNull    ] public Guid   NutritionsId { get; set; } // uuid
+		[Column,     NotNull    ] public int    NumberOfUses { get; set; } // integer
 
 		#region Associations
 
@@ -361,17 +363,20 @@ namespace DM.Database
 	[Table(Schema="Users", Name="User")]
 	public partial class User
 	{
-		[PrimaryKey, NotNull    ] public Guid           Id            { get; set; } // uuid
-		[Column,        Nullable] public string         Email         { get; set; } // character varying(254)
-		[Column,        Nullable] public string         UserName      { get; set; } // character varying(20)
-		[Column,     NotNull    ] public string         Name          { get; set; } // character varying(20)
-		[Column,     NotNull    ] public string         Surname       { get; set; } // character varying(35)
-		[Column,     NotNull    ] public string         FullName      { get; set; } // character varying(56)
-		[Column,     NotNull    ] public string         Password      { get; set; } // text
-		[Column,     NotNull    ] public DateTimeOffset CreationDate  { get; set; } // timestamp (6) with time zone
-		[Column,     NotNull    ] public DateTimeOffset LastLoginDate { get; set; } // timestamp (6) with time zone
-		[Column,        Nullable] public Guid?          ImageId       { get; set; } // uuid
-		[Column,     NotNull    ] public Guid           RoleId        { get; set; } // uuid
+		[PrimaryKey, NotNull    ] public Guid           Id                          { get; set; } // uuid
+		[Column,        Nullable] public string         Email                       { get; set; } // character varying(254)
+		[Column,        Nullable] public string         UserName                    { get; set; } // character varying(20)
+		[Column,     NotNull    ] public string         Name                        { get; set; } // character varying(20)
+		[Column,     NotNull    ] public string         Surname                     { get; set; } // character varying(35)
+		[Column,     NotNull    ] public string         FullName                    { get; set; } // character varying(56)
+		[Column,     NotNull    ] public string         City                        { get; set; } // character varying(35)
+		[Column,     NotNull    ] public int            CreatedMealsCount           { get; set; } // integer
+		[Column,     NotNull    ] public int            CreatedMealIngredientsCount { get; set; } // integer
+		[Column,     NotNull    ] public string         Password                    { get; set; } // text
+		[Column,     NotNull    ] public DateTimeOffset CreationDate                { get; set; } // timestamp (6) with time zone
+		[Column,     NotNull    ] public DateTimeOffset LastLoginDate               { get; set; } // timestamp (6) with time zone
+		[Column,        Nullable] public Guid?          ImageId                     { get; set; } // uuid
+		[Column,     NotNull    ] public Guid           RoleId                      { get; set; } // uuid
 
 		#region Associations
 

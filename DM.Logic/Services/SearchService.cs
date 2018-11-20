@@ -82,7 +82,7 @@ namespace DM.Logic.Services
             IndexedResult<MealIngredientSearchVM> searchArgumentsVM,
             int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE)
         {
-            var searchResult = _mapper.Map<IList<MealIngredientVM>>(
+            var searchResult = _mapper.Map<ICollection<MealIngredientVM>>(
                 await _mealIngredientRepository.GetMealIngredientsByQueryAsync(
                     searchArgumentsVM.Result.Query,
                     searchArgumentsVM.Index,
@@ -107,7 +107,7 @@ namespace DM.Logic.Services
             IndexedResult<UserSearchVM> searchArgumentsVM,
             int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE)
         {
-            var searchResult = _mapper.Map<IList<UserVM>>(
+            var searchResult = _mapper.Map<ICollection<UserVM>>(
                 await _userRepository.GetUsersByQueryAsync(
                     searchArgumentsVM.Result.Query,
                     searchArgumentsVM.Index,
@@ -122,7 +122,7 @@ namespace DM.Logic.Services
             };
         }
 
-        private void SetNumberOfFavouriteMarks(IList<Models.Models.MealPreview> userMealPreviews, IDictionary<Guid, int> mealFavouriteCounts)
+        private void SetNumberOfFavouriteMarks(ICollection<Models.Models.MealPreview> userMealPreviews, IDictionary<Guid, int> mealFavouriteCounts)
         {
             if (mealFavouriteCounts.Any())
             {
@@ -138,7 +138,7 @@ namespace DM.Logic.Services
 
         private void SetIsFavouriteField(
             Guid userId, 
-            IList<Database.Favourite> favourites, 
+            ICollection<Database.Favourite> favourites, 
             IEnumerable<MealPreviewVM> searchResultVM)
         {
             var commonMealIds = searchResultVM.Select(m => m.Id.Value).

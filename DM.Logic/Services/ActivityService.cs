@@ -25,16 +25,16 @@ namespace DM.Logic.Services
             _mapper = mapper;
         }
 
-        public async Task<IndexedResult<IList<UserActivityVM>>> GetUsersActivitiesFeedAsync(
+        public async Task<IndexedResult<ICollection<UserActivityVM>>> GetUsersActivitiesFeedAsync(
             IEnumerable<Guid> userIds,
             IndexedResult<UserActivityVM> lastReturned,
             int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE)
         {
             var usersActivities = await _activityRepository.GetUsersActivitiesAsync(userIds, lastReturned.Index, takeAmount);
 
-            return new IndexedResult<IList<UserActivityVM>>()
+            return new IndexedResult<ICollection<UserActivityVM>>()
             {
-                Result = _mapper.Map<IList<UserActivityVM>>(usersActivities),
+                Result = _mapper.Map<ICollection<UserActivityVM>>(usersActivities),
                 Index = lastReturned?.Index ?? 0 + usersActivities.Count,
                 IsLast = usersActivities.Count != takeAmount
             };

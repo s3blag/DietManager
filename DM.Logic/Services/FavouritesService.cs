@@ -27,17 +27,17 @@ namespace DM.Logic.Services
             _activityService = activityService;
         }
 
-        public async Task<IndexedResult<IEnumerable<FavouriteVM>>> GetFavouriteMealsAsync(
+        public async Task<IndexedResult<IEnumerable<MealPreviewVM>>> GetFavouriteMealsAsync(
             Guid userId, 
-            IndexedResult<FavouriteVM> lastReturned, 
+            IndexedResult<MealPreviewVM> lastReturned, 
             int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE
             )
         {
             var usersFavourites = await _favouriteRepository.GetUserFavouritesAsync(userId, lastReturned?.Index ?? 0, takeAmount);
 
-            return new IndexedResult<IEnumerable<FavouriteVM>>()
+            return new IndexedResult<IEnumerable<MealPreviewVM>>()
             {
-                Result = _mapper.Map<IEnumerable<FavouriteVM>>(usersFavourites),
+                Result = _mapper.Map<IEnumerable<MealPreviewVM>>(usersFavourites),
                 Index = lastReturned?.Index ?? 0 + usersFavourites.Count,
                 IsLast = usersFavourites.Count != takeAmount
             };

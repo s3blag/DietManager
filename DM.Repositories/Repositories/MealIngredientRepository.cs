@@ -92,7 +92,7 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<IList<MealIngredient>> GetMealIngredientsByQueryAsync(string query, int index, int takeAmount)
+        public async Task<ICollection<MealIngredient>> GetMealIngredientsByQueryAsync(string query, int index, int takeAmount)
         {
             using (var db = new DietManagerDB())
             {
@@ -107,14 +107,14 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<int> GetMealIngredientsAddedByUserCountAsync(Guid userId)
-        {
-            using (var db = new DietManagerDB())
-            {
-                return await db.MealIngredients.
-                    Where(m => m.CreatorId == userId).
-                    CountAsync();
-            }
-        }
+        //public async Task<int> GetMealIngredientsAddedByUserCountAsync(Guid userId)
+        //{
+        //    using (var db = new DietManagerDB())
+        //    {
+        //        return await db.MealIngredients.
+        //            Where(m => m.CreatorId == userId).
+        //            CountAsync();
+        //    }
+        //}
     }
 }

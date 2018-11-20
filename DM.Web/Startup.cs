@@ -8,6 +8,7 @@ using DM.Repositories.Interfaces;
 using LinqToDB.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -78,7 +79,8 @@ namespace Diet_Manager
             services.AddScoped<IMealScheduleService, MealScheduleService>();
             services.AddScoped<IActivityService, ActivityService>();
             services.AddScoped<IFavouritesService, FavouritesService>();
-            
+
+            services.AddScoped<IContentTypeProvider, FileExtensionContentTypeProvider>();
 
             services.AddSingleton<ICacheContainer, AchievementsCacheContainer>();
         }

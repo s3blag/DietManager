@@ -14,9 +14,9 @@ namespace DM.Logic.Interfaces
 
         Task<UserAchievementVM> CheckForNumberOfFriendsAsync(Guid userId);
 
-        Task<UserAchievementVM> CheckForNumberOfMealAdditionsByUserAsync(Guid userId);
+        Task<UserAchievementVM> CheckForNumberOfMealAdditionsByUserAsync(User user);
 
-        Task<UserAchievementVM> CheckForNumberOfMealIngredientAdditionsByUserAsync(Guid userId);
+        Task<UserAchievementVM> CheckForNumberOfMealIngredientAdditionsByUserAsync(User user);
 
         Task CheckForNumberOfMealUsesAsync(Guid userId, Guid mealId);
 

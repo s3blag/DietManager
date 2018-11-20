@@ -8,6 +8,6 @@ namespace DM.Repositories.Interfaces
     public interface IUserRepository : IBaseRepository<User>
     {
         Task<User> GetUserAsync(Guid id);
-        Task<IList<User>> GetUsersByQueryAsync(string query, int index, int takeAmount);
+        Task<ICollection<User>> GetUsersByQueryAsync(string query, int index, int takeAmount);
     }
 }

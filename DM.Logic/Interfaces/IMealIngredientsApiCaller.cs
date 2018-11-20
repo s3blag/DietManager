@@ -6,6 +6,6 @@ namespace DM.Logic.Interfaces
 {
     public interface IMealIngredientsApiCaller
     {
-        Task<IList<MealIngredientVM>> GetMealIngredientsByQueryAsync(string query);
+        Task<ICollection<MealIngredientVM>> GetMealIngredientsByQueryAsync(string query);
     }
 }

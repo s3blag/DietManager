@@ -8,7 +8,7 @@ namespace DM.Logic.Services
 {
     public class MealIngredientsApiCaller : IMealIngredientsApiCaller
     {
-        public  Task<IList<MealIngredientVM>> GetMealIngredientsByQueryAsync(string query)
+        public  Task<ICollection<MealIngredientVM>> GetMealIngredientsByQueryAsync(string query)
         {
             throw new NotImplementedException();
         }

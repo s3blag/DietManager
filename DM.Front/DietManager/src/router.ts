@@ -4,6 +4,7 @@ import Home from "./views/Home.vue";
 import MealManager from "./components/meal/MealManager.vue";
 import AddMeal from "@/components/meal/AddMeal.vue";
 import MyMeals from "@/components/meal/MyMeals.vue";
+import FavouriteMeals from "@/components/meal/FavouriteMeals.vue";
 import SearchMeals from "@/components/meal/SearchMeals.vue";
 import FriendManager from "./components/friend/FriendManager.vue";
 import MealSchedule from "./components/meal-schedule/MealSchedule.vue";
@@ -38,6 +39,11 @@ export default new Router({
           path: "my-meals",
           name: "MyMeals",
           component: MyMeals
+        },
+        {
+          path: "favourite-meals",
+          name: "FavouriteMeals",
+          component: FavouriteMeals
         }
       ]
     },

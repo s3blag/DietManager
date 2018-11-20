@@ -39,7 +39,7 @@ public static class AchievementsSetup
         } 
     }
 
-    private static IList<Achievement> GetAchievementsFromConfig(AchievementsConfig instance)
+    private static ICollection<Achievement> GetAchievementsFromConfig(AchievementsConfig instance)
     {
         var achievements = new List<Achievement>();
 

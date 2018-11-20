@@ -1,4 +1,6 @@
 import Axios from "axios";
+import IndexedResult from "@/ViewModels/wrappers/indexedResult";
+import MealPreview from "@/ViewModels/meal/mealPreview";
 
 export default class FriendsApiCaller {
   static add(
@@ -23,6 +25,27 @@ export default class FriendsApiCaller {
       .catch(error => errorHandler(error));
   }
 
+  static get(
+    lastReturnedMealPreview: IndexedResult<MealPreview> | null,
+    successHandler: (indexedResult: IndexedResult<MealPreview[]>) => void,
+    errorHandler: (error: Error) => void = this.defaultErrorHandler
+  ) {
+    Axios.post<IndexedResult<MealPreview[]>>(
+      "/api/favourites/get",
+      lastReturnedMealPreview,
+      {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    )
+      .then(response => {
+        successHandler(response.data);
+      })
+      .catch(error => {
+        errorHandler(error);
+      });
+  }
   private static defaultErrorHandler(error: Error) {
     // eslint-disable-next-line no-console
     console.error(error);

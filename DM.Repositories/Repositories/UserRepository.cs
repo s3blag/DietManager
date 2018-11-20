@@ -20,7 +20,7 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<IList<User>> GetUsersByQueryAsync(string query, int index, int takeAmount)
+        public async Task<ICollection<User>> GetUsersByQueryAsync(string query, int index, int takeAmount)
         {
             using (var db = new DietManagerDB())
             {

@@ -70,8 +70,10 @@ namespace DM.Logic.Services
                 );
             }
 
+            //get user for checkForNumberOfAdditionsTask
+
             var logNewMealAddedTask = _activityService.LogNewMealAddedAsync(userId, dbMeal.Id);
-            var checkForNumberOfAdditionsTask = _achievementService.CheckForNumberOfMealAdditionsByUserAsync(userId);
+            var checkForNumberOfAdditionsTask = _achievementService.CheckForNumberOfMealAdditionsByUserAsync(null);
 
             await Task.WhenAll(logNewMealAddedTask, checkForNumberOfAdditionsTask);
 
@@ -109,7 +111,7 @@ namespace DM.Logic.Services
             };
         }
 
-        private void SetIsFavourite(IList<Favourite> favourites, IEnumerable<MealPreviewVM> mealPreviewsVM)
+        private void SetIsFavourite(ICollection<Favourite> favourites, IEnumerable<MealPreviewVM> mealPreviewsVM)
         {
             var commonMealIds = mealPreviewsVM.Select(m => m.Id.Value).
                             Intersect(favourites.Select(f => f.MealId)).
@@ -124,7 +126,7 @@ namespace DM.Logic.Services
             }
         }
 
-        private void SetNumberOfFavouriteMarks(IList<Models.Models.MealPreview> userMealPreviews, IDictionary<Guid, int> mealFavouriteCounts)
+        private void SetNumberOfFavouriteMarks(ICollection<Models.Models.MealPreview> userMealPreviews, IDictionary<Guid, int> mealFavouriteCounts)
         {
             if (mealFavouriteCounts.Any())
             {
@@ -138,7 +140,7 @@ namespace DM.Logic.Services
             }
         }
 
-        private IList<MealMealIngredient> GetMealMealIngredients(
+        private ICollection<MealMealIngredient> GetMealMealIngredients(
             Guid mealId, 
             IEnumerable<MealIngredientIdWithQuantityVM> mealIngredientsIDs
         ) =>    mealIngredientsIDs.

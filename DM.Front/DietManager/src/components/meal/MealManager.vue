@@ -11,6 +11,10 @@
     <router-link tag="li" class="link" :to="{ name: 'MyMeals'}">
       <font-awesome-icon id="book-icon" class="option-icon" icon="book" /> My Meals
     </router-link>
+
+    <router-link tag="li" class="link" :to="{ name: 'FavouriteMeals'}">
+      <font-awesome-icon id="book-icon" class="option-icon" icon="star" /> Favourite
+    </router-link>
   </side-menu>
 </template>
 

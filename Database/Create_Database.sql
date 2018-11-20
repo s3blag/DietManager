@@ -20,17 +20,20 @@ CREATE TABLE "Users"."Role" (
 );
 
 CREATE TABLE "Users"."User" (
-    "Id"            UUID            PRIMARY KEY,
-    "Email"         VARCHAR(254)    UNIQUE NULL,
-    "UserName"      VARCHAR(20)     UNIQUE NULL,
-    "Name"          VARCHAR(20)     NOT NULL,
-    "Surname"       VARCHAR(35)     NOT NULL,
-    "FullName"      VARCHAR(56)     NOT NULL,
-    "Password"      TEXT            NOT NULL,
-    "CreationDate"  TIMESTAMPTZ     NOT NULL,
-    "LastLoginDate" TIMESTAMPTZ     NOT NULL,
-    "ImageId"       UUID            NULL,
-    "RoleId"        UUID            NOT NULL
+    "Id"                            UUID            PRIMARY KEY,
+    "Email"                         VARCHAR(254)    UNIQUE NULL,
+    "UserName"                      VARCHAR(20)     UNIQUE NULL,
+    "Name"                          VARCHAR(20)     NOT NULL,
+    "Surname"                       VARCHAR(35)     NOT NULL,
+    "FullName"                      VARCHAR(56)     NOT NULL,
+    "City"                          VARCHAR(35)     NOT NULL,
+    "CreatedMealsCount"             INTEGER         NOT NULL DEFAULT 0,
+    "CreatedMealIngredientsCount"   INTEGER         NOT NULL DEFAULT 0,
+    "Password"                      TEXT            NOT NULL,
+    "CreationDate"                  TIMESTAMPTZ     NOT NULL,
+    "LastLoginDate"                 TIMESTAMPTZ     NOT NULL,
+    "ImageId"                       UUID            NULL,
+    "RoleId"                        UUID            NOT NULL
 );
 ALTER TABLE "Users"."User" 
 ADD CONSTRAINT FK_User_Image      FOREIGN KEY ("ImageId")     REFERENCES "Images"."Image"("Id"),
@@ -78,13 +81,15 @@ ADD CONSTRAINT FK_UserAchievement_Achievement FOREIGN KEY ("AchievementId") REFE
 ADD CONSTRAINT UQ_User_Achievement UNIQUE("UserId", "AchievementId");
 
 CREATE TABLE "Meals"."Meal" (
-    "Id"            UUID        PRIMARY KEY,
-    "CreationDate"  TIMESTAMPTZ NOT NULL,
-    "CreatorId"     UUID        NOT NULL,
-    "ImageId"       UUID        NULL,
-    "Name"          TEXT        NOT NULL,
-    "Description"   TEXT        NULL,
-    "Calories"      REAL        NOT NULL
+    "Id"                        UUID        PRIMARY KEY,
+    "CreationDate"              TIMESTAMPTZ NOT NULL,
+    "CreatorId"                 UUID        NOT NULL,
+    "ImageId"                   UUID        NULL,
+    "Name"                      TEXT        NOT NULL,
+    "Description"               TEXT        NULL,
+    "Calories"                  REAL        NOT NULL,
+    "NumberOfFavouriteMarks"    INTEGER     NOT NULL,
+    "NumberOfUses"              INTEGER     NOT NULL
 );
 ALTER TABLE "Meals"."Meal" 
 ADD CONSTRAINT "FK_Meal_Image" FOREIGN KEY ("ImageId") REFERENCES  "Images"."Image"("Id"),
@@ -128,7 +133,8 @@ CREATE TABLE "Meals"."MealIngredient" (
     "ImageId"       UUID        NULL,
     "Name"          TEXT        UNIQUE,
     "Calories"      INTEGER     NOT NULL,
-    "NutritionsId"  UUID        NOT NULL
+    "NutritionsId"  UUID        NOT NULL,
+    "NumberOfUses"  INTEGER     NOT NULL
 );
 ALTER TABLE "Meals"."MealIngredient" 
 ADD CONSTRAINT "FK_MealIngredient_Image" FOREIGN KEY ("ImageId") REFERENCES  "Images"."Image"("Id"),
@@ -193,6 +199,7 @@ VALUES (
 
 INSERT INTO "Users"."User"(
     "Id", 
+    "City",
     "Email", 
     "UserName", 
     "Name",
@@ -205,6 +212,7 @@ INSERT INTO "Users"."User"(
 )
 VALUES (
     '00000000-0000-0000-0000-000000000000',
+    'Wroclaw',
     'ad@m.in',
     'ad@m.in',
     'Sebastian',

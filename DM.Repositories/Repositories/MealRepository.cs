@@ -36,15 +36,15 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<int> GetMealsCreatedByUserCountAsync(Guid userId)
-        {
-            using (var db = new DietManagerDB())
-            {
-                return await db.Meals.
-                    Where(m => m.CreatorId == userId).
-                    CountAsync();
-            }
-        }
+        //public async Task<int> GetMealsCreatedByUserCountAsync(Guid userId)
+        //{
+        //    using (var db = new DietManagerDB())
+        //    {
+        //        return await db.Meals.
+        //            Where(m => m.CreatorId == userId).
+        //            CountAsync();
+        //    }
+        //}
 
         public async Task<bool> AddMealMealIngredientsAsync(
             IEnumerable<MealMealIngredient> mealMealIngredients
@@ -72,7 +72,7 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<IList<MealPreview>> GetMealPreviewsAsync(Guid userId, int index, int takeAmount)
+        public async Task<ICollection<MealPreview>> GetMealPreviewsAsync(Guid userId, int index, int takeAmount)
         {
             using (var db = new DietManagerDB())
             {
@@ -89,7 +89,7 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<IList<MealPreview>> GetMealPreviewsByQueryAsync(string query, int index, int takeAmount)
+        public async Task<ICollection<MealPreview>> GetMealPreviewsByQueryAsync(string query, int index, int takeAmount)
         {
             using (var db = new DietManagerDB())
             {

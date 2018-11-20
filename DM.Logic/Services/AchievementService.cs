@@ -69,69 +69,71 @@ namespace DM.Logic.Services
 
         public async Task CheckForNumberOfMealUsesAsync(Guid userId, Guid mealId)
         {
-            var newValueTask = _mealScheduleRepository.GetNumberOfMealUsesAsync(mealId);
+            var getMealTask = _mealRepository.GetMealByIdAsync(mealId);
 
             var currentlyBestValueTask = _userAchievementRepository.GetUserAchievementMaxValueAsync(userId, Achievements.MealAchievement.NumberOfUses);
 
-            await Task.WhenAll(newValueTask, currentlyBestValueTask);
+            await Task.WhenAll(getMealTask, currentlyBestValueTask);
 
-            if (newValueTask.Result <= currentlyBestValueTask.Result)
+            if (getMealTask.Result.NumberOfUses <= currentlyBestValueTask.Result)
             {
                 return;
             }
 
             int[] achievementStages = achievementsConfig.MealAchievements[Achievements.MealAchievement.NumberOfUses];
 
-            await AddAchievementIfNextStageReachedAsync(userId, achievementStages, newValueTask.Result, Achievements.MealAchievement.NumberOfUses);
+            await AddAchievementIfNextStageReachedAsync(userId, achievementStages, getMealTask.Result.NumberOfUses, Achievements.MealAchievement.NumberOfUses);
         }
 
-
-        public async Task<UserAchievementVM> CheckForNumberOfMealAdditionsByUserAsync(Guid userId)
+        public async Task<UserAchievementVM> CheckForNumberOfMealAdditionsByUserAsync(User user)
         {
-            int newValue = await _mealRepository.GetMealsCreatedByUserCountAsync(userId);
+            var currentlyBestValue = await _userAchievementRepository.GetUserAchievementMaxValueAsync(user.Id, Achievements.MealAchievement.AdditionsCountOver);
+
+            if (user.CreatedMealsCount <= currentlyBestValue)
+            {
+                return null;
+            }
 
             int[] achievementStages = achievementsConfig.MealAchievements[Achievements.MealAchievement.AdditionsCountOver];
 
-            return _mapper.Map<UserAchievementVM>(await AddAchievementIfNextStageReachedAsync(userId, achievementStages, newValue, Achievements.MealAchievement.AdditionsCountOver));
+            return _mapper.Map<UserAchievementVM>(await AddAchievementIfNextStageReachedAsync(user.Id, achievementStages, user.CreatedMealsCount, Achievements.MealAchievement.AdditionsCountOver));
         }
 
         public async Task CheckForNumberOfFavouriteMarksAsync(Guid mealId)
         {
             int[] achievementStages = achievementsConfig.MealAchievements[Achievements.MealAchievement.NumberOfFavouriteMarks];
+      
+            var meal =  await _mealRepository.GetMealByIdAsync(mealId);
 
-            var newValueTask = _favouriteRepository.GetNumberOfFavouritesMarksAsync(new[] { mealId });
+            int currentlyBestValue = await _userAchievementRepository.GetUserAchievementMaxValueAsync(meal.CreatorId, Achievements.MealAchievement.NumberOfFavouriteMarks);
 
-            var creatorIdTask =  _mealRepository.GetMealByIdAsync(mealId);
-
-            await Task.WhenAll(newValueTask, creatorIdTask);
-
-            var creatorId = creatorIdTask.Result.CreatorId;
-            int newValue = newValueTask.Result.First().Value;
-
-            int currentlyBestValue = await _userAchievementRepository.GetUserAchievementMaxValueAsync(creatorId, Achievements.MealAchievement.NumberOfFavouriteMarks);
-
-            if (newValue <= currentlyBestValue)
+            if (meal.NumberOfFavouriteMarks <= currentlyBestValue)
             {
                 return;
             }
 
-            await AddAchievementIfNextStageReachedAsync(creatorId, achievementStages, newValue, Achievements.MealAchievement.NumberOfFavouriteMarks);
+            await AddAchievementIfNextStageReachedAsync(meal.CreatorId, achievementStages, meal.NumberOfFavouriteMarks, Achievements.MealAchievement.NumberOfFavouriteMarks);
         }
 
         #endregion
 
         #region MealIngredient Achievements
 
-        public async Task<UserAchievementVM> CheckForNumberOfMealIngredientAdditionsByUserAsync(Guid userId)
+        public async Task<UserAchievementVM> CheckForNumberOfMealIngredientAdditionsByUserAsync(User user)
         {
-            int newValue = await _mealIngredientRepository.GetMealIngredientsAddedByUserCountAsync(userId);
+            var currentlyBestValue = await _userAchievementRepository.GetUserAchievementMaxValueAsync(user.Id, Achievements.MealIngredientAchievement.AdditionsCountOver);
+
+            if (user.CreatedMealIngredientsCount <= currentlyBestValue)
+            {
+                return null;
+            }
 
             int[] achievementStages = achievementsConfig.MealIngredientAchievements[Achievements.MealIngredientAchievement.AdditionsCountOver];
 
             return _mapper.Map<UserAchievementVM>(await AddAchievementIfNextStageReachedAsync(
-                userId,
-                achievementStages, 
-                newValue, 
+                user.Id,
+                achievementStages,
+                user.CreatedMealIngredientsCount, 
                 Achievements.MealIngredientAchievement.AdditionsCountOver
                 ));
         }
@@ -156,6 +158,13 @@ namespace DM.Logic.Services
                 return null;
             }
 
+            int currentlyBestValue = await _userAchievementRepository.GetUserAchievementMaxValueAsync(userBeforeLastLoginUpdate.Id, Achievements.UserAchievement.Anniversary);
+
+            if (currentDateAndCreationDifferenceInYears <= currentlyBestValue)
+            {
+                return null;
+            }
+
             int[] achievementStages = achievementsConfig.UserAchievements[Achievements.UserAchievement.Anniversary];
 
             return _mapper.Map<UserAchievementVM>(await AddAchievementIfNextStageReachedAsync(
@@ -172,14 +181,16 @@ namespace DM.Logic.Services
 
         public async Task<UserAchievementVM> CheckForConsequentScheduleUpdatesAsync(Guid userId)
         {
-            int oldMaxStreak = await _userAchievementRepository.GetUserAchievementMaxValueAsync(
+            var oldMaxStreakTask = _userAchievementRepository.GetUserAchievementMaxValueAsync(
                                    userId,
                                    Achievements.MealScheduleAchievement.ConsequentScheduleUpdates
                                );
 
-            int newStreak = await _mealScheduleRepository.GetMealScheduleUpdatesStreakInDaysAsync(userId);
+            var newStreakTask = _mealScheduleRepository.GetMealScheduleUpdatesStreakInDaysAsync(userId);
 
-            if (newStreak <= oldMaxStreak)
+            await Task.WhenAll(oldMaxStreakTask, newStreakTask);
+
+            if (newStreakTask.Result <= oldMaxStreakTask.Result)
             {
                 return null;
             }
@@ -189,7 +200,7 @@ namespace DM.Logic.Services
             return _mapper.Map<UserAchievementVM>(await AddAchievementIfNextStageReachedAsync(
                 userId,
                 achievementStages, 
-                newStreak, 
+                newStreakTask.Result, 
                 Achievements.MealScheduleAchievement.ConsequentScheduleUpdates
                 ));
         }

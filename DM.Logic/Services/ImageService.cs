@@ -4,10 +4,14 @@ using DM.Logic.Interfaces;
 using DM.Models.Config;
 using DM.Models.Exceptions;
 using DM.Models.Models;
+using DM.Models.ViewModels;
 using DM.Repositories.Interfaces;
 using Microsoft.Extensions.Options;
 using System;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DM.Logic.Services
@@ -25,9 +29,8 @@ namespace DM.Logic.Services
             _config = options.Value;
         }
 
-        public async Task<byte[]> GetImageByIdAsync(Guid imageId)
+        public async Task<ImageVM> GetImageByIdAsync(Guid imageId)
         {
-
             ValidateArgument((imageId, nameof(imageId)));
 
             var imageMetaData = await _imageRepository.GetImageByIdAsync(imageId);
@@ -39,18 +42,18 @@ namespace DM.Logic.Services
 
             byte[] image = await ReadImageAsync(imageMetaData.Path);
 
-            return image;
+            return new ImageVM() { Content = image, Extension = Path.GetExtension(imageMetaData.Path) };
         }
 
-        public async Task<Guid> AddImageAsync(byte[] image)
+        public async Task<Guid> AddImageAsync(string base64Image)
         {
-            ValidateArgument((image, nameof(image)));
+            ValidateArgument((base64Image, nameof(base64Image)));
 
-            var imageCreation = await CreateFullImagePathAsync(_config.ImagesRootDirectoryPath);
+            var imageCreation = await CreateFullImagePathAsync(_config.ImagesRootDirectoryPath, GetExtension(base64Image));
 
             //compress image
 
-            await WriteImageAsync(imageCreation, image);
+            await WriteImageAsync(imageCreation, GetBase64Image(base64Image));
 
             var dbImage = _mapper.Map<Image>(imageCreation);
 
@@ -64,19 +67,31 @@ namespace DM.Logic.Services
             return dbImage.Id;
         }
 
+        private string GetExtension(string base64Image)
+        {
+            var match = Regex.Match(base64Image, Constants.Base64ExtensionRegex);
+
+            return "." + match.Groups["type"].Value;
+        }
+
+        private string GetBase64Image(string fullBase64Image)
+        {
+            return fullBase64Image.Substring(fullBase64Image.LastIndexOf(',') + 1);
+        }
+
         private async Task<Byte[]> ReadImageAsync(string imagePath) =>
              await File.ReadAllBytesAsync(imagePath);
 
 
-        private async Task WriteImageAsync(ImageCreation imageCreation, byte[] image) => 
-            await File.WriteAllBytesAsync(imageCreation.Path, image);
+        private async Task WriteImageAsync(ImageCreation imageCreation, string base64Image) => 
+            await File.WriteAllBytesAsync(imageCreation.Path, base64Image.Select(x => (byte)x).ToArray());
 
         private async Task<Byte[]> CompressImage(Byte[] image)
         {
             throw new NotImplementedException();
         }
 
-        private async Task<ImageCreation> CreateFullImagePathAsync(string basePath)
+        private async Task<ImageCreation> CreateFullImagePathAsync(string basePath, string extension)
         {
             int count = await _imageRepository.CountAsync();
 
@@ -94,7 +109,7 @@ namespace DM.Logic.Services
                 });  
             }
 
-            return new ImageCreation(Path.Combine(newImageDirectoryPath, imageInternalIndex.ToString() + ".jpg"));
+            return new ImageCreation(Path.Combine(newImageDirectoryPath, imageInternalIndex.ToString() + extension));
         }
         
         private void ValidateArgument(params (Object value, string name)[] arguments)

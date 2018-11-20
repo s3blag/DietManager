@@ -25,15 +25,15 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<int> GetNumberOfMealUsesAsync(Guid mealId)
-        {
-            using (var db = new DietManagerDB())
-            {
-                return await db.MealScheduleEntries.
-                    Where(m => m.MealId == mealId).
-                    CountAsync();
-            }
-        }
+        //public async Task<int> GetNumberOfMealUsesAsync(Guid mealId)
+        //{
+        //    using (var db = new DietManagerDB())
+        //    {
+        //        return await db.MealScheduleEntries.
+        //            Where(m => m.MealId == mealId).
+        //            CountAsync();
+        //    }
+        //}
 
         public async Task<int> GetMealScheduleUpdatesStreakInDaysAsync(Guid userId)
         {
@@ -71,12 +71,61 @@ namespace DM.Repositories
         {
             using (var db = new DietManagerDB())
             {
-                var result = await db.MealScheduleEntries.
-                    Where(m => m.Id == mealScheduleEntryId).
-                    Where(m => m.UserId == userId).
-                    DeleteAsync();
+                db.BeginTransaction();
+                bool succeeded;
 
-                return result == 1;
+                var scheduleEntryq = db.MealScheduleEntries.
+                    Where(m => m.Id == mealScheduleEntryId).
+                    Where(m => m.UserId == userId);
+
+                var scheduleEntry = await scheduleEntryq.FirstOrDefaultAsync();
+
+                if (scheduleEntry == null)
+                {
+                    return false;
+                }
+
+                succeeded = (await scheduleEntryq.DeleteAsync() == 1);
+
+                if (!succeeded)
+                {
+                    return false;
+                }
+
+                succeeded = (await db.Meals.
+                        Where(m => m.Id == scheduleEntry.MealId).
+                        Set(m => m.NumberOfUses, m => m.NumberOfUses - 1).
+                        UpdateAsync() == 1);
+                
+
+                db.CommitTransaction();
+
+                return succeeded;
+            }
+        }
+
+        public override async Task<bool> AddAsync(MealScheduleEntry model)
+        {
+            using (var db = new DietManagerDB())
+            {
+                db.BeginTransaction();
+                bool succeeded;
+
+                succeeded = (await db.InsertAsync(model) == 1);
+
+                if (!succeeded)
+                {
+                    return false;
+                }
+
+                succeeded = (await db.Meals.
+                        Where(m => m.Id == model.MealId).
+                        Set(m => m.NumberOfUses, m => m.NumberOfUses + 1).
+                        UpdateAsync() == 1);
+
+                db.CommitTransaction();
+
+                return succeeded;
             }
         }
 

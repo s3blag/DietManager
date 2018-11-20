@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DM.Repositories
 {
-    public class FavouriteRepository: BaseRepository<Favourite>, IFavouriteRepository
+    public class FavouriteRepository : BaseRepository<Favourite>, IFavouriteRepository
     {
         public async Task<IDictionary<Guid, int>> GetNumberOfFavouritesMarksAsync(IEnumerable<Guid> mealIds)
         {
@@ -21,13 +21,13 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<IList<Favourite>> GetUserFavouritesAsync(Guid userId, int index, int takeAmount, string nameFilter = null)
+        public async Task<ICollection<Favourite>> GetUserFavouritesAsync(Guid userId, int index, int takeAmount, string nameFilter = null)
         {
             using (var db = new DietManagerDB())
             {
                 var favouritesQuery = db.Favourites.
                     LoadWith(f => f.Meal).
-                    LoadWith(f => f.User).
+                    LoadWith(f => f.Meal.Creator).
                     Where(f => f.UserId == userId).
                     AsQueryable();
 
@@ -48,11 +48,52 @@ namespace DM.Repositories
         {
             using (var db = new DietManagerDB())
             {
-                var result = await db.Favourites.
+                db.BeginTransaction();
+                bool succeeded;
+
+                succeeded = (await db.Favourites.
                     Where(f => f.MealId == mealId).
                     Where(f => f.UserId == userId).
-                    DeleteAsync();
-                return result == 1;
+                    DeleteAsync() == 1);
+
+                if (!succeeded)
+                {
+                    return false;
+                }
+
+                succeeded = (await db.Meals.
+                    Where(m => m.Id == mealId).
+                    Set(m => m.NumberOfFavouriteMarks, m => m.NumberOfFavouriteMarks -1).
+                    UpdateAsync() == 1);
+                
+                db.CommitTransaction();
+
+                return succeeded;
+            }
+        }
+
+        public override async Task<bool> AddAsync(Favourite favourite)
+        {
+            using (var db = new DietManagerDB())
+            {
+                db.BeginTransaction();
+                bool succeeded;
+
+                succeeded = (await db.InsertAsync(favourite) == 1);
+
+                if (!succeeded)
+                {
+                    return false;
+                }
+
+                succeeded = (await db.Meals.
+                    Where(m => m.Id == favourite.MealId).
+                    Set(m => m.NumberOfFavouriteMarks, m => m.NumberOfFavouriteMarks + 1).
+                    UpdateAsync() == 1);
+
+                db.CommitTransaction();
+
+                return succeeded;
             }
         }
     }

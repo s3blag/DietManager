@@ -11,7 +11,7 @@ namespace DM.Repositories
 {
     public class FriendRepository : BaseRepository<Friend>, IFriendRepository
     {
-        public async Task<IList<User>> GetUserFriendsAsync(Guid userId, int index, int takeAmount, FriendInvitationStatus status = FriendInvitationStatus.Accepted)
+        public async Task<ICollection<User>> GetUserFriendsAsync(Guid userId, int index, int takeAmount, FriendInvitationStatus status = FriendInvitationStatus.Accepted)
         {
             using (var db = new DietManagerDB())
             {

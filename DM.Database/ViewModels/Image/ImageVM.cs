@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace DM.Models.ViewModels.Image
+﻿namespace DM.Models.ViewModels
 {
     public class ImageVM
     {
-        [Required]
-        public string Image { get; set; }
+        public byte[] Content { get; set; }
+
+        public string Extension { get; set; }
+
     }
 }
