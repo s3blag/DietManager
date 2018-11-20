@@ -13,7 +13,6 @@ import Vue from "vue";
 import Component from "vue-class-component";
 
 import MealPreview from "@/ViewModels/meal/mealPreview";
-import MealPreviewWithImage from "@/ViewModels/meal/mealPreviewWithImage";
 import MealApiCaller from "@/services/api-callers/mealApi";
 import IndexedResult from "@/ViewModels/wrappers/indexedResult";
 import ImageApiCaller from "@/services/api-callers/imageApi";
@@ -27,7 +26,7 @@ Component.registerHooks(["beforeRouteEnter"]);
   }
 })
 export default class MyMeals extends Vue {
-  private mealPreviews: MealPreviewWithImage[] = [];
+  private mealPreviews: MealPreview[] = [];
   private lastReturned: IndexedResult<MealPreview> | null = null;
 
   beforeRouteEnter(
@@ -70,16 +69,7 @@ export default class MyMeals extends Vue {
       !indexedMealPreviews.result !== null ||
       indexedMealPreviews.result.length > 0
     ) {
-      this.mealPreviews.push(
-        ...indexedMealPreviews.result.map(mealPreview => {
-          const mealPreviewWithImage = {
-            mealPreview: mealPreview,
-            imageData: null
-          } as MealPreviewWithImage;
-          this.getMealPreviewImage(mealPreviewWithImage, mealPreview.imageId);
-          return mealPreviewWithImage;
-        })
-      );
+      this.mealPreviews.push(...indexedMealPreviews.result);
 
       this.lastReturned = {
         result:
@@ -87,17 +77,6 @@ export default class MyMeals extends Vue {
         index: indexedMealPreviews.index,
         isLast: indexedMealPreviews.isLast
       };
-    }
-  }
-
-  getMealPreviewImage(
-    mealPreviewWithImage: MealPreviewWithImage,
-    imageGuid: string | null
-  ) {
-    if (imageGuid !== null) {
-      ImageApiCaller.get(imageGuid, imageData => {
-        mealPreviewWithImage.imageData = imageData;
-      });
     }
   }
 }

@@ -68,7 +68,7 @@ namespace DM.Logic.Services
             //get user
 
             var logNewMealIngredientAddedTask = _activityService.LogNewMealIngredientAddedAsync(userId, dbMealIngredient.Id);
-            var checkForNumberOfMealIngredientAdditionsTask = _achievementService.CheckForNumberOfMealIngredientAdditionsByUserAsync(null);
+            var checkForNumberOfMealIngredientAdditionsTask = _achievementService.CheckForNumberOfMealIngredientAdditionsByUserAsync(new User() { Id = Guid.Empty });
 
             await Task.WhenAll(logNewMealIngredientAddedTask, checkForNumberOfMealIngredientAdditionsTask);
             

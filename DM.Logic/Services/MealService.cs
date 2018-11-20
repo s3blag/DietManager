@@ -73,7 +73,7 @@ namespace DM.Logic.Services
             //get user for checkForNumberOfAdditionsTask
 
             var logNewMealAddedTask = _activityService.LogNewMealAddedAsync(userId, dbMeal.Id);
-            var checkForNumberOfAdditionsTask = _achievementService.CheckForNumberOfMealAdditionsByUserAsync(null);
+            var checkForNumberOfAdditionsTask = _achievementService.CheckForNumberOfMealAdditionsByUserAsync(new User() { Id = Guid.Empty });
 
             await Task.WhenAll(logNewMealAddedTask, checkForNumberOfAdditionsTask);
 
@@ -88,20 +88,14 @@ namespace DM.Logic.Services
         {
             var userMealPreviews = await _mealRepository.GetMealPreviewsAsync(userId, lastReturned?.Index ?? 0, takeAmount);
 
-            var mealFavouriteCountsTask = _favouritesRepository.GetNumberOfFavouritesMarksAsync(userMealPreviews.Select(m => m.Id));
-
-            var userFavouritesTask = _favouritesRepository.GetUserFavouritesAsync(
+            var userFavourites = await _favouritesRepository.GetUserFavouritesAsync(
                                    userId,
                                    0,
                                    int.MaxValue);
 
-            await Task.WhenAll(mealFavouriteCountsTask, userFavouritesTask);
-
-            SetNumberOfFavouriteMarks(userMealPreviews, mealFavouriteCountsTask.Result);
-
             var mealPreviewsVM = _mapper.Map<IEnumerable<MealPreviewVM>>(userMealPreviews);
 
-            SetIsFavourite(userFavouritesTask.Result, mealPreviewsVM);
+            SetIsFavourite(userFavourites, mealPreviewsVM);
 
             return new IndexedResult<IEnumerable<MealPreviewVM>>()
             {
@@ -122,20 +116,6 @@ namespace DM.Logic.Services
                 foreach (var mealPreview in mealPreviewsVM.Where(m => commonMealIds.Contains(m.Id.Value)))
                 {
                     mealPreview.IsFavourite = true;
-                }
-            }
-        }
-
-        private void SetNumberOfFavouriteMarks(ICollection<Models.Models.MealPreview> userMealPreviews, IDictionary<Guid, int> mealFavouriteCounts)
-        {
-            if (mealFavouriteCounts.Any())
-            {
-                foreach (var mealPreview in userMealPreviews)
-                {
-                    if (mealFavouriteCounts.TryGetValue(mealPreview.Id, out int favouritesCount))
-                    {
-                        mealPreview.NumberOfFavouriteMarks = favouritesCount;
-                    }
                 }
             }
         }

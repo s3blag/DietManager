@@ -10,16 +10,16 @@ namespace DM.Repositories
 {
     public class FavouriteRepository : BaseRepository<Favourite>, IFavouriteRepository
     {
-        public async Task<IDictionary<Guid, int>> GetNumberOfFavouritesMarksAsync(IEnumerable<Guid> mealIds)
-        {
-            using (var db = new DietManagerDB())
-            {
-                return await db.Favourites.
-                    GroupBy(f => f.MealId).
-                    Having(_ => mealIds.Contains(_.Key)).
-                    ToDictionaryAsync(_ => _.Key, _ => _.Count());
-            }
-        }
+        //public async Task<IDictionary<Guid, int>> GetNumberOfFavouritesMarksAsync(IEnumerable<Guid> mealIds)
+        //{
+        //    using (var db = new DietManagerDB())
+        //    {
+        //        return await db.Favourites.
+        //            GroupBy(f => f.MealId).
+        //            Having(_ => mealIds.Contains(_.Key)).
+        //            ToDictionaryAsync(_ => _.Key, _ => _.Count());
+        //    }
+        //}
 
         public async Task<ICollection<Favourite>> GetUserFavouritesAsync(Guid userId, int index, int takeAmount, string nameFilter = null)
         {
@@ -63,7 +63,7 @@ namespace DM.Repositories
 
                 succeeded = (await db.Meals.
                     Where(m => m.Id == mealId).
-                    Set(m => m.NumberOfFavouriteMarks, m => m.NumberOfFavouriteMarks -1).
+                    Set(m => m.NumberOfFavouriteMarks, m => m.NumberOfFavouriteMarks - 1).
                     UpdateAsync() == 1);
                 
                 db.CommitTransaction();
@@ -72,14 +72,14 @@ namespace DM.Repositories
             }
         }
 
-        public override async Task<bool> AddAsync(Favourite favourite)
+        public override async Task<bool> AddAsync(Favourite model)
         {
             using (var db = new DietManagerDB())
             {
                 db.BeginTransaction();
                 bool succeeded;
 
-                succeeded = (await db.InsertAsync(favourite) == 1);
+                succeeded = (await db.InsertAsync(model) == 1);
 
                 if (!succeeded)
                 {
@@ -87,7 +87,7 @@ namespace DM.Repositories
                 }
 
                 succeeded = (await db.Meals.
-                    Where(m => m.Id == favourite.MealId).
+                    Where(m => m.Id == model.MealId).
                     Set(m => m.NumberOfFavouriteMarks, m => m.NumberOfFavouriteMarks + 1).
                     UpdateAsync() == 1);
 

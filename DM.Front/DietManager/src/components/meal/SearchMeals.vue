@@ -18,7 +18,6 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { Watch } from "vue-property-decorator";
 import MealPreviewItem from "./MealPreviewItem.vue";
-import MealPreviewWithImage from "@/ViewModels/meal/mealPreviewWithImage";
 import IndexedResult from "@/ViewModels/wrappers/indexedResult";
 import MealPreview from "@/ViewModels/meal/mealPreview";
 import MealApiCaller from "@/services/api-callers/mealApi";
@@ -31,7 +30,7 @@ import MealSearch from "@/ViewModels/meal/mealSearch";
   }
 })
 export default class SearchMeals extends Vue {
-  private mealPreviews: MealPreviewWithImage[] = [];
+  private mealPreviews: MealPreview[] = [];
   private lastReturned: IndexedResult<MealPreview> | null = null;
   private searchQuery: string = "";
   private previousSearchQuery: string = "";
@@ -109,16 +108,7 @@ export default class SearchMeals extends Vue {
       !indexedMealPreviews.result !== null ||
       indexedMealPreviews.result.length > 0
     ) {
-      this.mealPreviews.push(
-        ...indexedMealPreviews.result.map(mealPreview => {
-          const mealPreviewWithImage = {
-            mealPreview: mealPreview,
-            imageData: null
-          } as MealPreviewWithImage;
-          this.getMealPreviewImage(mealPreviewWithImage, mealPreview.imageId);
-          return mealPreviewWithImage;
-        })
-      );
+      this.mealPreviews.push(...indexedMealPreviews.result);
 
       this.lastReturned = {
         result:
@@ -126,17 +116,6 @@ export default class SearchMeals extends Vue {
         index: indexedMealPreviews.index,
         isLast: indexedMealPreviews.isLast
       };
-    }
-  }
-
-  getMealPreviewImage(
-    mealPreviewWithImage: MealPreviewWithImage,
-    imageGuid: string | null
-  ) {
-    if (imageGuid !== null) {
-      ImageApiCaller.get(imageGuid, imageData => {
-        mealPreviewWithImage.imageData = imageData;
-      });
     }
   }
 }

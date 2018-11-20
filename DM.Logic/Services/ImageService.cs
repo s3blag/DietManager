@@ -84,7 +84,7 @@ namespace DM.Logic.Services
 
 
         private async Task WriteImageAsync(ImageCreation imageCreation, string base64Image) => 
-            await File.WriteAllBytesAsync(imageCreation.Path, base64Image.Select(x => (byte)x).ToArray());
+            await File.WriteAllBytesAsync(imageCreation.Path, Convert.FromBase64String(base64Image));
 
         private async Task<Byte[]> CompressImage(Byte[] image)
         {

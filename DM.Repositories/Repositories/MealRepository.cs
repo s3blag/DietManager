@@ -83,7 +83,7 @@ namespace DM.Repositories
                     ThenBy(m => m.CreationDate).
                     Skip(index).
                     Take(takeAmount).
-                    Select(m => new MealPreview(m.Id, m.Creator, m.ImageId, m.Name, (int)m.Calories, m.NumberOfUses, m.CreationDate));
+                    Select(m => new MealPreview(m.Id, m.Creator, m.ImageId, m.Name, (int)m.Calories, m.NumberOfUses, m.NumberOfFavouriteMarks, m.CreationDate));
 
                 return await mealPreviewsQuery.ToListAsync();
             }
@@ -100,7 +100,7 @@ namespace DM.Repositories
                     ThenBy(m => m.CreationDate).
                     Skip(index).
                     Take(takeAmount).
-                    Select(m => new MealPreview(m.Id, m.Creator, m.ImageId, m.Name, (int)m.Calories, m.NumberOfUses, m.CreationDate));
+                    Select(m => new MealPreview(m.Id, m.Creator, m.ImageId, m.Name, (int)m.Calories, m.NumberOfUses, m.NumberOfFavouriteMarks, m.CreationDate));
 
                 return await mealPreviewsQuery.ToListAsync();
             }

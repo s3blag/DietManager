@@ -1,41 +1,44 @@
 <template>
   <div id="preview-item">
     <div class="image-container">
-      <font-awesome-icon v-if="!mealPreview.imageData" class="main-color" icon="utensils" size="2x" />
-      <img v-else :src="mealPreview.imageData">
-      <div v-if="mealPreview.mealPreview.isFavourite" id="favourite-mark">
+      <image-wrapper :imageId="mealPreview.imageId">
+        <template slot="placeholder">
+          <font-awesome-icon class="main-color" icon="utensils" size="2x" />
+        </template>
+      </image-wrapper>
+      <div v-if="mealPreview.isFavourite" class="pin">
         <font-awesome-icon class="main-color" icon="star" />
       </div>
-      <div v-else-if="createdByUser && enableFavouriteMarkToggling" id="favourite-mark">
+      <div v-else-if="createdByUser && enableFavouriteMarkToggling" class="pin">
         <font-awesome-icon class="main-color" icon="user-circle" />
       </div>
     </div>
     <div class="meal-info-element meal-name">
       <div class="label">Name</div>
-      <div class="value">{{mealPreview.mealPreview.name}} </div>
+      <div class="value">{{mealPreview.name}} </div>
     </div>
     <div class="meal-info-element">
       <div class="label">Calories</div>
-      <div class="value">{{mealPreview.mealPreview.calories}} </div>
+      <div class="value">{{mealPreview.calories}} </div>
     </div>
     <span v-if="!isMobile" class="details">
       <div class="meal-info-element">
         <div class="label">Used by</div>
-        <div class="value">{{mealPreview.mealPreview.numberOfUses}} people</div>
+        <div class="value">{{mealPreview.numberOfUses}} people</div>
       </div>
       <div class="meal-info-element">
         <div class="label">Favourite by</div>
-        <div class="value">{{mealPreview.mealPreview.numberOfFavouriteMarks}} people</div>
+        <div class="value">{{mealPreview.numberOfFavouriteMarks}} people</div>
       </div>
     </span>
     <div id="add-to-favourites-wrapper" v-if="enableFavouriteMarkToggling">
-      <div v-if="enableFavouriteMarkToggling && mealPreview.mealPreview.isFavourite !== null" id="add-to-favourites-button" @click="toggleFavouriteMark">
-        <font-awesome-icon v-if="mealPreview.mealPreview.isFavourite === false" id="add-icon" class="option-icon" icon="plus-circle" />
+      <div v-if="enableFavouriteMarkToggling && mealPreview.isFavourite !== null" id="add-to-favourites-button" @click="toggleFavouriteMark">
+        <font-awesome-icon v-if="mealPreview.isFavourite === false" id="add-icon" class="option-icon" icon="plus-circle" />
         <font-awesome-icon v-else id="delete-icon" class="option-icon" icon="minus-circle" />
       </div>
     </div>
 
-    <router-link class="go-to-meal" :to="'/meal/' + mealPreview.mealPreview.id">
+    <router-link class="go-to-meal" :to="'/meal/' + mealPreview.id">
       <font-awesome-icon class="main-color" icon="arrow-alt-circle-right" size="2x" />
     </router-link>
   </div>
@@ -45,21 +48,25 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import MealPreview from "@/ViewModels/meal/mealPreview";
-import MealPreviewWithImage from "@/ViewModels/meal/mealPreviewWithImage";
 import MealApiCaller from "@/services/api-callers/mealApi";
 import IndexedResult from "@/ViewModels/wrappers/indexedResult";
 import ImageApiCaller from "@/services/api-callers/imageApi";
 import FavouritesApiCaller from "@/services/api-callers/favouritesApi";
 import { Prop } from "vue-property-decorator";
+import ImageWrapper from "@/components/image/ImageWrapper.vue";
 
 Component.registerHooks(["beforeRouteEnter"]);
 
-@Component
+@Component({
+  components: {
+    "image-wrapper": ImageWrapper
+  }
+})
 export default class MyMeals extends Vue {
   @Prop({
     required: true
   })
-  private mealPreview!: MealPreviewWithImage;
+  private mealPreview!: MealPreview;
 
   @Prop({
     required: true
@@ -75,32 +82,32 @@ export default class MyMeals extends Vue {
   }
 
   get createdByUser() {
-    return this.mealPreview.mealPreview.isFavourite === null;
+    return this.mealPreview.isFavourite === null;
   }
 
   toggleFavouriteMark() {
-    if (this.mealPreview.mealPreview.isFavourite) {
+    if (this.mealPreview.isFavourite) {
       FavouritesApiCaller.delete(
-        this.mealPreview.mealPreview.id,
+        this.mealPreview.id,
         this.deletedFromFavouritesSuccessHandler
       );
     } else {
       FavouritesApiCaller.add(
-        this.mealPreview.mealPreview.id,
+        this.mealPreview.id,
         this.addedToFavouritesSuccessHandler
       );
     }
   }
 
   deletedFromFavouritesSuccessHandler() {
-    this.mealPreview.mealPreview.isFavourite = false;
-    this.mealPreview.mealPreview.numberOfFavouriteMarks--;
-    this.$emit("deleted-from-favourites", this.mealPreview.mealPreview.id);
+    this.mealPreview.isFavourite = false;
+    this.mealPreview.numberOfFavouriteMarks--;
+    this.$emit("deleted-from-favourites", this.mealPreview.id);
   }
 
   addedToFavouritesSuccessHandler() {
-    this.mealPreview.mealPreview.isFavourite = true;
-    this.mealPreview.mealPreview.numberOfFavouriteMarks++;
+    this.mealPreview.isFavourite = true;
+    this.mealPreview.numberOfFavouriteMarks++;
   }
 }
 </script>
@@ -116,18 +123,16 @@ export default class MyMeals extends Vue {
   height: 75px; */
   width: 65px;
   height: 65px;
+  max-width: 65px;
+  max-height: 65px;
   min-width: 65px;
 }
-#favourite-mark {
+.pin {
   position: absolute;
   top: -10px;
-  left: 25px;
+  left: 53px;
 }
-.image-container > * {
-  border-radius: 50%;
-  width: 100%;
-  height: 100%;
-}
+
 .meal-info-element {
   flex-grow: 1;
   margin-left: 10px;

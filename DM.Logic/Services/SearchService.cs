@@ -41,8 +41,7 @@ namespace DM.Logic.Services
                 searchArgumentsVM.Index,
                 takeAmount
             );
-
-           
+ 
             var favouritesTask = _favouritesRepository.GetUserFavouritesAsync(
                                     userId,
                                     0,
@@ -60,10 +59,6 @@ namespace DM.Logic.Services
                     IsLast = true
                 };
             }
-
-            var mealFavouriteCounts = await _favouritesRepository.GetNumberOfFavouritesMarksAsync(searchTask.Result.Select(m => m.Id));
-
-            SetNumberOfFavouriteMarks(searchTask.Result, mealFavouriteCounts);
 
             var searchResultVM = _mapper.Map<IEnumerable<MealPreviewVM>>(searchTask.Result);
 
@@ -120,20 +115,6 @@ namespace DM.Logic.Services
                 Index = searchArgumentsVM.Index + searchResult.Count,
                 IsLast = searchResult.Count != takeAmount
             };
-        }
-
-        private void SetNumberOfFavouriteMarks(ICollection<Models.Models.MealPreview> userMealPreviews, IDictionary<Guid, int> mealFavouriteCounts)
-        {
-            if (mealFavouriteCounts.Any())
-            {
-                foreach (var mealPreview in userMealPreviews)
-                {
-                    if (mealFavouriteCounts.TryGetValue(mealPreview.Id, out int favouritesCount))
-                    {
-                        mealPreview.NumberOfFavouriteMarks = favouritesCount;
-                    }
-                }
-            }
         }
 
         private void SetIsFavouriteField(

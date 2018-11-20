@@ -7,7 +7,7 @@ namespace DM.Models.Models
     {
         public MealPreview() {}
 
-        public MealPreview(Guid mealId, User creator, Guid? imageId, string mealName, int calories, int numberOfUses, DateTimeOffset creationDate)
+        public MealPreview(Guid mealId, User creator, Guid? imageId, string mealName, int calories, int numberOfUses, int numberOfFavouriteMarks, DateTimeOffset creationDate)
         {
             Id = mealId;
             Creator = creator;
@@ -15,6 +15,8 @@ namespace DM.Models.Models
             Name = mealName;
             Calories = calories;
             CreationDate = creationDate;
+            NumberOfFavouriteMarks = numberOfFavouriteMarks;
+            NumberOfUses = numberOfUses;
         }
 
         public Guid Id { get; set; }
