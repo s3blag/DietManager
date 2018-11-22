@@ -41,16 +41,16 @@ ADD CONSTRAINT FK_User_Role       FOREIGN KEY ("RoleId")      REFERENCES "Users"
 ADD CONSTRAINT UserName_Or_Email  CHECK (("Email" IS NOT NULL) OR ("UserName" IS NOT NULL));
 
 CREATE TABLE "Socials"."Friend" (
-    PRIMARY KEY ("User1Id", "User2Id"),
-    "User1Id"       UUID        NOT NULL,
-    "User2Id"       UUID        NOT NULL,
-    "Status"        TEXT        NOT NULL,
-    "CreationDate"  TIMESTAMPTZ NOT NULL
+    PRIMARY KEY ("InvitingUserId", "InvitedUserId"),
+    "InvitingUserId"    UUID        NOT NULL,
+    "InvitedUserId"     UUID        NOT NULL,
+    "Status"            TEXT        NOT NULL,
+    "CreationDate"      TIMESTAMPTZ NOT NULL
 );
 ALTER TABLE "Socials"."Friend" 
-ADD CONSTRAINT FK_Friend_User1 FOREIGN KEY ("User1Id") REFERENCES "Users"."User"("Id"),
-ADD CONSTRAINT FK_Friend_User2 FOREIGN KEY ("User2Id") REFERENCES "Users"."User"("Id"),
-ADD CONSTRAINT Friend_FriendsIdsShouldBeDifferent CHECK ("User1Id" != "User2Id");
+ADD CONSTRAINT FK_Friend_InvitingUserId FOREIGN KEY ("InvitingUserId") REFERENCES "Users"."User"("Id"),
+ADD CONSTRAINT FK_Friend_InvitedUserId FOREIGN KEY ("InvitedUserId") REFERENCES "Users"."User"("Id"),
+ADD CONSTRAINT Friend_FriendsIdsShouldBeDifferent CHECK ("InvitingUserId" != "InvitedUserId");
 
 CREATE TABLE "Socials"."UserActivity" (
     "Id"            UUID        PRIMARY KEY,

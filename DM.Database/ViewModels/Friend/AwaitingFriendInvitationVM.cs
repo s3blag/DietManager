@@ -15,5 +15,8 @@ namespace DM.Models.ViewModels
         public string Surname { get; set; }
 
         public Guid? ImageId { get; set; }
+
+        [Required]
+        public string City { get; set; }
     }
 }

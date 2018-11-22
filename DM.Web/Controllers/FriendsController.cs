@@ -19,7 +19,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost("my-friends")]
-        public async Task<IActionResult> GetUsersFriends([FromBody] IndexedResult<UserFriendsVM> lastReturned)
+        public async Task<IActionResult> GetUsersFriends([FromBody] IndexedResult<UserVM> lastReturned)
         {
             if (lastReturned != null && lastReturned.IsLast)
             {
@@ -69,21 +69,31 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost("invitations/accept")]
-        public async Task<IActionResult> AcceptInvitation([FromBody]AwaitingFriendInvitationVM friendInvitationVM)
+        public async Task<IActionResult> AcceptInvitation([FromBody]Guid friendId)
         {
             var userId = Guid.Empty;
 
-            await _friendService.AcceptFriendInvitationAsync(friendInvitationVM, userId);
+            await _friendService.AcceptFriendInvitationAsync(friendId, userId);
 
             return Ok();
         }
 
         [HttpPost("invitations/ignore")]
-        public async Task<IActionResult> IgnoreInvitation([FromBody]AwaitingFriendInvitationVM friendInvitationVM)
+        public async Task<IActionResult> IgnoreInvitation([FromBody]Guid friendId)
         {
             var userId = Guid.Empty;
 
-            await _friendService.IgnoreFriendInvitationAsync(friendInvitationVM, userId);
+            await _friendService.IgnoreFriendInvitationAsync(friendId, userId);
+
+            return Ok();
+        }
+
+        [HttpDelete("remove/{friendId}")]
+        public async Task<IActionResult> Remove(Guid friendId)
+        {
+            var userId = Guid.Empty;
+
+            await _friendService.RemoveFromFriends(friendId, userId);
 
             return Ok();
         }

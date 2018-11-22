@@ -29,9 +29,9 @@ namespace DM.Logic.Services
             _achievementService = achievementService;
         }
 
-        public async Task<IndexedResult<IEnumerable<UserFriendsVM>>> GetUserFriendsAsync(
+        public async Task<IndexedResult<IEnumerable<UserVM>>> GetUserFriendsAsync(
             Guid userId, 
-            IndexedResult<UserFriendsVM> lastReturned, 
+            IndexedResult<UserVM> lastReturned, 
             int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE)
         {
             if (lastReturned != null && lastReturned.IsLast)
@@ -41,9 +41,9 @@ namespace DM.Logic.Services
 
             var friends = await _friendRepository.GetUserFriendsAsync(userId, lastReturned?.Index ?? 0, takeAmount);
 
-            return new IndexedResult<IEnumerable<UserFriendsVM>>()
+            return new IndexedResult<IEnumerable<UserVM>>()
             {
-                Result = _mapper.Map<IEnumerable<UserFriendsVM>>(friends),
+                Result = _mapper.Map<IEnumerable<UserVM>>(friends),
                 Index = lastReturned?.Index ?? 0 + friends.Count,
                 IsLast = friends.Count != takeAmount
             };
@@ -93,24 +93,32 @@ namespace DM.Logic.Services
             }
         }
 
-        public async Task AcceptFriendInvitationAsync(AwaitingFriendInvitationVM friendInvitation, Guid receiverId)
+        public async Task AcceptFriendInvitationAsync(Guid invitingUserId, Guid invitedUserId)
         {
-            if (!await _friendRepository.SetFriendInvitationStatusAsync(friendInvitation.UserId.Value, receiverId, Models.Enums.FriendInvitationStatus.Accepted))
+            if (!await _friendRepository.SetFriendInvitationStatusAsync(invitingUserId, invitedUserId, Models.Enums.FriendInvitationStatus.Accepted))
             {
-                throw new DataAccessException($"Accepting friend invitation failed for model: {JsonConvert.SerializeObject(friendInvitation)}");
+                throw new DataAccessException($"Accepting friend invitation failed for model: {JsonConvert.SerializeObject(new { invitedUserId, invitingUserId })}");
             }
 
-            var checkInvitersNumberOfFriendsTask = _achievementService.CheckForNumberOfFriendsAsync(friendInvitation.UserId.Value);
-            var checkReceiversNumberOfFriendsTask = _achievementService.CheckForNumberOfFriendsAsync(receiverId);
+            var checkInvitersNumberOfFriendsTask = _achievementService.CheckForNumberOfFriendsAsync(invitingUserId);
+            var checkReceiversNumberOfFriendsTask = _achievementService.CheckForNumberOfFriendsAsync(invitedUserId);
 
             await Task.WhenAll(checkInvitersNumberOfFriendsTask, checkReceiversNumberOfFriendsTask);
         }
 
-        public async Task IgnoreFriendInvitationAsync(AwaitingFriendInvitationVM friendInvitation, Guid receiverId)
+        public async Task IgnoreFriendInvitationAsync(Guid invitingUserId, Guid invitedUserId)
         {
-            if (!await _friendRepository.SetFriendInvitationStatusAsync(friendInvitation.UserId.Value, receiverId, Models.Enums.FriendInvitationStatus.Ignored))
+            if (!await _friendRepository.SetFriendInvitationStatusAsync(invitingUserId, invitedUserId, Models.Enums.FriendInvitationStatus.Ignored))
             {
-                throw new DataAccessException($"Ignoring friend invitation failed for model: {JsonConvert.SerializeObject(friendInvitation)}");
+                throw new DataAccessException($"Ignoring friend invitation failed for model: {JsonConvert.SerializeObject(new { invitedUserId, invitingUserId })}");
+            }
+        }
+
+        public async Task RemoveFromFriends(Guid friendId, Guid userId)
+        {
+            if (!await _friendRepository.RemoveFriendAsync(userId, friendId))
+            {
+                throw new DataAccessException($"Ignoring friend invitation failed for model: {JsonConvert.SerializeObject(new { friendId, userId })}");
             }
         }
     }

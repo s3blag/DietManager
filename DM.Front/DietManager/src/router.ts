@@ -6,7 +6,9 @@ import AddMeal from "@/components/meal/AddMeal.vue";
 import MyMeals from "@/components/meal/MyMeals.vue";
 import FavouriteMeals from "@/components/meal/FavouriteMeals.vue";
 import SearchMeals from "@/components/meal/SearchMeals.vue";
-import FriendManager from "./components/friend/FriendManager.vue";
+import FriendManager from "./components/user/FriendManager.vue";
+import MyFriends from "@/components/user/MyFriends.vue";
+import SearchUsers from "@/components/user/SearchUsers.vue";
 import MealSchedule from "./components/meal-schedule/MealSchedule.vue";
 
 Vue.use(Router);
@@ -59,11 +61,13 @@ export default new Router({
         },
         {
           path: "search",
-          name: "SearchFriends"
+          name: "SearchUsers",
+          component: SearchUsers
         },
         {
           path: "my-friends",
-          name: "MyFriends"
+          name: "MyFriends",
+          component: MyFriends
         }
       ]
     },

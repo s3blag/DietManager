@@ -1,6 +1,6 @@
 // todo: reuse MyMealsComponent
 <template>
-  <div class="meals-container">
+  <div class="list-container">
     <h1 class="main-color">Favourite Meals</h1>
     <meal-preview-item class="meal" v-for="mealPreview in mealPreviews" :key="mealPreview.id" :mealPreview="mealPreview" :enableFavouriteMarkToggling="true" @deleted-from-favourites="onDeletedFromFavourites" />
     <button @click="getMealPreviews" class="load-more-button main-background-color" v-if="elementsRemainingToLoad">

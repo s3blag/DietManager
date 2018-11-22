@@ -119,18 +119,11 @@ export default class MyMeals extends Vue {
   margin-bottom: auto;
   text-align: center;
   vertical-align: center;
-  /* width: 135px;
-  height: 75px; */
   width: 65px;
   height: 65px;
   max-width: 65px;
   max-height: 65px;
   min-width: 65px;
-}
-.pin {
-  position: absolute;
-  top: -10px;
-  left: 53px;
 }
 
 .meal-info-element {

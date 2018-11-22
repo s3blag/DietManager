@@ -2,6 +2,7 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
+import Axios from "axios";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
@@ -22,7 +23,8 @@ import {
   faPenSquare,
   faPencilAlt,
   faStar,
-  faMinusCircle
+  faMinusCircle,
+  faUserPlus
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(faAppleAlt);
@@ -40,6 +42,7 @@ library.add(faArrowLeft);
 library.add(faTrashAlt);
 library.add(faPencilAlt);
 library.add(faStar);
+library.add(faUserPlus);
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 
 import BootstrapVue from "bootstrap-vue";
@@ -47,8 +50,9 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 Vue.use(BootstrapVue);
 
-// import VModal from "vue-js-modal";
-// Vue.use(VModal);
+import "@/style/global.less";
+
+Axios.defaults.headers.post["Content-Type"] = "application/json";
 
 Vue.config.productionTip = false;
 

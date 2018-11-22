@@ -9,7 +9,8 @@ namespace DM.Repositories.Interfaces
     public interface IFriendRepository: IBaseRepository<Friend>
     {
         Task<ICollection<User>> GetUserFriendsAsync(Guid userId, int index, int takeAmount, FriendInvitationStatus status = FriendInvitationStatus.Accepted);
-        Task<bool> SetFriendInvitationStatusAsync(Guid user1Id, Guid user2Id, FriendInvitationStatus status);
+        Task<bool> SetFriendInvitationStatusAsync(Guid invitingUserId, Guid invitedUserId, FriendInvitationStatus status);
         Task<int> GetNumberOfFriendsAsync(Guid userId);
+        Task<bool> RemoveFriendAsync(Guid userId, Guid friendId);
     }
 }

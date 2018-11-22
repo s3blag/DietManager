@@ -97,24 +97,24 @@ namespace DM.Database
 	[Table(Schema="Socials", Name="Friend")]
 	public partial class Friend
 	{
-		[PrimaryKey(1), NotNull] public Guid           User1Id      { get; set; } // uuid
-		[PrimaryKey(2), NotNull] public Guid           User2Id      { get; set; } // uuid
-		[Column,        NotNull] public string         Status       { get; set; } // text
-		[Column,        NotNull] public DateTimeOffset CreationDate { get; set; } // timestamp (6) with time zone
+		[PrimaryKey(1), NotNull] public Guid           InvitingUserId { get; set; } // uuid
+		[PrimaryKey(2), NotNull] public Guid           InvitedUserId  { get; set; } // uuid
+		[Column,        NotNull] public string         Status         { get; set; } // text
+		[Column,        NotNull] public DateTimeOffset CreationDate   { get; set; } // timestamp (6) with time zone
 
 		#region Associations
 
 		/// <summary>
-		/// fk_friend_user1
+		/// fk_friend_inviteduserid
 		/// </summary>
-		[Association(ThisKey="User1Id", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_friend_user1", BackReferenceName="fk_friend_user1_BackReferences")]
-		public User User1 { get; set; }
+		[Association(ThisKey="InvitedUserId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_friend_inviteduserid", BackReferenceName="fkfriendinviteduserids")]
+		public User InvitedUser { get; set; }
 
 		/// <summary>
-		/// fk_friend_user2
+		/// fk_friend_invitinguserid
 		/// </summary>
-		[Association(ThisKey="User2Id", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_friend_user2", BackReferenceName="fkfriendusers")]
-		public User User2 { get; set; }
+		[Association(ThisKey="InvitingUserId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_friend_invitinguserid", BackReferenceName="fkfriendinvitinguserids")]
+		public User InvitingUser { get; set; }
 
 		#endregion
 	}
@@ -381,22 +381,22 @@ namespace DM.Database
 		#region Associations
 
 		/// <summary>
-		/// fk_friend_user1_BackReference
-		/// </summary>
-		[Association(ThisKey="Id", OtherKey="User1Id", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
-		public IEnumerable<Friend> fk_friend_user1_BackReferences { get; set; }
-
-		/// <summary>
 		/// fk_favourites_userid_BackReference
 		/// </summary>
 		[Association(ThisKey="Id", OtherKey="UserId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
 		public IEnumerable<Favourite> fkfavouritesuserids { get; set; }
 
 		/// <summary>
-		/// fk_friend_user2_BackReference
+		/// fk_friend_inviteduserid_BackReference
 		/// </summary>
-		[Association(ThisKey="Id", OtherKey="User2Id", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
-		public IEnumerable<Friend> fkfriendusers { get; set; }
+		[Association(ThisKey="Id", OtherKey="InvitedUserId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<Friend> fkfriendinviteduserids { get; set; }
+
+		/// <summary>
+		/// fk_friend_invitinguserid_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="InvitingUserId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<Friend> fkfriendinvitinguserids { get; set; }
 
 		/// <summary>
 		/// fk_userachievement_user_BackReference
@@ -502,11 +502,11 @@ namespace DM.Database
 				t.Id == Id);
 		}
 
-		public static Friend Find(this ITable<Friend> table, Guid User1Id, Guid User2Id)
+		public static Friend Find(this ITable<Friend> table, Guid InvitingUserId, Guid InvitedUserId)
 		{
 			return table.FirstOrDefault(t =>
-				t.User1Id == User1Id &&
-				t.User2Id == User2Id);
+				t.InvitingUserId == InvitingUserId &&
+				t.InvitedUserId  == InvitedUserId);
 		}
 
 		public static Image Find(this ITable<Image> table, Guid Id)

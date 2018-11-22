@@ -50,16 +50,6 @@ export default class Header extends Vue {
 }
 </script>
 
-<style>
-.main-color {
-  color: #3c88c7;
-}
-.main-background-color {
-  background-color: #3c88c7;
-}
-</style>
-
-
 <style scoped>
 .header-container {
   background-color: #e6e4e4;

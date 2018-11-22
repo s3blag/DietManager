@@ -4,8 +4,8 @@
       <font-awesome-icon id="news-feed-icon" class="option-icon" icon="newspaper" /> News Feed
     </router-link>
 
-    <router-link tag="li" class="link" :to="{ name: 'SearchFriends'}">
-      <font-awesome-icon id="search-friends-icon" class="option-icon" icon="search" /> Browse
+    <router-link tag="li" class="link" :to="{ name: 'SearchUsers'}">
+      <font-awesome-icon id="search-friends-icon" class="option-icon" icon="search" /> Search
     </router-link>
 
     <router-link tag="li" class="link" :to="{ name: 'MyFriends'}">

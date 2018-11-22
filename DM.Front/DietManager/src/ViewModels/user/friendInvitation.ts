@@ -1,8 +1,7 @@
-export default interface User {
-  id: string;
+export default interface FriendInvitation {
+  userId: string;
   name: string;
   surname: string;
   imageId: string;
   city: string;
-  isFriend: boolean;
 }

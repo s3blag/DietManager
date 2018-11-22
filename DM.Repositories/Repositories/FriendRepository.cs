@@ -16,25 +16,25 @@ namespace DM.Repositories
             using (var db = new DietManagerDB())
             {
                 var userFriendsQuery = db.Friends.
-                    LoadWith(f => f.User2).
-                    LoadWith(f => f.User1).
-                    Where(f => f.User1Id == userId || f.User2Id == userId).
+                    LoadWith(f => f.InvitingUser).
+                    LoadWith(f => f.InvitedUser).
+                    Where(f => f.InvitingUserId == userId || f.InvitedUserId == userId).
                     Where(f => f.Status == status.ToString()).
                     OrderBy(f => f.CreationDate).
                     Skip(index).
                     Take(takeAmount).
-                    Select(f => f.User1Id == userId ? f.User2 : f.User1);
+                    Select(f => f.InvitingUserId == userId ? f.InvitedUser : f.InvitingUser);
 
                 return await userFriendsQuery.ToListAsync();
             }
         }
 
-        public async Task<bool> SetFriendInvitationStatusAsync(Guid user1Id, Guid user2Id, FriendInvitationStatus status)
+        public async Task<bool> SetFriendInvitationStatusAsync(Guid invitingUserId, Guid invitedUserId, FriendInvitationStatus status)
         {
             using (var db = new DietManagerDB())
             {
                 var updateResult = await db.Friends.
-                    Where(f => (f.User1Id == user1Id && f.User2Id == user2Id) || (f.User1Id == user2Id && f.User2Id == user1Id)).
+                    Where(f => (f.InvitingUserId == invitingUserId && f.InvitedUserId == invitedUserId)).
                     Where(f => f.Status != status.ToString()).
                     Set(f => f.Status, status.ToString()).
                     UpdateAsync();
@@ -48,20 +48,21 @@ namespace DM.Repositories
             using (var db = new DietManagerDB())
             {
                 return await db.Friends.
-                    Where(f => f.User1Id == userId || f.User2Id == userId).
+                    Where(f => f.InvitingUserId == userId || f.InvitedUserId == userId).
                     Where(f => f.Status == FriendInvitationStatus.Accepted.ToString()).
                     CountAsync();
             }
         }
 
-        public async Task<int> GetFriend(Guid userId)
+        public async Task<bool> RemoveFriendAsync(Guid userId, Guid friendId)
         {
             using (var db = new DietManagerDB())
             {
-                return await db.Friends.
-                    Where(f => f.User1Id == userId || f.User2Id == userId).
-                    Where(f => f.Status == FriendInvitationStatus.Accepted.ToString()).
-                    CountAsync();
+                var rowsAffected = await db.Friends.
+                    Where(f => (f.InvitingUserId == userId && f.InvitedUserId == friendId) || (f.InvitedUserId == userId && f.InvitingUserId == friendId)).
+                    DeleteAsync();
+
+                return rowsAffected == 1;
             }
         }
     }

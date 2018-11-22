@@ -1,3 +1,3 @@
-export default interface MealSearch {
+export default interface Search {
   query: string;
 }

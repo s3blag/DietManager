@@ -47,8 +47,8 @@ namespace DM.Web
                 ForMember(target => target.ImageId, config => config.MapFrom(src => src.ImageId)).
                 ReverseMap();
             CreateMap<FriendInvitationCreationVM, Friend>().
-                ForMember(target => target.User1Id, config => config.MapFrom(src => src.InvitingUserId)).
-                ForMember(target => target.User2Id, config => config.MapFrom(src => src.InvitedUserId)).
+                ForMember(target => target.InvitingUserId, config => config.MapFrom(src => src.InvitingUserId)).
+                ForMember(target => target.InvitedUserId, config => config.MapFrom(src => src.InvitedUserId)).
                 ForMember(target => target.Status, config => config.MapFrom(src => FriendInvitationStatus.Awaiting)).
                 ForMember(target => target.CreationDate, config => config.MapFrom(_ => DateTimeOffset.Now));
             CreateMap<UserActivity, UserActivityVM>().
