@@ -10,6 +10,6 @@ namespace DM.Logic.Interfaces
     {
         Task<IndexedResult<IEnumerable<MealPreviewVM>>> SearchMealsAsync(Guid userId, IndexedResult<MealSearchVM> searchArgumentsVM, int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE);
         Task<IndexedResult<IEnumerable<MealIngredientVM>>> SearchMealIngredientsAsync(IndexedResult<MealIngredientSearchVM> searchArgumentsVM, int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE);
-        Task<IndexedResult<IEnumerable<UserVM>>> SearchUsersAsync(IndexedResult<UserSearchVM> searchArgumentsVM, int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE);
+        Task<IndexedResult<IEnumerable<UserVM>>> SearchUsersAsync(Guid userId, IndexedResult<UserSearchVM> searchArgumentsVM, int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE);
     }
 }

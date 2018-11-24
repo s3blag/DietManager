@@ -8,7 +8,6 @@ using DM.Repositories.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DM.Logic.Services
@@ -16,15 +15,15 @@ namespace DM.Logic.Services
     public class FriendService : IFriendService
     {
         private readonly IFriendRepository _friendRepository;
-        private readonly IActivityService _activityService;
+        private readonly IActivityRepository _activityRepository;
         private readonly IMapper _mapper;
         private readonly IAchievementService _achievementService;
 
-        public FriendService(IFriendRepository friendRepository, IActivityService activityService, 
+        public FriendService(IFriendRepository friendRepository, IActivityRepository activityRepository, 
             IMapper mapper, IAchievementService achievementService)
         {
             _friendRepository = friendRepository;
-            _activityService = activityService;
+            _activityRepository = activityRepository;
             _mapper = mapper;
             _achievementService = achievementService;
         }
@@ -39,13 +38,18 @@ namespace DM.Logic.Services
                 return null;
             }
 
-            var friends = await _friendRepository.GetUserFriendsAsync(userId, lastReturned?.Index ?? 0, takeAmount);
+            var usersVM = _mapper.Map<ICollection<UserVM>>(await _friendRepository.GetFriendsAsync(userId, lastReturned?.Index ?? 0, takeAmount));
+
+            foreach (var user in usersVM)
+            {
+                user.IsFriend = true;
+            }
 
             return new IndexedResult<IEnumerable<UserVM>>()
             {
-                Result = _mapper.Map<IEnumerable<UserVM>>(friends),
-                Index = lastReturned?.Index ?? 0 + friends.Count,
-                IsLast = friends.Count != takeAmount
+                Result = usersVM,
+                Index = lastReturned?.Index ?? 0 + usersVM.Count,
+                IsLast = usersVM.Count != takeAmount
             };
         }
 
@@ -54,14 +58,14 @@ namespace DM.Logic.Services
             IndexedResult<UserActivityVM> lastReturned,
             int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE)
         {
-            var friends = await _friendRepository.GetUserFriendsAsync(userId, 0, int.MaxValue);
-            var indexedFriendsActivities = await _activityService.GetUsersActivitiesFeedAsync(friends.Select(f => f.Id).ToList(), lastReturned, takeAmount);
+
+            var indexedFriendsActivities = await _activityRepository.GetUsersFriendsActivitiesAsync(userId, lastReturned?.Index ?? 0, takeAmount);
 
             return new IndexedResult<IEnumerable<UserActivityVM>>()
             {
-                Result = _mapper.Map<IEnumerable<UserActivityVM>>(indexedFriendsActivities.Result),
-                Index = lastReturned?.Index ?? 0 + indexedFriendsActivities.Result.Count,
-                IsLast = indexedFriendsActivities.Result.Count != takeAmount
+                Result = _mapper.Map<IEnumerable<UserActivityVM>>(indexedFriendsActivities),
+                Index = lastReturned?.Index ?? 0 + indexedFriendsActivities.Count,
+                IsLast = indexedFriendsActivities.Count != takeAmount
             };
         }
 
@@ -75,7 +79,7 @@ namespace DM.Logic.Services
                 return null;
             }
 
-            var friends = await _friendRepository.GetUserFriendsAsync(userId, lastReturned?.Index ?? 0, takeAmount, Models.Enums.FriendInvitationStatus.Awaiting);
+            var friends = await _friendRepository.GetFriendsAsync(userId, lastReturned?.Index ?? 0, takeAmount, Models.Enums.FriendInvitationStatus.Awaiting);
 
             return new IndexedResult<IEnumerable<AwaitingFriendInvitationVM>>()
             {

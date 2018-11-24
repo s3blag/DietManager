@@ -42,31 +42,21 @@ ADD CONSTRAINT UserName_Or_Email  CHECK (("Email" IS NOT NULL) OR ("UserName" IS
 
 CREATE TABLE "Socials"."Friend" (
     PRIMARY KEY ("InvitingUserId", "InvitedUserId"),
-    "InvitingUserId"    UUID        NOT NULL,
-    "InvitedUserId"     UUID        NOT NULL,
-    "Status"            TEXT        NOT NULL,
-    "CreationDate"      TIMESTAMPTZ NOT NULL
+    "InvitingUserId"    UUID            NOT NULL,
+    "InvitedUserId"     UUID            NOT NULL,
+    "Status"            TEXT            NOT NULL,
+    "CreationDate"      TIMESTAMPTZ     NOT NULL
 );
 ALTER TABLE "Socials"."Friend" 
 ADD CONSTRAINT FK_Friend_InvitingUserId FOREIGN KEY ("InvitingUserId") REFERENCES "Users"."User"("Id"),
 ADD CONSTRAINT FK_Friend_InvitedUserId FOREIGN KEY ("InvitedUserId") REFERENCES "Users"."User"("Id"),
 ADD CONSTRAINT Friend_FriendsIdsShouldBeDifferent CHECK ("InvitingUserId" != "InvitedUserId");
 
-CREATE TABLE "Socials"."UserActivity" (
-    "Id"            UUID        PRIMARY KEY,
-    "UserId"        UUID        NOT NULL,
-    "ActivityType"  TEXT        NOT NULL,
-    "ContentId"     UUID        NOT NULL,
-    "ActivityDate"  TIMESTAMPTZ NOT NULL
-);
-ALTER TABLE "Socials"."UserActivity" 
-ADD CONSTRAINT FK_UserActivity_User FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id");
-
 CREATE TABLE "Socials"."Achievement" (
-    "Id"                UUID    PRIMARY KEY,
-    "Category"          TEXT    NOT NULL,
-    "Type"              TEXT    NOT NULL,
-    "Value"             INTEGER NOT NULL
+    "Id"                UUID        PRIMARY KEY,
+    "Category"          TEXT        NOT NULL,
+    "Type"              TEXT        NOT NULL,
+    "Value"             INTEGER     NOT NULL
 );
 
 CREATE TABLE "Socials"."UserAchievement" (
@@ -81,27 +71,27 @@ ADD CONSTRAINT FK_UserAchievement_Achievement FOREIGN KEY ("AchievementId") REFE
 ADD CONSTRAINT UQ_User_Achievement UNIQUE("UserId", "AchievementId");
 
 CREATE TABLE "Meals"."Meal" (
-    "Id"                        UUID        PRIMARY KEY,
-    "CreationDate"              TIMESTAMPTZ NOT NULL,
-    "CreatorId"                 UUID        NOT NULL,
-    "ImageId"                   UUID        NULL,
-    "Name"                      TEXT        NOT NULL,
-    "Description"               TEXT        NULL,
-    "Calories"                  REAL        NOT NULL,
-    "NumberOfFavouriteMarks"    INTEGER     NOT NULL,
-    "NumberOfUses"              INTEGER     NOT NULL
+    "Id"                        UUID            PRIMARY KEY,
+    "CreationDate"              TIMESTAMPTZ     NOT NULL,
+    "CreatorId"                 UUID            NOT NULL,
+    "ImageId"                   UUID            NULL,
+    "Name"                      TEXT            NOT NULL,
+    "Description"               TEXT            NULL,
+    "Calories"                  REAL            NOT NULL,
+    "NumberOfFavouriteMarks"    INTEGER         NOT NULL,
+    "NumberOfUses"              INTEGER         NOT NULL
 );
 ALTER TABLE "Meals"."Meal" 
 ADD CONSTRAINT "FK_Meal_Image" FOREIGN KEY ("ImageId") REFERENCES  "Images"."Image"("Id"),
 ADD CONSTRAINT "FK_Meal_User" FOREIGN KEY ("CreatorId") REFERENCES  "Users"."User"("Id");
 
-CREATE TABLE "Meals"."Favourites" (
-    "Id"            UUID        PRIMARY KEY,
-    "MealId"        UUID        NOT NULL,
-    "UserId"        UUID        NOT NULL,
-    "CreationDate"  TIMESTAMPTZ NOT NULL
+CREATE TABLE "Meals"."Favourite" (
+    "Id"            UUID            PRIMARY KEY,
+    "MealId"        UUID            NOT NULL,
+    "UserId"        UUID            NOT NULL,
+    "CreationDate"  TIMESTAMPTZ     NOT NULL
 );
-ALTER TABLE "Meals"."Favourites"
+ALTER TABLE "Meals"."Favourite"
 ADD CONSTRAINT FK_Favourites_MealId FOREIGN KEY ("MealId") REFERENCES "Meals"."Meal"("Id") ON DELETE CASCADE,
 ADD CONSTRAINT FK_Favourites_UserId FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id") ON DELETE CASCADE,
 ADD CONSTRAINT UQ_User_Meal UNIQUE("UserId", "MealId");
@@ -142,15 +132,38 @@ ADD CONSTRAINT "FK_MealIngredient_Nutritions" FOREIGN KEY ("NutritionsId") REFER
 ADD CONSTRAINT "FK_MealIngredient_Creator" FOREIGN KEY ("CreatorId") REFERENCES  "Users"."User"("Id");
 
 CREATE TABLE "Meals"."Meal-MealIngredient" (
-    "Id"                UUID    PRIMARY KEY,
-    "MealIngredientId"  UUID    NOT NULL,
-    "MealId"            UUID    NOT NULL,
-    "Quantity"          INTEGER NOT NULL
+    "Id"                UUID        PRIMARY KEY,
+    "MealIngredientId"  UUID        NOT NULL,
+    "MealId"            UUID        NOT NULL,
+    "Quantity"          INTEGER     NOT NULL
 );
 ALTER TABLE "Meals"."Meal-MealIngredient" 
 ADD CONSTRAINT "FK_MealMealIngredient_MealIngredient-" FOREIGN KEY ("MealIngredientId") REFERENCES  "Meals"."MealIngredient"("Id") ON DELETE CASCADE,
 ADD CONSTRAINT "FK_MealMealIngredient_Meal" FOREIGN KEY ("MealId") REFERENCES  "Meals"."Meal"("Id") ON DELETE CASCADE,
 ADD CONSTRAINT "Quantity_MustBeGreaterThan0" CHECK ("Quantity" > 0);
+
+CREATE TABLE "Socials"."UserActivity" (
+    "Id"                SERIAL          PRIMARY KEY,
+    "UserId"            UUID            NOT NULL,
+    "MealId"            UUID            NULL,
+    "MealIngredientId"  UUID            NULL,
+    "FavouriteId"       UUID            NULL,
+    "FriendId"          UUID            NULL,
+    "AchievementId"     UUID            NULL
+);
+ALTER TABLE "Socials"."UserActivity" 
+ADD CONSTRAINT FK_UserActivity_User FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id"),
+ADD CONSTRAINT FK_UserActivity_Meal FOREIGN KEY ("MealId") REFERENCES "Meals"."Meal"("Id"),
+ADD CONSTRAINT FK_UserActivity_MealIngredient FOREIGN KEY ("MealIngredientId") REFERENCES "Meals"."MealIngredient"("Id"),
+ADD CONSTRAINT FK_UserActivity_Favourite FOREIGN KEY ("FavouriteId") REFERENCES "Meals"."Meal"("Id"),
+ADD CONSTRAINT FK_UserActivity_Friend FOREIGN KEY ("FriendId") REFERENCES "Users"."User"("Id"),
+ADD CONSTRAINT FK_UserActivity_Achievement FOREIGN KEY ("AchievementId") REFERENCES "Socials"."Achievement"("Id"),
+ADD CONSTRAINT FK_UserActivity_AnyContent CHECK (
+    ("MealId"           IS NOT NULL) OR 
+    ("MealIngredientId" IS NOT NULL) OR 
+    ("FavouriteId"      IS NOT NULL) OR 
+    ("FriendId"         IS NOT NULL) OR 
+    ("AchievementId"    IS NOT NULL)); 
 
 CREATE VIEW "Meals"."MealIngredientsWithNutritions" AS
 SELECT

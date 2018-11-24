@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using DM.Database;
 using DM.Logic.Interfaces;
-using DM.Models.Enums;
 using DM.Models.Exceptions;
-using DM.Models.Models;
 using DM.Models.ViewModels;
 using DM.Models.Wrappers;
 using DM.Repositories.Interfaces;
@@ -25,12 +23,12 @@ namespace DM.Logic.Services
             _mapper = mapper;
         }
 
-        public async Task<IndexedResult<ICollection<UserActivityVM>>> GetUsersActivitiesFeedAsync(
-            IEnumerable<Guid> userIds,
+        public async Task<IndexedResult<ICollection<UserActivityVM>>> GetUserActivitiesAsync(
+            Guid userId,
             IndexedResult<UserActivityVM> lastReturned,
             int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE)
         {
-            var usersActivities = await _activityRepository.GetUsersActivitiesAsync(userIds, lastReturned.Index, takeAmount);
+            var usersActivities = await _activityRepository.GetUserActivitiesAsync(userId, lastReturned?.Index ?? 0, takeAmount);
 
             return new IndexedResult<ICollection<UserActivityVM>>()
             {
@@ -40,26 +38,17 @@ namespace DM.Logic.Services
             };
         }
 
-        public async Task LogNewMealAddedAsync(Guid userId, Guid mealId)
-        {
-            var dbActivity = _mapper.Map<UserActivity>(new ActivityCreation() { UserId = userId, ContentId = mealId, ActivityType = ActivityType.NewMealAdded });
+        public async Task LogNewMealAddedAsync(Guid userId, Guid mealId) => 
+            await AddActivityAsync(new UserActivity() { UserId = userId, MealId = mealId });
 
-            await AddActivityAsync(dbActivity);
-        }
+        public async Task LogNewMealIngredientAddedAsync(Guid userId, Guid mealIngredientId) => 
+            await AddActivityAsync(new UserActivity() { UserId = userId, MealIngredientId = mealIngredientId });
 
-        public async Task LogNewMealIngredientAddedAsync(Guid userId, Guid mealIngredientId)
-        {
-            var dbActivity = _mapper.Map<UserActivity>(new ActivityCreation() { UserId = userId, ContentId = mealIngredientId, ActivityType = ActivityType.NewMealIngredientAdded });
+        public async Task LogNewAchievementReachedAsync(Guid userId, Guid achievementId) =>
+            await AddActivityAsync(new UserActivity() { UserId = userId, AchievementId = achievementId });
 
-            await AddActivityAsync(dbActivity);
-        }
-
-        public async Task LogNewAchievementReachedAsync(Guid userId, Guid userAchievementId)
-        {
-            var dbActivity = _mapper.Map<UserActivity>(new ActivityCreation() { UserId = userId, ContentId = userAchievementId, ActivityType = ActivityType.AchievementReached });
-
-            await AddActivityAsync(dbActivity);
-        }
+        public async Task LogNewFavouriteMealAddedAsync(Guid userId, Guid mealId) =>
+            await AddActivityAsync(new UserActivity() { UserId = userId, FavouriteId = mealId });
 
         private async Task AddActivityAsync(UserActivity model)
         {
@@ -67,13 +56,6 @@ namespace DM.Logic.Services
             {
                 throw new DataAccessException($"Adding new activity failed for model: {JsonConvert.SerializeObject(model)}");
             }
-        }
-
-        public async Task LogNewFavouriteMealAddedAsync(Guid userId, Guid favouriteId)
-        {
-            var dbActivity = _mapper.Map<UserActivity>(new ActivityCreation() { UserId = userId, ContentId = favouriteId, ActivityType = ActivityType.AddToFavourites });
-
-            await AddActivityAsync(dbActivity);
         }
     }
 }

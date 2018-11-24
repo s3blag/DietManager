@@ -36,15 +36,6 @@ namespace DM.Repositories
             }
         }
 
-        //public async Task<int> GetMealsCreatedByUserCountAsync(Guid userId)
-        //{
-        //    using (var db = new DietManagerDB())
-        //    {
-        //        return await db.Meals.
-        //            Where(m => m.CreatorId == userId).
-        //            CountAsync();
-        //    }
-        //}
 
         public async Task<bool> AddMealMealIngredientsAsync(
             IEnumerable<MealMealIngredient> mealMealIngredients
@@ -59,17 +50,6 @@ namespace DM.Repositories
                     return result.RowsCopied == mealMealIngredients.Count();
                 }
             });
-        }
-
-        public async Task<bool> UpdateMealAsync(Meal newMealData)
-        {
-            using (var db = new DietManagerDB())
-            {
-                var result = await db.
-                    UpdateAsync(newMealData);
-
-                return Convert.ToBoolean(result);
-            }
         }
 
         public async Task<ICollection<MealPreview>> GetMealPreviewsAsync(Guid userId, int index, int takeAmount)
@@ -103,6 +83,36 @@ namespace DM.Repositories
                     Select(m => new MealPreview(m.Id, m.Creator, m.ImageId, m.Name, (int)m.Calories, m.NumberOfUses, m.NumberOfFavouriteMarks, m.CreationDate));
 
                 return await mealPreviewsQuery.ToListAsync();
+            }
+        }
+
+        public async Task IncrementNumberOfUsesAsync(Guid mealId) => await UpdateNumberOfUsesAsync(mealId, 1);
+
+        public async Task DecrementNumberOfUsesAsync(Guid mealId) => await UpdateNumberOfUsesAsync(mealId, -1);
+
+        public async Task IncrementNumberOfFavouriteMarksAsync(Guid mealId) => await UpdateNumberOfFavouriteMarksAsync(mealId, 1);
+
+        public async Task DecrementNumberOfFavouriteMarksAsync(Guid mealId) => await UpdateNumberOfFavouriteMarksAsync(mealId, -1);
+
+        private async Task UpdateNumberOfUsesAsync(Guid mealId, int valueToAdd)
+        {
+            using (var db = new DietManagerDB())
+            {
+                await db.Meals.
+                    Where(m => m.Id == mealId).
+                    Set(m => m.NumberOfUses, m => m.NumberOfUses + valueToAdd).
+                    UpdateAsync();
+            }
+        }
+
+        private async Task UpdateNumberOfFavouriteMarksAsync(Guid mealId, int valueToAdd)
+        {
+            using (var db = new DietManagerDB())
+            {
+                await db.Meals.
+                    Where(m => m.Id == mealId).
+                    Set(m => m.NumberOfFavouriteMarks, m => m.NumberOfFavouriteMarks + valueToAdd).
+                    UpdateAsync();
             }
         }
     }

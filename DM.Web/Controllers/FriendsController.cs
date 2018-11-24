@@ -39,11 +39,13 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost("invite")]
-        public async Task<IActionResult> Invite([FromBody]Guid invitedUserId)
+        public async Task<IActionResult> Invite([FromBody] FriendInvitationCreationVM invitation)
         {
             var userId = Guid.Empty;
 
-            await _friendService.SendFriendInvitationAsync(new FriendInvitationCreationVM() { InvitedUserId = invitedUserId, InvitingUserId = userId });
+            invitation.InvitingUserId = userId;
+
+            await _friendService.SendFriendInvitationAsync(invitation);
 
             return Ok();
         }
@@ -106,14 +108,9 @@ namespace DM.Web.Controllers
                 return NotFound("Invalid arguments");
             }
 
-            var userId = Guid.Empty;
+            var userId = new Guid("20000000-0000-0000-0000-000000000000");
 
             var newsFeed = await _friendService.GetFriendsActivitiesFeedAsync(userId, lastReturned);
-
-            if (newsFeed == null)
-            {
-                return NotFound();
-            }
 
             return Ok(newsFeed);
         }

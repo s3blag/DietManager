@@ -22,9 +22,11 @@ namespace DM.Logic.Services
         private readonly IFavouriteRepository _favouritesRepository;
         private readonly IAchievementService _achievementService;
         private readonly IActivityService _activityService;
+        private readonly IUserRepository _userRepository;
 
         public MealService(IMapper mapper, IMealRepository mealRepository, IMealIngredientRepository mealIngredientRepository, 
-            IFavouriteRepository favouritesRepository, IAchievementService achievementService, IActivityService activityService)
+            IFavouriteRepository favouritesRepository, IAchievementService achievementService, IActivityService activityService,
+            IUserRepository userRepository)
         {
             _mapper = mapper;
             _mealRepository = mealRepository;
@@ -32,6 +34,7 @@ namespace DM.Logic.Services
             _favouritesRepository = favouritesRepository;
             _achievementService = achievementService;
             _activityService = activityService;
+            _userRepository = userRepository;
         }
 
         public async Task<MealVM> GetMealByIdAsync(Guid id)
@@ -71,6 +74,7 @@ namespace DM.Logic.Services
             }
 
             //get user for checkForNumberOfAdditionsTask
+            await _userRepository.IncrementCreatedMealsCountAsync(userId);
 
             var logNewMealAddedTask = _activityService.LogNewMealAddedAsync(userId, dbMeal.Id);
             var checkForNumberOfAdditionsTask = _achievementService.CheckForNumberOfMealAdditionsByUserAsync(new User() { Id = Guid.Empty });
@@ -121,19 +125,22 @@ namespace DM.Logic.Services
         }
 
         private ICollection<MealMealIngredient> GetMealMealIngredients(
-            Guid mealId, 
+            Guid mealId,
             IEnumerable<MealIngredientIdWithQuantityVM> mealIngredientsIDs
-        ) =>    mealIngredientsIDs.
-                    Select(m => 
-                        new MealMealIngredient()
-                        {
-                            Id = Guid.NewGuid(),
-                            MealId = mealId,
-                            MealIngredientId = m .Id.Value,
-                            Quantity = m.Quantity.Value
-                        }
-                    ).
-                    ToList();
+        )
+        {
+            return mealIngredientsIDs.
+                 Select(m =>
+                     new MealMealIngredient()
+                     {
+                         Id = Guid.NewGuid(),
+                         MealId = mealId,
+                         MealIngredientId = m.Id.Value,
+                         Quantity = m.Quantity.Value
+                     }
+                 ).
+                 ToList();
+        }
 
         private void ValidateArguments(params (Object value, string name)[] arguments)
         {

@@ -25,14 +25,60 @@ namespace DM.Repositories
             using (var db = new DietManagerDB())
             {
                 var mealPreviewsQuery = db.Users.
-                    Where(m => m.FullName.ToLower().Contains(query)).
-                    OrderBy(m => m.FullName).
-                    ThenBy(m => m.CreationDate).
+                    Where(u => u.FullName.ToLower().Contains(query)).
+                    OrderBy(u => u.FullName).
+                    ThenBy(u => u.CreationDate).
                     Skip(index).
                     Take(takeAmount);
 
                 return await mealPreviewsQuery.ToListAsync();
             }
         }
+
+        public async Task IncrementCreatedMealsCountAsync(Guid userId) => await UpdateCreatedMealsCountAsync(userId, 1);
+
+        public async Task IncrementCreatedMealIngredientsCountAsync(Guid userId) => await UpdateCreatedMealIngredientsCountAsync(userId, 1);
+
+        public async Task DecrementCreatedMealsCountAsync(Guid userId) => await UpdateCreatedMealsCountAsync(userId, -1);
+
+        public async Task DecrementCreatedMealIngredientsCountAsync(Guid userId) => await UpdateCreatedMealIngredientsCountAsync(userId, -1);
+
+        public async Task UpdateLastLoginDateAsync(Guid userId)
+        {
+            using (var db = new DietManagerDB())
+            {
+                await db.Users.
+                   Where(u => u.Id == userId).
+                   Set(u => u.LastLoginDate, DateTimeOffset.Now).
+                   UpdateAsync();
+            }
+        }
+
+        #region private
+
+        private async Task UpdateCreatedMealsCountAsync(Guid userId, int valueToAdd)
+        {
+            using (var db = new DietManagerDB())
+            {
+                await db.Users.
+                    Where(u => u.Id == userId).
+                    Set(u => u.CreatedMealsCount, u => u.CreatedMealsCount + valueToAdd).
+                    UpdateAsync();
+
+            }
+        }
+
+        private async Task UpdateCreatedMealIngredientsCountAsync(Guid userId, int valueToAdd)
+        {
+            using (var db = new DietManagerDB())
+            {
+                await db.Users.
+                   Where(u => u.Id == userId).
+                   Set(u => u.CreatedMealIngredientsCount, u => u.CreatedMealsCount + valueToAdd).
+                   UpdateAsync();
+            }
+        }
+
+        #endregion
     }
 }

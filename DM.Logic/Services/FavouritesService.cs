@@ -17,14 +17,16 @@ namespace DM.Logic.Services
         private readonly IAchievementService _achievementService;
         private readonly IMapper _mapper;
         private readonly IActivityService _activityService;
+        private readonly IMealRepository _mealRepository;
 
         public FavouritesService(IFavouriteRepository favouriteRepository, IAchievementService achievementService,
-            IMapper mapper, IActivityService activityService)
+            IMapper mapper, IActivityService activityService, IMealRepository mealRepository)
         {
             _favouriteRepository = favouriteRepository;
             _achievementService = achievementService;
             _mapper = mapper;
             _activityService = activityService;
+            _mealRepository = mealRepository;
         }
 
         public async Task<IndexedResult<IEnumerable<MealPreviewVM>>> GetFavouriteMealsAsync(
@@ -52,8 +54,10 @@ namespace DM.Logic.Services
                 throw new DataAccessException($"Adding to favourites failed for model: {dbFavourite}");
             }
 
+            await _mealRepository.IncrementNumberOfFavouriteMarksAsync(favouriteCreation.MealId.Value);
+
             var checkForNumberOfFavouriteMarksTask = _achievementService.CheckForNumberOfFavouriteMarksAsync(dbFavourite.MealId);
-            var LogNewFavouriteAddedTask = _activityService.LogNewFavouriteMealAddedAsync(dbFavourite.UserId, dbFavourite.Id);
+            var LogNewFavouriteAddedTask = _activityService.LogNewFavouriteMealAddedAsync(dbFavourite.UserId, dbFavourite.MealId);
 
             await Task.WhenAll(checkForNumberOfFavouriteMarksTask, LogNewFavouriteAddedTask);
 
@@ -62,7 +66,13 @@ namespace DM.Logic.Services
 
         public async Task<bool> RemoveFromFavouritesAsync(Guid userId, Guid mealId)
         {
-            return await _favouriteRepository.DeleteAsync(userId, mealId);
+            var deleted = await  _favouriteRepository.DeleteAsync(userId, mealId);
+            if (deleted)
+            {
+                await _mealRepository.DecrementNumberOfFavouriteMarksAsync(mealId);
+            }
+
+            return deleted;
         }
     }
 }

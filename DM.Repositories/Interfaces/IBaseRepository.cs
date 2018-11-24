@@ -6,5 +6,6 @@ namespace DM.Repositories.Interfaces
     {
         Task<bool> AddAsync(T model);
         Task<bool> DeleteAsync(T model);
+        Task<bool> UpdateAsync(T model);
     }
 }

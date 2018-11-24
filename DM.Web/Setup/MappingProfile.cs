@@ -51,14 +51,12 @@ namespace DM.Web
                 ForMember(target => target.InvitedUserId, config => config.MapFrom(src => src.InvitedUserId)).
                 ForMember(target => target.Status, config => config.MapFrom(src => FriendInvitationStatus.Awaiting)).
                 ForMember(target => target.CreationDate, config => config.MapFrom(_ => DateTimeOffset.Now));
-            CreateMap<UserActivity, UserActivityVM>().
-                ForMember(target => target.Activity, config => config.MapFrom(src => (ActivityType)Enum.Parse(typeof(ActivityType), src.ActivityType, true))).
-                ReverseMap().
-                ForPath(target => target.ActivityType, config => config.MapFrom(src => src.Activity.ToString()));
+            CreateMap<UserActivity, UserActivityVM>();
             CreateMap<FavouriteCreationVM, Favourite>().
                 ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
                 ForMember(target => target.CreationDate, config => config.MapFrom(source => DateTimeOffset.Now));
             CreateMap<FavouriteVM, Favourite>().ReverseMap();
+            CreateMap<Meal, MealPreviewVM>().ReverseMap();
             //!
             CreateMap<Favourite, MealPreviewVM>().
                 ForMember(target => target.Id, config => config.MapFrom(src => src.Meal.Id)).
@@ -68,10 +66,7 @@ namespace DM.Web
                 ForMember(target => target.CreationDate, config => config.MapFrom(src => src.CreationDate)).
                 ForMember(target => target.Creator, config => config.MapFrom(src => src.Meal.Creator)).
                 ForMember(target => target.IsFavourite, config => config.MapFrom(_ => true));
-            CreateMap<ActivityCreation, UserActivity>().
-                ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
-                ForMember(target => target.ActivityType, config => config.MapFrom(src => src.ActivityType.ToString())).
-                ForMember(target => target.ActivityDate, config => config.MapFrom(src => DateTimeOffset.Now));
+            CreateMap<ActivityCreation, UserActivity>();
             CreateMap<MealScheduleEntryUpdateVM, MealScheduleEntry>().
                 ForMember(target => target.Date, config => config.MapFrom(src => src.NewDate));
         }

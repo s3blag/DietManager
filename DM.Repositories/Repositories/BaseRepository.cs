@@ -12,9 +12,9 @@ namespace DM.Repositories
         {
             using (var db = new DietManagerDB())
             {
-                int result = await db.InsertAsync(model);
+                int rowsAffected = await db.InsertAsync(model);
 
-                return Convert.ToBoolean(result);
+                return rowsAffected == 1;
             }
         }
 
@@ -22,11 +22,20 @@ namespace DM.Repositories
         {
             using (var db = new DietManagerDB())
             {
-                int result = await db.DeleteAsync(model);
+                int rowsAffected = await db.DeleteAsync(model);
 
-                return Convert.ToBoolean(result);
+                return rowsAffected == 1;
             }
         }
 
+        public virtual async Task<bool> UpdateAsync(T model)
+        {
+            using (var db = new DietManagerDB())
+            {
+                int rowsAffected = await db.UpdateAsync(model);
+
+                return rowsAffected == 1;
+            }
+        }
     }
 }

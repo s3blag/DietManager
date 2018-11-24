@@ -27,7 +27,7 @@ export default class FriendsApiCaller {
     successHandler: () => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.post("/api/friends/invite", invitedUserId)
+    Axios.post("/api/friends/invite", { invitedUserId: invitedUserId })
       .then(() => {
         successHandler();
       })

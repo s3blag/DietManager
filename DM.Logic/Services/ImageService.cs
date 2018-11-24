@@ -9,8 +9,6 @@ using DM.Repositories.Interfaces;
 using Microsoft.Extensions.Options;
 using System;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -51,8 +49,6 @@ namespace DM.Logic.Services
 
             var imageCreation = await CreateFullImagePathAsync(_config.ImagesRootDirectoryPath, GetExtension(base64Image));
 
-            //compress image
-
             await WriteImageAsync(imageCreation, GetBase64Image(base64Image));
 
             var dbImage = _mapper.Map<Image>(imageCreation);
@@ -74,22 +70,13 @@ namespace DM.Logic.Services
             return "." + match.Groups["type"].Value;
         }
 
-        private string GetBase64Image(string fullBase64Image)
-        {
-            return fullBase64Image.Substring(fullBase64Image.LastIndexOf(',') + 1);
-        }
+        private string GetBase64Image(string fullBase64Image) => fullBase64Image.Substring(fullBase64Image.LastIndexOf(',') + 1);
 
-        private async Task<Byte[]> ReadImageAsync(string imagePath) =>
-             await File.ReadAllBytesAsync(imagePath);
+        private async Task<Byte[]> ReadImageAsync(string imagePath) => await File.ReadAllBytesAsync(imagePath);
 
 
         private async Task WriteImageAsync(ImageCreation imageCreation, string base64Image) => 
             await File.WriteAllBytesAsync(imageCreation.Path, Convert.FromBase64String(base64Image));
-
-        private async Task<Byte[]> CompressImage(Byte[] image)
-        {
-            throw new NotImplementedException();
-        }
 
         private async Task<ImageCreation> CreateFullImagePathAsync(string basePath, string extension)
         {

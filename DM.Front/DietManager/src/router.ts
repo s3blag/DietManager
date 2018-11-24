@@ -10,6 +10,7 @@ import FriendManager from "./components/user/FriendManager.vue";
 import MyFriends from "@/components/user/MyFriends.vue";
 import SearchUsers from "@/components/user/SearchUsers.vue";
 import MealSchedule from "./components/meal-schedule/MealSchedule.vue";
+import NewsFeed from "./components/user/NewsFeed.vue";
 
 Vue.use(Router);
 
@@ -57,7 +58,8 @@ export default new Router({
       children: [
         {
           path: "news-feed",
-          name: "NewsFeed"
+          name: "NewsFeed",
+          component: NewsFeed
         },
         {
           path: "search",

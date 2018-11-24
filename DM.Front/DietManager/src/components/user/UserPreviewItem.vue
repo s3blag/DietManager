@@ -64,6 +64,8 @@ export default class MyMeals extends Vue {
 
 <style lang="less" scoped>
 #preview-item {
+  border-radius: 10px;
+  background-color: white;
   max-width: 450px;
   min-width: 305px;
   display: flex;

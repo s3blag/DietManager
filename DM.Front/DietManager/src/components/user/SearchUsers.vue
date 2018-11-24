@@ -1,5 +1,6 @@
 <template>
   <div id="search">
+    <h3 class="main-color">User search</h3>
     <div id="search-input">
       <input @keyup.enter="search" type="text" class="form-control" id="search-query" placeholder="Search..." v-model="searchQuery">
       <button id="search-button" class="btn main-background-color" @click="search">

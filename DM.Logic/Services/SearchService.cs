@@ -17,14 +17,16 @@ namespace DM.Logic.Services
         private readonly IMealIngredientsApiCaller _mealIngredientsApi;
         private readonly IUserRepository _userRepository;
         private readonly IFavouriteRepository _favouritesRepository;
+        private readonly IFriendRepository _friendRepository;
         private readonly IMapper _mapper;
 
         public SearchService(IMealRepository mealRepository, IMealIngredientRepository mealIngredientRepository, 
             IMealIngredientsApiCaller mealIngredientsApi, IUserRepository userRepository, IMapper mapper,
-            IFavouriteRepository favouriteRepository)
+            IFavouriteRepository favouriteRepository, IFriendRepository friendRepository)
         {
             _mealRepository = mealRepository;
             _favouritesRepository = favouriteRepository;
+            _friendRepository = friendRepository;
             _mealIngredientRepository = mealIngredientRepository;
             _mealIngredientsApi = mealIngredientsApi;
             _userRepository= userRepository;
@@ -99,22 +101,46 @@ namespace DM.Logic.Services
         }
 
         public async Task<IndexedResult<IEnumerable<UserVM>>> SearchUsersAsync(
+            Guid userId,
             IndexedResult<UserSearchVM> searchArgumentsVM,
             int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE)
         {
-            var searchResult = _mapper.Map<ICollection<UserVM>>(
-                await _userRepository.GetUsersByQueryAsync(
+            var searchResultTask = _userRepository.GetUsersByQueryAsync(
                     searchArgumentsVM.Result.Query,
                     searchArgumentsVM.Index,
-                    takeAmount)
-            );
+                    takeAmount);
+
+            var friendsIdsTask = _friendRepository.GetFriendsIdsAsync(userId);
+
+            await Task.WhenAll(searchResultTask, friendsIdsTask);
+
+            var searchResultVM = _mapper.Map<ICollection<UserVM>>(searchResultTask.Result);
+
+            SetIsFriendField(friendsIdsTask.Result, searchResultVM);
 
             return new IndexedResult<IEnumerable<UserVM>>
             {
-                Result = searchResult,
-                Index = searchArgumentsVM.Index + searchResult.Count,
-                IsLast = searchResult.Count != takeAmount
+                Result = searchResultVM,
+                Index = searchArgumentsVM.Index + searchResultVM.Count,
+                IsLast = searchResultVM.Count != takeAmount
             };
+        }
+
+        private void SetIsFriendField(
+            ICollection<Guid> friendIds,
+            IEnumerable<UserVM> searchResultVM)
+        {
+            var commonFriendIds = searchResultVM.Select(m => m.Id.Value).
+                            Intersect(friendIds).
+                            ToList();
+
+            if (commonFriendIds.Any())
+            {
+                foreach (var userVM in searchResultVM.Where(m => commonFriendIds.Contains(m.Id.Value)))
+                {
+                    userVM.IsFriend = true;
+                }
+            }
         }
 
         private void SetIsFavouriteField(

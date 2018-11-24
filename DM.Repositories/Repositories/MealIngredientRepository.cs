@@ -106,15 +106,5 @@ namespace DM.Repositories
                 return await dbQuery.ToListAsync();
             }
         }
-
-        //public async Task<int> GetMealIngredientsAddedByUserCountAsync(Guid userId)
-        //{
-        //    using (var db = new DietManagerDB())
-        //    {
-        //        return await db.MealIngredients.
-        //            Where(m => m.CreatorId == userId).
-        //            CountAsync();
-        //    }
-        //}
     }
 }

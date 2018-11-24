@@ -23,8 +23,6 @@ namespace DM.Logic.Services
         private readonly IUserAchievementRepository _userAchievementRepository;
         private readonly IAchievementRepository _achievementRepository;
         private readonly IMealRepository _mealRepository;
-        private readonly IFavouriteRepository _favouriteRepository;
-        private readonly IMealIngredientRepository _mealIngredientRepository;
         private readonly IFriendRepository _friendRepository;
         private readonly IMealScheduleRepository _mealScheduleRepository;
         private readonly IActivityService _activityService;
@@ -46,8 +44,6 @@ namespace DM.Logic.Services
             _userAchievementRepository = userAchievementRepository;
             _achievementRepository = achievementRepository;
             _mealRepository = mealRepository;
-            _favouriteRepository = favouriteRepository;
-            _mealIngredientRepository = mealIngredientRepository;
             _friendRepository = friendRepository;
             _mealScheduleRepository = mealScheduleRepository;
             _activityService = activityService;
@@ -85,18 +81,18 @@ namespace DM.Logic.Services
             await AddAchievementIfNextStageReachedAsync(userId, achievementStages, getMealTask.Result.NumberOfUses, Achievements.MealAchievement.NumberOfUses);
         }
 
-        public async Task<UserAchievementVM> CheckForNumberOfMealAdditionsByUserAsync(User user)
+        public async Task CheckForNumberOfMealAdditionsByUserAsync(User user)
         {
             var currentlyBestValue = await _userAchievementRepository.GetUserAchievementMaxValueAsync(user.Id, Achievements.MealAchievement.AdditionsCountOver);
 
             if (user.CreatedMealsCount <= currentlyBestValue)
             {
-                return null;
+                return;
             }
 
             int[] achievementStages = achievementsConfig.MealAchievements[Achievements.MealAchievement.AdditionsCountOver];
 
-            return _mapper.Map<UserAchievementVM>(await AddAchievementIfNextStageReachedAsync(user.Id, achievementStages, user.CreatedMealsCount, Achievements.MealAchievement.AdditionsCountOver));
+            await AddAchievementIfNextStageReachedAsync(user.Id, achievementStages, user.CreatedMealsCount, Achievements.MealAchievement.AdditionsCountOver);
         }
 
         public async Task CheckForNumberOfFavouriteMarksAsync(Guid mealId)
@@ -119,30 +115,30 @@ namespace DM.Logic.Services
 
         #region MealIngredient Achievements
 
-        public async Task<UserAchievementVM> CheckForNumberOfMealIngredientAdditionsByUserAsync(User user)
+        public async Task CheckForNumberOfMealIngredientAdditionsByUserAsync(User user)
         {
             var currentlyBestValue = await _userAchievementRepository.GetUserAchievementMaxValueAsync(user.Id, Achievements.MealIngredientAchievement.AdditionsCountOver);
 
             if (user.CreatedMealIngredientsCount <= currentlyBestValue)
             {
-                return null;
+                return;
             }
 
             int[] achievementStages = achievementsConfig.MealIngredientAchievements[Achievements.MealIngredientAchievement.AdditionsCountOver];
 
-            return _mapper.Map<UserAchievementVM>(await AddAchievementIfNextStageReachedAsync(
+            await AddAchievementIfNextStageReachedAsync(
                 user.Id,
                 achievementStages,
                 user.CreatedMealIngredientsCount, 
                 Achievements.MealIngredientAchievement.AdditionsCountOver
-                ));
+                );
         }
 
         #endregion
 
         #region User Achievements
 
-        public async Task<UserAchievementVM> CheckForUserAnniversaryAsync(User userBeforeLastLoginUpdate)
+        public async Task CheckForUserAnniversaryAsync(User userBeforeLastLoginUpdate)
         {
             int lastLoginAndCreationDifferenceInYears = Extensions.GetDifferenceInYears(
                                                             userBeforeLastLoginUpdate.LastLoginDate,
@@ -155,31 +151,31 @@ namespace DM.Logic.Services
 
             if (lastLoginAndCreationDifferenceInYears == currentDateAndCreationDifferenceInYears)
             {
-                return null;
+                return ;
             }
 
             int currentlyBestValue = await _userAchievementRepository.GetUserAchievementMaxValueAsync(userBeforeLastLoginUpdate.Id, Achievements.UserAchievement.Anniversary);
 
             if (currentDateAndCreationDifferenceInYears <= currentlyBestValue)
             {
-                return null;
+                return ;
             }
 
             int[] achievementStages = achievementsConfig.UserAchievements[Achievements.UserAchievement.Anniversary];
 
-            return _mapper.Map<UserAchievementVM>(await AddAchievementIfNextStageReachedAsync(
+            await AddAchievementIfNextStageReachedAsync(
                     userBeforeLastLoginUpdate.Id,
                     achievementStages, 
                     currentDateAndCreationDifferenceInYears, 
                     Achievements.UserAchievement.Anniversary
-                ));
+                );
         }
 
         #endregion
 
         #region Meal Schedule Achievements
 
-        public async Task<UserAchievementVM> CheckForConsequentScheduleUpdatesAsync(Guid userId)
+        public async Task CheckForConsequentScheduleUpdatesAsync(Guid userId)
         {
             var oldMaxStreakTask = _userAchievementRepository.GetUserAchievementMaxValueAsync(
                                    userId,
@@ -192,24 +188,24 @@ namespace DM.Logic.Services
 
             if (newStreakTask.Result <= oldMaxStreakTask.Result)
             {
-                return null;
+                return;
             }
 
             int[] achievementStages = achievementsConfig.MealScheduleAchievements[Achievements.MealScheduleAchievement.ConsequentScheduleUpdates];
 
-            return _mapper.Map<UserAchievementVM>(await AddAchievementIfNextStageReachedAsync(
+            await AddAchievementIfNextStageReachedAsync(
                 userId,
                 achievementStages, 
                 newStreakTask.Result, 
                 Achievements.MealScheduleAchievement.ConsequentScheduleUpdates
-                ));
+                );
         }
 
         #endregion
 
         #region Friend Achievements
 
-        public async Task<UserAchievementVM> CheckForNumberOfFriendsAsync(Guid userId)
+        public async Task CheckForNumberOfFriendsAsync(Guid userId)
         {
             var newValueTask = _friendRepository.GetNumberOfFriendsAsync(userId);
 
@@ -219,42 +215,42 @@ namespace DM.Logic.Services
 
             if (newValueTask.Result <= currentlyBestValueTask.Result)
             {
-                return null;
+                return;
             }
 
             int[] achievementStages = achievementsConfig.FriendAchievements[Achievements.FriendAchievement.NumberOfFriends];
 
-            return _mapper.Map<UserAchievementVM>(await AddAchievementIfNextStageReachedAsync(
+            await AddAchievementIfNextStageReachedAsync(
                 userId,
                 achievementStages,
                 newValueTask.Result,
                 Achievements.FriendAchievement.NumberOfFriends
-                ));
+                );
         }
 
         #endregion
 
         #region Private Methods
 
-        private async Task<UserAchievement> AddAchievementIfNextStageReachedAsync(Guid userId, int[] achievementStages, int newValue, object achievement)
+        private async Task AddAchievementIfNextStageReachedAsync(Guid userId, int[] achievementStages, int newValue, object achievement)
         {
             bool achievementReached = CheckIfAchievementReached(achievementStages, newValue);
 
             if (!achievementReached)
             {
-                return null;
+                return ;
             }
 
             var dbAchievement = _achievementRepository.GetAchievement(achievement, newValue);
 
             var userAchievementCreation = new UserAchievementCreation(dbAchievement.Id, userId);
 
-            return await AddUserAchievement(userAchievementCreation, dbAchievement);
+            await AddUserAchievement(userAchievementCreation, dbAchievement);
         }
 
         private static bool CheckIfAchievementReached(int[] stages, int newValue) => stages.Contains(newValue);
 
-        private async Task<UserAchievement> AddUserAchievement<T>(T userAchievementCreation, Achievement achievement)
+        private async Task AddUserAchievement<T>(T userAchievementCreation, Achievement achievement)
         {
             var dbUserAchievement = _mapper.Map<UserAchievement>(userAchievementCreation);
 
@@ -264,9 +260,7 @@ namespace DM.Logic.Services
 
             dbUserAchievement.Achievement = achievement;
 
-            await _activityService.LogNewAchievementReachedAsync(dbUserAchievement.UserId, dbUserAchievement.Id);
-
-            return dbUserAchievement;
+            await _activityService.LogNewAchievementReachedAsync(dbUserAchievement.UserId, achievement.Id);
         }
 
         private static void ThrowIfNotCompleted(bool insertCompleted, object model)

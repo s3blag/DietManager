@@ -17,14 +17,17 @@ namespace DM.Logic.Services
         private readonly IMealIngredientRepository _mealIngredientRepository;
         private readonly IAchievementService _achievementService;
         private readonly IActivityService _activityService;
+        private readonly IUserRepository _userRepository;
 
         public MealIngredientService(IMapper mapper, IMealIngredientRepository mealIngredientRepository,
-                                     IAchievementService achievementService, IActivityService activityService)
+                                     IAchievementService achievementService, IActivityService activityService,
+                                     IUserRepository userRepository)
         {
             _mapper = mapper;
             _mealIngredientRepository = mealIngredientRepository;
             _achievementService = achievementService;
             _activityService = activityService;
+            _userRepository = userRepository;
         }
 
         public async Task<IEnumerable<MealIngredientVM>> GetMealIngredientsForMealAsync(Guid mealId)
@@ -66,6 +69,7 @@ namespace DM.Logic.Services
             }
 
             //get user
+            await _userRepository.IncrementCreatedMealIngredientsCountAsync(userId);
 
             var logNewMealIngredientAddedTask = _activityService.LogNewMealIngredientAddedAsync(userId, dbMealIngredient.Id);
             var checkForNumberOfMealIngredientAdditionsTask = _achievementService.CheckForNumberOfMealIngredientAdditionsByUserAsync(new User() { Id = Guid.Empty });

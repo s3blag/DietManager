@@ -69,12 +69,6 @@ li:hover {
   background-color: #4495d8;
   color: white;
 }
-.link {
-  cursor: pointer;
-  text-decoration: none;
-  color: inherit;
-  border-radius: 5px;
-}
 @media screen and (max-width: 1300px) {
   .column {
     margin-left: auto;

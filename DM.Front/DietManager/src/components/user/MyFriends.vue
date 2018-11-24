@@ -1,6 +1,6 @@
 <template>
   <div class="list-container">
-    <h1 class="main-color">My Friends</h1>
+    <h3 class="main-color">My Friends</h3>
     <user-preview-item class="user-preview-item" v-for="user in friends" :key="user.id" :userPreview="user" :showFriendPin="false" />
     <button @click="getFriends" class="load-more-button main-background-color" v-if="elementsRemainingToLoad">
       Load more...

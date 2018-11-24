@@ -66,10 +66,16 @@ namespace DM.Database
 		[Association(ThisKey="Id", OtherKey="AchievementId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
 		public IEnumerable<UserAchievement> fkuserachievementachievements { get; set; }
 
+		/// <summary>
+		/// fk_useractivity_achievement_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="AchievementId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<UserActivity> fkuseractivityachievements { get; set; }
+
 		#endregion
 	}
 
-	[Table(Schema="Meals", Name="Favourites")]
+	[Table(Schema="Meals", Name="Favourite")]
 	public partial class Favourite
 	{
 		[PrimaryKey, NotNull] public Guid           Id           { get; set; } // uuid
@@ -176,6 +182,18 @@ namespace DM.Database
 		public IEnumerable<Favourite> fkfavouritesmealids { get; set; }
 
 		/// <summary>
+		/// fk_useractivity_favourite_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="FavouriteId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<UserActivity> fkuseractivityfavourites { get; set; }
+
+		/// <summary>
+		/// fk_useractivity_meal_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="MealId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<UserActivity> fkuseractivitymeals { get; set; }
+
+		/// <summary>
 		/// fk_usermeal_mealid_BackReference
 		/// </summary>
 		[Association(ThisKey="Id", OtherKey="MealId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
@@ -232,6 +250,12 @@ namespace DM.Database
 		/// </summary>
 		[Association(ThisKey="CreatorId", OtherKey="Id", CanBeNull=true, Relationship=Relationship.ManyToOne, KeyName="FK_MealIngredient_Creator", BackReferenceName="MealIngredientCreators")]
 		public User Creator { get; set; }
+
+		/// <summary>
+		/// fk_useractivity_mealingredient_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="MealIngredientId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<UserActivity> fkuseractivitymealingredients { get; set; }
 
 		/// <summary>
 		/// FK_MealIngredient_Image
@@ -405,6 +429,12 @@ namespace DM.Database
 		public IEnumerable<UserAchievement> fkuserachievementusers { get; set; }
 
 		/// <summary>
+		/// fk_useractivity_friend_BackReference
+		/// </summary>
+		[Association(ThisKey="Id", OtherKey="FriendId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<UserActivity> fkuseractivityfriends { get; set; }
+
+		/// <summary>
 		/// fk_useractivity_user_BackReference
 		/// </summary>
 		[Association(ThisKey="Id", OtherKey="UserId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
@@ -471,13 +501,45 @@ namespace DM.Database
 	[Table(Schema="Socials", Name="UserActivity")]
 	public partial class UserActivity
 	{
-		[PrimaryKey, NotNull] public Guid           Id           { get; set; } // uuid
-		[Column,     NotNull] public Guid           UserId       { get; set; } // uuid
-		[Column,     NotNull] public string         ActivityType { get; set; } // text
-		[Column,     NotNull] public Guid           ContentId    { get; set; } // uuid
-		[Column,     NotNull] public DateTimeOffset ActivityDate { get; set; } // timestamp (6) with time zone
+		[PrimaryKey, Identity   ] public int   Id               { get; set; } // integer
+		[Column,     NotNull    ] public Guid  UserId           { get; set; } // uuid
+		[Column,        Nullable] public Guid? MealId           { get; set; } // uuid
+		[Column,        Nullable] public Guid? MealIngredientId { get; set; } // uuid
+		[Column,        Nullable] public Guid? FavouriteId      { get; set; } // uuid
+		[Column,        Nullable] public Guid? FriendId         { get; set; } // uuid
+		[Column,        Nullable] public Guid? AchievementId    { get; set; } // uuid
 
 		#region Associations
+
+		/// <summary>
+		/// fk_useractivity_achievement
+		/// </summary>
+		[Association(ThisKey="AchievementId", OtherKey="Id", CanBeNull=true, Relationship=Relationship.ManyToOne, KeyName="fk_useractivity_achievement", BackReferenceName="fkuseractivityachievements")]
+		public Achievement Achievement { get; set; }
+
+		/// <summary>
+		/// fk_useractivity_favourite
+		/// </summary>
+		[Association(ThisKey="FavouriteId", OtherKey="Id", CanBeNull=true, Relationship=Relationship.ManyToOne, KeyName="fk_useractivity_favourite", BackReferenceName="fkuseractivityfavourites")]
+		public Meal Favourite { get; set; }
+
+		/// <summary>
+		/// fk_useractivity_friend
+		/// </summary>
+		[Association(ThisKey="FriendId", OtherKey="Id", CanBeNull=true, Relationship=Relationship.ManyToOne, KeyName="fk_useractivity_friend", BackReferenceName="fkuseractivityfriends")]
+		public User Friend { get; set; }
+
+		/// <summary>
+		/// fk_useractivity_meal
+		/// </summary>
+		[Association(ThisKey="MealId", OtherKey="Id", CanBeNull=true, Relationship=Relationship.ManyToOne, KeyName="fk_useractivity_meal", BackReferenceName="fkuseractivitymeals")]
+		public Meal Meal { get; set; }
+
+		/// <summary>
+		/// fk_useractivity_mealingredient
+		/// </summary>
+		[Association(ThisKey="MealIngredientId", OtherKey="Id", CanBeNull=true, Relationship=Relationship.ManyToOne, KeyName="fk_useractivity_mealingredient", BackReferenceName="fkuseractivitymealingredients")]
+		public MealIngredient MealIngredient { get; set; }
 
 		/// <summary>
 		/// fk_useractivity_user
@@ -563,7 +625,7 @@ namespace DM.Database
 				t.Id == Id);
 		}
 
-		public static UserActivity Find(this ITable<UserActivity> table, Guid Id)
+		public static UserActivity Find(this ITable<UserActivity> table, int Id)
 		{
 			return table.FirstOrDefault(t =>
 				t.Id == Id);

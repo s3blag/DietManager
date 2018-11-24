@@ -24,7 +24,9 @@ import {
   faPencilAlt,
   faStar,
   faMinusCircle,
-  faUserPlus
+  faUserPlus,
+  faTrophy,
+  faLemon
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(faAppleAlt);
@@ -43,6 +45,8 @@ library.add(faTrashAlt);
 library.add(faPencilAlt);
 library.add(faStar);
 library.add(faUserPlus);
+library.add(faTrophy);
+library.add(faLemon);
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 
 import BootstrapVue from "bootstrap-vue";

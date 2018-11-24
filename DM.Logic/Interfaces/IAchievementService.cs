@@ -8,19 +8,19 @@ namespace DM.Logic.Interfaces
 {
     public interface IAchievementService
     {
-        Task<UserAchievementVM> CheckForConsequentScheduleUpdatesAsync(Guid userId);
+        Task CheckForConsequentScheduleUpdatesAsync(Guid userId);
 
         Task CheckForNumberOfFavouriteMarksAsync(Guid mealId);
 
-        Task<UserAchievementVM> CheckForNumberOfFriendsAsync(Guid userId);
+        Task CheckForNumberOfFriendsAsync(Guid userId);
 
-        Task<UserAchievementVM> CheckForNumberOfMealAdditionsByUserAsync(User user);
+        Task CheckForNumberOfMealAdditionsByUserAsync(User user);
 
-        Task<UserAchievementVM> CheckForNumberOfMealIngredientAdditionsByUserAsync(User user);
+        Task CheckForNumberOfMealIngredientAdditionsByUserAsync(User user);
 
         Task CheckForNumberOfMealUsesAsync(Guid userId, Guid mealId);
 
-        Task<UserAchievementVM> CheckForUserAnniversaryAsync(User userBeforeLastLoginUpdate);
+        Task CheckForUserAnniversaryAsync(User userBeforeLastLoginUpdate);
 
         Task<IEnumerable<UserAchievementVM>> GetUsersAchievements(Guid userId);
 

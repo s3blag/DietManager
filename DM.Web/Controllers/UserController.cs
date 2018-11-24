@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
@@ -26,7 +27,9 @@ namespace DM.Web.Controllers
                 return NotFound("Invalid arguments");
             }
 
-            var result = await _searchService.SearchUsersAsync(lastReturned);
+            var loggedUserId = Guid.Empty;
+
+            var result = await _searchService.SearchUsersAsync(loggedUserId, lastReturned);
 
             if (!result.Result.Any())
             {

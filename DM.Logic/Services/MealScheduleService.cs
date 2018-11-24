@@ -16,13 +16,16 @@ namespace DM.Logic.Services
     {
         private readonly IMapper _mapper;
         private readonly IMealScheduleRepository _mealScheduleRepository;
+        private readonly IMealRepository _mealRepository;
         private readonly IAchievementService _achievementService;
 
-        public MealScheduleService(IMapper mapper, IMealScheduleRepository mealScheduleRepository, IAchievementService achievementService)
+        public MealScheduleService(IMapper mapper, IMealScheduleRepository mealScheduleRepository, 
+            IAchievementService achievementService, IMealRepository mealRepository)
         {
             _mapper = mapper;
             _mealScheduleRepository = mealScheduleRepository;
             _achievementService = achievementService;
+            _mealRepository = mealRepository;
         }
 
         public async Task<Dictionary<DayOfWeek, IEnumerable<MealScheduleEntryVM>>> GetUpcomingMealSchedule(Guid userId, DateTimeOffset dateOffset)
@@ -63,6 +66,8 @@ namespace DM.Logic.Services
                 throw new DataAccessException($"Adding meal schedule entry failed for model: {JsonConvert.SerializeObject(dbMealScheduleEntry)}");
             }
 
+            await _mealRepository.IncrementNumberOfUsesAsync(newMealScheduleEntry.MealId.Value);
+
             var checkNumberOfMealUsesTask = _achievementService.CheckForNumberOfMealUsesAsync(userId, dbMealScheduleEntry.MealId);
             var checkConsequentUpdatesTask =  _achievementService.CheckForConsequentScheduleUpdatesAsync(userId);
 
@@ -73,7 +78,21 @@ namespace DM.Logic.Services
 
         public async Task<bool> DeleteMealScheduleEntryAsync(Guid userId, Guid mealScheduleEntryId)
         {
-            return await _mealScheduleRepository.DeleteAsync(userId, mealScheduleEntryId);
+            var scheduleEntry = await _mealScheduleRepository.GetByIdAsync(userId, mealScheduleEntryId);
+
+            if (scheduleEntry == null)
+            {
+                return false;
+            }
+
+            bool deleted = await _mealScheduleRepository.DeleteAsync(userId, mealScheduleEntryId);
+
+            if (deleted)
+            {
+                await _mealRepository.DecrementNumberOfUsesAsync(scheduleEntry.MealId);
+            }
+
+            return deleted;
         }
 
         public async Task<bool> UpdateMealScheduleEntryAsync(Guid userId, MealScheduleEntryUpdateVM scheduleEntryUpdateVM)

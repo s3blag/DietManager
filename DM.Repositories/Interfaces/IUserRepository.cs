@@ -9,5 +9,10 @@ namespace DM.Repositories.Interfaces
     {
         Task<User> GetUserAsync(Guid id);
         Task<ICollection<User>> GetUsersByQueryAsync(string query, int index, int takeAmount);
+        Task IncrementCreatedMealsCountAsync(Guid userId);
+        Task IncrementCreatedMealIngredientsCountAsync(Guid userId);
+        Task DecrementCreatedMealsCountAsync(Guid userId);
+        Task DecrementCreatedMealIngredientsCountAsync(Guid userId);
+        Task UpdateLastLoginDateAsync(Guid userId);
     }
 }

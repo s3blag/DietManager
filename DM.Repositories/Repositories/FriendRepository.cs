@@ -11,7 +11,7 @@ namespace DM.Repositories
 {
     public class FriendRepository : BaseRepository<Friend>, IFriendRepository
     {
-        public async Task<ICollection<User>> GetUserFriendsAsync(Guid userId, int index, int takeAmount, FriendInvitationStatus status = FriendInvitationStatus.Accepted)
+        public async Task<ICollection<User>> GetFriendsAsync(Guid userId, int index, int takeAmount, FriendInvitationStatus status = FriendInvitationStatus.Accepted)
         {
             using (var db = new DietManagerDB())
             {
@@ -24,6 +24,22 @@ namespace DM.Repositories
                     Skip(index).
                     Take(takeAmount).
                     Select(f => f.InvitingUserId == userId ? f.InvitedUser : f.InvitingUser);
+
+                return await userFriendsQuery.ToListAsync();
+            }
+        }
+
+        public async Task<ICollection<Guid>> GetFriendsIdsAsync(Guid userId, int index = 0, int takeAmount = Int32.MaxValue, FriendInvitationStatus status = FriendInvitationStatus.Accepted)
+        {
+            using (var db = new DietManagerDB())
+            {
+                var userFriendsQuery = db.Friends.
+                    Where(f => f.InvitingUserId == userId || f.InvitedUserId == userId).
+                    Where(f => f.Status == status.ToString()).
+                    OrderBy(f => f.CreationDate).
+                    Skip(index).
+                    Take(takeAmount).
+                    Select(f => f.InvitingUserId == userId ? f.InvitedUserId : f.InvitingUserId);
 
                 return await userFriendsQuery.ToListAsync();
             }

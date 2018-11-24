@@ -4,7 +4,6 @@ import MealIngredient from "../meal-ingredient/mealIngredient";
 import Achievement from "../achievement/achievement";
 
 export default interface UserActivity {
-  id: string;
   user: User;
   meal: MealPreview;
   mealIngredient: MealIngredient;

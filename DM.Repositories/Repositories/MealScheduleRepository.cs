@@ -25,15 +25,25 @@ namespace DM.Repositories
             }
         }
 
-        //public async Task<int> GetNumberOfMealUsesAsync(Guid mealId)
-        //{
-        //    using (var db = new DietManagerDB())
-        //    {
-        //        return await db.MealScheduleEntries.
-        //            Where(m => m.MealId == mealId).
-        //            CountAsync();
-        //    }
-        //}
+        public async Task<MealScheduleEntry> GetByIdAsync(Guid userId, Guid mealScheduleEntryId, bool deepLoading = false)
+        {
+            using (var db = new DietManagerDB())
+            {
+                var mealScheduleEntries = db.MealScheduleEntries;
+
+                if (deepLoading)
+                {
+                    mealScheduleEntries = mealScheduleEntries.
+                        LoadWith(m => m.Meal).
+                        LoadWith(m => m.User);
+                }
+
+                return await mealScheduleEntries.
+                        Where(m => m.UserId == userId).
+                        Where(m => m.Id == mealScheduleEntryId).
+                        FirstOrDefaultAsync();
+            }
+        }
 
         public async Task<int> GetMealScheduleUpdatesStreakInDaysAsync(Guid userId)
         {
