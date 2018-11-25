@@ -79,11 +79,6 @@ namespace DM.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUserInfo()
         {
-            //if (avatar.ImageId == Guid.Empty)
-            //{
-            //    return BadRequest();
-            //}
-
             var signedInUserId = Guid.Empty;
 
             var userInfo = await _userService.GetUserInfoAsync(signedInUserId);
@@ -94,6 +89,21 @@ namespace DM.Web.Controllers
             }
 
             return NotFound();
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAccount()
+        {
+            var signedInUserId = Guid.Empty;
+
+            bool deleted = await _userService.DeleteAccountAsync(signedInUserId);
+
+            if (deleted)
+            {
+                return Ok();
+            }
+
+            return BadRequest();
         }
     }
 }

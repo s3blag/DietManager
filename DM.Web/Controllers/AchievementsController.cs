@@ -34,28 +34,27 @@ namespace DM.Web.Controllers
             }
         }
 
-        //TODO: indexed result
         [HttpGet("my-achievements")]
-        public async Task<IActionResult> GetUserAchievements()
+        public async Task<GroupedUserAchievementsVM> GetUserAchievements()
         {
             var userId = Guid.Empty;
 
             var result = await _achievementService.GetUsersAchievements(userId);
 
-            return Ok(result);
+            return result;
         }
 
         [HttpPost("my-achievements/mark-as-read")]
-        public async Task<IActionResult> MarkAsRead([FromBody]IEnumerable<UserAchievementVM> userAchievements)
+        public async Task<IActionResult> MarkAsRead([FromBody]AchievementIdsVM achievements)
         {
-            if (userAchievements == null || !userAchievements.Any() || userAchievements.Any(ua => ua.Seen == true))
+            if (achievements == null || !achievements.AchievementIds.Any())
             {
                 return NotFound();
             }
 
             var userId = Guid.Empty;
 
-            var result = await _achievementService.MarkAchievementsAsReadAsync(userAchievements.Select(ua => ua.Id.Value).ToList(), userId);
+            var result = await _achievementService.MarkAchievementsAsReadAsync(achievements.AchievementIds, userId);
 
             return Ok(result);
         }

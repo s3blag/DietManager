@@ -7,7 +7,9 @@
         <font-awesome-icon id="search-icon" icon="search" />
       </button>
     </div>
-    <user-preview-item class="result-item" v-for="user in users" :key="user.id" :userPreview="user" :showFriendPin="true" />
+    <div id="users-container">
+      <user-preview-item class="result-item" v-for="user in users" :key="user.id" :userPreview="user" :showFriendPin="true" />
+    </div>
     <button v-if="!isLast && lastReturned" @click="loadMore" class="load-more-button main-background-color">
       Load more...
     </button>
@@ -132,5 +134,11 @@ export default class SearchUsers extends Vue {
 }
 #search-icon {
   color: white;
+}
+#users-container {
+  margin-top: 10px;
+}
+.result-item {
+  margin-bottom: 5px !important;
 }
 </style>

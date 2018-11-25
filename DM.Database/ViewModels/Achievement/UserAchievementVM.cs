@@ -8,9 +8,16 @@ namespace DM.Models.ViewModels
     {
         [Required]
         public Guid? Id { get; set; }
+
         [Required]
-        public AchievementVM Achievement { get; set; }
+        public string Category { get; set; }
+
         [Required]
+        public string Type { get; set; }
+
+        [Required]
+        public int Value { get; set; }
+
         public bool? Seen { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using DM.Models.Exceptions;
 using DM.Models.ViewModels;
 using DM.Models.Wrappers;
 using DM.Repositories.Interfaces;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,14 +19,16 @@ namespace DM.Logic.Services
         private readonly IActivityRepository _activityRepository;
         private readonly IMapper _mapper;
         private readonly IAchievementService _achievementService;
+        private readonly ILogger<FriendService> _logger;
 
         public FriendService(IFriendRepository friendRepository, IActivityRepository activityRepository, 
-            IMapper mapper, IAchievementService achievementService)
+            IMapper mapper, IAchievementService achievementService, ILogger<FriendService> logger)
         {
             _friendRepository = friendRepository;
             _activityRepository = activityRepository;
             _mapper = mapper;
             _achievementService = achievementService;
+            _logger = logger;
         }
 
         public async Task<IndexedResult<IEnumerable<UserVM>>> GetUserFriendsAsync(
@@ -89,12 +92,26 @@ namespace DM.Logic.Services
             };
         }
 
-        public async Task SendFriendInvitationAsync(FriendInvitationCreationVM friendInvitation)
+        public async Task<bool> SendFriendInvitationAsync(FriendInvitationCreationVM friendInvitation)
         {
-            if (!await _friendRepository.AddAsync(_mapper.Map<Friend>(friendInvitation)))
+            bool addedSuccessfully = false;
+
+            try
+            {
+                addedSuccessfully = await _friendRepository.AddAsync(_mapper.Map<Friend>(friendInvitation));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return false;
+            }
+
+            if (!addedSuccessfully)
             {
                 throw new DataAccessException($"Sending friend invitation failed for model: {JsonConvert.SerializeObject(friendInvitation)}");
             }
+
+            return true;
         }
 
         public async Task AcceptFriendInvitationAsync(Guid invitingUserId, Guid invitedUserId)

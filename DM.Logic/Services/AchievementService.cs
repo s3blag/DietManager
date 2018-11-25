@@ -53,8 +53,22 @@ namespace DM.Logic.Services
         public async Task<IEnumerable<AchievementVM>> GetAllAchievementsAsync() => 
             _mapper.Map<IEnumerable<AchievementVM>>(await _achievementRepository.GetAllAsync());
 
-        public async Task<IEnumerable<UserAchievementVM>> GetUsersAchievements(Guid userId) => 
-            _mapper.Map<IEnumerable<UserAchievementVM>>(await _userAchievementRepository.GetUsersAchievementsAsync(userId));
+        public async Task<GroupedUserAchievementsVM> GetUsersAchievements(Guid userId)
+        {
+            var achievements =  _mapper.Map<IEnumerable<UserAchievementVM>>(await _userAchievementRepository.GetUsersAchievementsAsync(userId));
+
+            var groupedByCategoryAchievements = achievements.GroupBy(a => ToCamelCase(a.Category)).
+                ToDictionary(
+                    kv => kv.Key, 
+                    kv => kv.AsEnumerable().GroupBy(_ => ToCamelCase(_.Type)).
+                            ToDictionary(_ => _.Key, _ => _.Select(__ => __.Value)));
+
+            return new GroupedUserAchievementsVM()
+            {
+                GroupedAchievements = groupedByCategoryAchievements,
+                Any = groupedByCategoryAchievements.SelectMany(kv => kv.Value).Any()
+            };
+        }
         
         public async Task<bool> MarkAchievementsAsReadAsync(IEnumerable<Guid> userAchievementIds, Guid userId)
         {
@@ -270,6 +284,8 @@ namespace DM.Logic.Services
                 throw new DataAccessException($"Adding achievement ${JsonConvert.SerializeObject(model)} failed");
             }
         }
+
+        private string ToCamelCase(string pascalCaseString) => char.ToLowerInvariant(pascalCaseString[0]) + pascalCaseString.Substring(1);
 
         #endregion
     }

@@ -68,14 +68,15 @@ namespace DM.Logic.Services
                 throw new DataAccessException("MealIngredient couldn't be added. MealIngredient:" + JsonConvert.SerializeObject(dbMealIngredient));
             }
 
-            //get user
             await _userRepository.IncrementCreatedMealIngredientsCountAsync(userId);
 
             var logNewMealIngredientAddedTask = _activityService.LogNewMealIngredientAddedAsync(userId, dbMealIngredient.Id);
-            var checkForNumberOfMealIngredientAdditionsTask = _achievementService.CheckForNumberOfMealIngredientAdditionsByUserAsync(new User() { Id = Guid.Empty });
+            var userTask = _userRepository.GetUserByIdAsync(userId);
 
-            await Task.WhenAll(logNewMealIngredientAddedTask, checkForNumberOfMealIngredientAdditionsTask);
-            
+            await Task.WhenAll(userTask, logNewMealIngredientAddedTask);
+
+            await _achievementService.CheckForNumberOfMealIngredientAdditionsByUserAsync(userTask.Result);
+
             return dbMealIngredient.Id;
         }
 

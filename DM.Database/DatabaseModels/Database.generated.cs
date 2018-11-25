@@ -401,6 +401,7 @@ namespace DM.Database
 		[Column,     NotNull    ] public DateTimeOffset LastLoginDate               { get; set; } // timestamp (6) with time zone
 		[Column,        Nullable] public Guid?          ImageId                     { get; set; } // uuid
 		[Column,     NotNull    ] public Guid           RoleId                      { get; set; } // uuid
+		[Column,     NotNull    ] public bool           Deleted                     { get; set; } // boolean
 
 		#region Associations
 

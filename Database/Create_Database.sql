@@ -33,7 +33,8 @@ CREATE TABLE "Users"."User" (
     "CreationDate"                  TIMESTAMPTZ     NOT NULL,
     "LastLoginDate"                 TIMESTAMPTZ     NOT NULL,
     "ImageId"                       UUID            NULL,
-    "RoleId"                        UUID            NOT NULL
+    "RoleId"                        UUID            NOT NULL,
+    "Deleted"                       BOOL            NOT NULL DEFAULT FALSE
 );
 ALTER TABLE "Users"."User" 
 ADD CONSTRAINT FK_User_Image      FOREIGN KEY ("ImageId")     REFERENCES "Images"."Image"("Id"),
@@ -223,11 +224,12 @@ INSERT INTO "Users"."User"(
     "CreationDate", 
     "RoleId"
 )
-VALUES (
+VALUES 
+(
     '00000000-0000-0000-0000-000000000000',
     'Wroclaw',
-    'ad@m.in',
-    'ad@m.in',
+    'ad1@m.in',
+    'ad1@m.in',
     'Sebastian',
     'Łągiewski',
     'Sebastian Łągiewski',
@@ -235,4 +237,95 @@ VALUES (
     '25.10.2018 20:58:57 +02:00',
     '25.10.2018 20:58:57 +02:00',
     '00000000-0000-0000-0000-000000000000'
+),
+(
+    '10000000-0000-0000-0000-000000000000',
+    'Wroclaw',
+    'ad2@m.in',
+    'ad2@m.in',
+    'Marcepan',
+    'Marcepański',
+    'Marcepan Marcepański',
+    'password',
+    '25.10.2018 20:58:57 +02:00',
+    '25.10.2018 20:58:57 +02:00',
+    '00000000-0000-0000-0000-000000000000'
+),
+(
+    '20000000-0000-0000-0000-000000000000',
+    'Wroclaw',
+    'ad3@m.in',
+    'ad3@m.in',
+    'Klaudia',
+    'Łągiewska',
+    'Klaudia Łągiewski',
+    'password',
+    '25.10.2018 20:58:57 +02:00',
+    '25.10.2018 20:58:57 +02:00',
+    '00000000-0000-0000-0000-000000000000'
+),
+(
+    '30000000-0000-0000-0000-000000000000',
+    'Wroclaw',
+    'ad4@m.in',
+    'ad4@m.in',
+    'Dawid',
+    'Lorek',
+    'Dawid Lorek',
+    'password',
+    '25.10.2018 20:58:57 +02:00',
+    '25.10.2018 20:58:57 +02:00',
+    '00000000-0000-0000-0000-000000000000'
+),
+(
+    '40000000-0000-0000-0000-000000000000',
+    'Wroclaw',
+    'ad5@m.in',
+    'ad5@m.in',
+    'Przemyslaw',
+    'Salata',
+    'Przemyslaw Salata',
+    'password',
+    '25.10.2018 20:58:57 +02:00',
+    '25.10.2018 20:58:57 +02:00',
+    '00000000-0000-0000-0000-000000000000'
+),
+(
+    '50000000-0000-0000-0000-000000000000',
+    'Wroclaw',
+    'ad6@m.in',
+    'ad6@m.in',
+    'Karolina',
+    'Kozica',
+    'Karolina Kozica',
+    'password',
+    '25.10.2018 20:58:57 +02:00',
+    '25.10.2018 20:58:57 +02:00',
+    '00000000-0000-0000-0000-000000000000'
+);
+
+INSERT INTO "Socials"."Friend"(
+    "InvitingUserId", 
+    "InvitedUserId",
+    "Status", 
+    "CreationDate"
+)
+VALUES 
+(
+    '00000000-0000-0000-0000-000000000000',
+    '10000000-0000-0000-0000-000000000000',
+    'Accepted',
+    '28.10.2018 20:58:57 +02:00'
+),
+(
+    '00000000-0000-0000-0000-000000000000',
+    '20000000-0000-0000-0000-000000000000',
+    'Awaiting',
+    '10.11.2018 20:58:57 +02:00'
+),
+(
+    '00000000-0000-0000-0000-000000000000',
+    '30000000-0000-0000-0000-000000000000',
+    'Awaiting',
+    '11.11.2018 20:58:57 +02:00'
 );

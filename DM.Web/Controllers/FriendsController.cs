@@ -108,7 +108,7 @@ namespace DM.Web.Controllers
                 return NotFound("Invalid arguments");
             }
 
-            var userId = new Guid("20000000-0000-0000-0000-000000000000");
+            var userId = new Guid("00000000-0000-0000-0000-000000000000");
 
             var newsFeed = await _friendService.GetFriendsActivitiesFeedAsync(userId, lastReturned);
 

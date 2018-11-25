@@ -35,7 +35,11 @@ namespace DM.Web
             CreateMap<ImageCreation, Image>().
                 ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid())).
                 ReverseMap();
-            CreateMap<UserAchievement, UserAchievementVM>().ReverseMap();
+            CreateMap<UserAchievement, UserAchievementVM>().
+                ForMember(target => target.Category, config => config.MapFrom(source => source.Achievement.Category)).
+                ForMember(target => target.Type, config => config.MapFrom(source => source.Achievement.Type)).
+                ForMember(target => target.Value, config => config.MapFrom(source => source.Achievement.Value)).
+                ReverseMap();
             CreateMap<Achievement, AchievementVM>().ReverseMap();
             CreateMap<User, UserVM>().ReverseMap();
             CreateMap<User, LoggedInUserVM>();

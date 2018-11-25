@@ -24,7 +24,7 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<IEnumerable<Achievement>> GetUsersAchievementsAsync(Guid userId)
+        public async Task<IEnumerable<UserAchievement>> GetUsersAchievementsAsync(Guid userId)
         {
             using (var db = new DietManagerDB())
             {
@@ -34,7 +34,6 @@ namespace DM.Repositories
                     OrderBy(ua => ua.Achievement.Category).
                     ThenBy(ua => ua.Achievement.Type).
                     ThenBy(ua => ua.Achievement.Value).
-                    Select(ua => ua.Achievement).
                     ToListAsync();
             }
         }

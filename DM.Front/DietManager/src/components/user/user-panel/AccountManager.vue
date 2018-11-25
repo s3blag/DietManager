@@ -1,5 +1,12 @@
 <template>
   <div id="account-manager">
+    <modal v-if="showDeleteAccountModal">
+      <span class="modal-text">Are you sure you want to delete your account?<br> All the created meals and meal ingredients will remain.</span>
+      <div class="modal-buttons-container">
+        <button class="button" @click="deleteAccount">Delete</button>
+        <button class="button" @click="showDeleteAccountModal = false">Cancel</button>
+      </div>
+    </modal>
     <div id="image">
       <div id="user-image">
         <image-uploader :predefinedImageId="user.imageId" @addImage="upsertAvatar" @deleteImage="deleteAvatar">
@@ -12,7 +19,7 @@
     <div id="user-name">{{user.name + ' ' + user.surname}}</div>
     <div id="user-city">{{user.city}}</div>
     <div id="delete-account" class="soft-border top">
-      <button class="button ">Delete your account</button>
+      <button class="button" @click="showDeleteAccountModal = true">Delete your account</button>
     </div>
   </div>
 </template>
@@ -27,12 +34,14 @@ import User from "@/ViewModels/user/user";
 import UserUpdate from "@/ViewModels/user/userUpdate";
 import ImageApiCaller from "@/services/api-callers/imageApi";
 import ImageUploader from "@/components/image/ImageUploader.vue";
+import Modal from "@/components/common/Modal.vue";
 Component.registerHooks(["beforeRouteEnter"]);
 
 @Component({
   components: {
     "image-wrapper": ImageWrapper,
-    "image-uploader": ImageUploader
+    "image-uploader": ImageUploader,
+    modal: Modal
   }
 })
 export default class AccountManager extends Vue {
@@ -46,6 +55,7 @@ export default class AccountManager extends Vue {
   };
   private userUpdate: UserUpdate = this.unsettedUserUpdateValue;
   private errors: string[] = [];
+  private showDeleteAccountModal = false;
 
   beforeRouteEnter(
     to: any,

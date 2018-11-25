@@ -73,13 +73,14 @@ namespace DM.Logic.Services
                 );
             }
 
-            //get user for checkForNumberOfAdditionsTask
             await _userRepository.IncrementCreatedMealsCountAsync(userId);
 
+            var userTask = _userRepository.GetUserByIdAsync(userId);
             var logNewMealAddedTask = _activityService.LogNewMealAddedAsync(userId, dbMeal.Id);
-            var checkForNumberOfAdditionsTask = _achievementService.CheckForNumberOfMealAdditionsByUserAsync(new User() { Id = Guid.Empty });
 
-            await Task.WhenAll(logNewMealAddedTask, checkForNumberOfAdditionsTask);
+            await Task.WhenAll(logNewMealAddedTask, userTask);
+
+            await _achievementService.CheckForNumberOfMealAdditionsByUserAsync(userTask.Result);
 
             return dbMeal.Id;
         } 

@@ -74,5 +74,24 @@ namespace DM.Logic.Services
         {
             return _mapper.Map<LoggedInUserVM>(await _userRepository.GetUserByIdAsync(userId));
         }
+
+        public async Task<bool> DeleteAccountAsync(Guid userId)
+        {
+            var user = await _userRepository.GetUserByIdAsync(userId);
+
+            if (user.ImageId != null)
+            {
+                bool imagedeleted = await _imageService.DeleteImageAsync(user.ImageId.Value);
+
+                if (!imagedeleted)
+                {
+                    return false;
+                }
+            }
+
+            await _userRepository.DeleteUserRelatedDataAsync(user);
+
+            return true;
+        }
     }
 }

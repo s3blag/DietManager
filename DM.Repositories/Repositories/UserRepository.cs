@@ -67,6 +67,57 @@ namespace DM.Repositories
             }
         }
 
+        public override async Task<bool> DeleteAsync(User model)
+        {
+            using (var db = new DietManagerDB())
+            {
+                int rowsAffected = await db.Users.
+                   Where(u => u.Id == model.Id).
+                   Set(u => u.ImageId, default(Guid?)).
+                   Set(u => u.City, string.Empty).
+                   Set(u => u.Email, string.Empty).
+                   Set(u => u.FullName, string.Empty).
+                   Set(u => u.Name, string.Empty).
+                   Set(u => u.Surname, string.Empty).
+                   Set(u => u.UserName, string.Empty).
+                   Set(u => u.Password, string.Empty).
+                   Set(u => u.CreationDate, DateTimeOffset.MinValue).
+                   Set(u => u.LastLoginDate, DateTimeOffset.MinValue).
+                   Set(u => u.CreatedMealsCount, 0).
+                   Set(u => u.CreatedMealIngredientsCount, 0).
+                   Set(u => u.Deleted, true).
+                   UpdateAsync();
+
+                return rowsAffected == 1;
+            }
+        }
+
+        public async Task DeleteUserRelatedDataAsync(User model)
+        {
+            using (var db = new DietManagerDB())
+            {
+                db.BeginTransaction();
+
+                await db.UserAchievements.
+                    Where(ua => ua.UserId == model.Id).
+                    DeleteAsync();
+
+                await db.Friends.
+                    Where(ua => ua.InvitedUserId == model.Id || ua.InvitingUserId == model.Id).
+                    DeleteAsync();
+
+                await db.Favourites.
+                    Where(ua => ua.UserId == model.Id).
+                    DeleteAsync();
+
+                await db.UserActivities.
+                    Where(ua => ua.UserId == model.Id).
+                    DeleteAsync();
+
+                db.CommitTransaction();
+            }
+        }
+
         #region private
 
         private async Task UpdateCreatedMealsCountAsync(Guid userId, int valueToAdd)
@@ -87,7 +138,7 @@ namespace DM.Repositories
             {
                 await db.Users.
                    Where(u => u.Id == userId).
-                   Set(u => u.CreatedMealIngredientsCount, u => u.CreatedMealsCount + valueToAdd).
+                   Set(u => u.CreatedMealIngredientsCount, u => u.CreatedMealIngredientsCount + valueToAdd).
                    UpdateAsync();
             }
         }

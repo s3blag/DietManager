@@ -79,7 +79,15 @@ namespace DM.Logic.Services
                 return false;
             }
 
-            return await DeleteImageAsync(imageMetaData);
+            bool imageDeleted = await DeleteImageAsync(imageMetaData);
+
+            if (!imageDeleted)
+            {
+                _logger.LogError("Deleting image with id: {0} and path: {1} failed", imageId, imageMetaData.Path);
+                return false;
+            }
+
+            return await _imageRepository.DeleteAsync(imageMetaData);
         }
 
         private string GetExtension(string base64Image)

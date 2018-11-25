@@ -15,5 +15,6 @@ namespace DM.Repositories.Interfaces
         Task DecrementCreatedMealIngredientsCountAsync(Guid userId);
         Task UpdateLastLoginDateAsync(Guid userId);
         Task<bool> UpdateUserAvatar(Guid userId, Guid? newAvatarId);
+        Task DeleteUserRelatedDataAsync(User model);
     }
 }
