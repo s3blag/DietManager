@@ -31,6 +31,9 @@ namespace DM.Repositories
                 return await db.UserAchievements.
                     LoadWith(ua => ua.Achievement).
                     Where(ua => ua.UserId == userId).
+                    OrderBy(ua => ua.Achievement.Category).
+                    ThenBy(ua => ua.Achievement.Type).
+                    ThenBy(ua => ua.Achievement.Value).
                     Select(ua => ua.Achievement).
                     ToListAsync();
             }

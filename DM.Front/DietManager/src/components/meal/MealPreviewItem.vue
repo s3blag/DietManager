@@ -1,6 +1,6 @@
 <template>
   <div id="preview-item">
-    <div class="image-container">
+    <div class="avatar-image-container">
       <image-wrapper :imageId="mealPreview.imageId">
         <template slot="placeholder">
           <font-awesome-icon class="main-color" icon="utensils" size="2x" />
@@ -113,19 +113,6 @@ export default class MyMeals extends Vue {
 </script>
 
 <style>
-.image-container {
-  position: relative;
-  margin-top: auto;
-  margin-bottom: auto;
-  text-align: center;
-  vertical-align: center;
-  width: 65px;
-  height: 65px;
-  max-width: 65px;
-  max-height: 65px;
-  min-width: 65px;
-}
-
 .meal-info-element {
   flex-grow: 1;
   margin-left: 10px;

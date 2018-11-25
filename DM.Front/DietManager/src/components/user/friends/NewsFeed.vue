@@ -1,9 +1,11 @@
 <template>
   <div class="list-container">
     <h3 class="main-color">News feed</h3>
+
     <div class="tile-container">
       <user-activity-item class="activity-item" v-for="(activity, index) in activities" :key="index" :userActivity="activity" />
     </div>
+
     <button @click="getFriendsActivities" class="load-more-button main-background-color" v-if="elementsRemainingToLoad">
       Load more...
     </button>
@@ -18,7 +20,7 @@ import IndexedResult from "@/ViewModels/wrappers/indexedResult";
 import ImageApiCaller from "@/services/api-callers/imageApi";
 import FriendsApiCaller from "@/services/api-callers/friendsApi";
 import UserActivity from "@/ViewModels/user/userActivity";
-import UserActivityItem from "@/components/user/activity/UserActivityItem.vue";
+import UserActivityItem from "@/components/user/friends/activity/UserActivityItem.vue";
 Component.registerHooks(["beforeRouteEnter"]);
 
 @Component({
@@ -76,7 +78,7 @@ export default class NewsFeed extends Vue {
 
 <style lang="less" scoped>
 .activity-item {
-  width: 225px;
+  width: 300px;
   border-radius: 7px;
   border-width: 1px;
   border-style: solid;
@@ -96,8 +98,8 @@ h1 {
 .tile-container {
   display: flex;
   flex-wrap: wrap;
+  margin: 0 auto;
   justify-content: center;
-
   > * {
     margin: 10px;
   }

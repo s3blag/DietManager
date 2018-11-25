@@ -21,26 +21,26 @@ export default class ActivityContentLayout extends Vue {}
 
 <style lang="less" scoped>
 #activity-content {
-  width: 225px;
+  width: 100%;
   display: block;
-  // border-width: 1px;
-  // border-radius: 8px;
-  // border-color: rgb(195, 195, 195);
-  // border-style: solid;
+  text-decoration: underline;
   > * {
     width: 100%;
   }
 }
 #activity-content-picture {
   padding: 10px;
-  height: 150px;
+  min-height: 150px;
   > * {
-    width: 100%;
-    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    min-width: 80%;
+    min-height: 150px;
+    margin: 0 auto;
   }
 }
 #activity-content-details {
-  margin-bottom: 5px;
+  margin: 0px 5px 16px 5px;
   > * {
     width: 100%;
   }

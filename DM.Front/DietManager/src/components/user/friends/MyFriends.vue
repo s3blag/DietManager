@@ -16,7 +16,7 @@ import MealPreview from "@/ViewModels/meal/mealPreview";
 import MealApiCaller from "@/services/api-callers/mealApi";
 import IndexedResult from "@/ViewModels/wrappers/indexedResult";
 import ImageApiCaller from "@/services/api-callers/imageApi";
-import UserPreviewItem from "@/components/user/UserPreviewItem.vue";
+import UserPreviewItem from "./UserPreviewItem.vue";
 import FriendsApiCaller from "@/services/api-callers/friendsApi";
 import User from "@/ViewModels/user/user";
 

@@ -80,6 +80,7 @@ namespace Diet_Manager
             services.AddScoped<IActivityService, ActivityService>();
             services.AddScoped<IFavouritesService, FavouritesService>();
             services.AddScoped<IFriendService, FriendService>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddScoped<IContentTypeProvider, FileExtensionContentTypeProvider>();
 

@@ -4,5 +4,5 @@ export default interface User {
   surname: string;
   imageId: string | null;
   city: string;
-  isFriend: boolean;
+  isFriend: boolean | null;
 }

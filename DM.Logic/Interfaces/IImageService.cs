@@ -8,5 +8,6 @@ namespace DM.Logic.Interfaces
     {
         Task<Guid> AddImageAsync(string base64Image);
         Task<ImageVM> GetImageByIdAsync(Guid imageId);
+        Task<bool> DeleteImageAsync(Guid imageId);
     }
 }

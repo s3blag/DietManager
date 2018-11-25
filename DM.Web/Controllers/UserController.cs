@@ -13,10 +13,12 @@ namespace DM.Web.Controllers
     public class UserController : Controller
     {
         private readonly ISearchService _searchService;
+        private readonly IUserService _userService;
 
-        public UserController(ISearchService searchService)
+        public UserController(ISearchService searchService, IUserService userService)
         {
             _searchService = searchService;
+            _userService = userService;
         }
 
         [HttpPost("search")]
@@ -37,6 +39,61 @@ namespace DM.Web.Controllers
             }
 
             return Ok(result);
+        }
+
+        [HttpDelete("avatar")]
+        public async Task<IActionResult> DeleteUserAvatar()
+        {
+            var signedInUserId = Guid.Empty;
+
+            bool deleted = await _userService.DeleteAvatarAsync(signedInUserId);
+
+            if (deleted)
+            {
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPatch("avatar")]
+        public async Task<IActionResult> UpsertUserAvatar([FromBody] AvatarVM avatar)
+        {
+            //if (avatar.ImageId == Guid.Empty)
+            //{
+            //    return BadRequest();
+            //}
+
+            var signedInUserId = Guid.Empty;
+
+            bool upserted = await _userService.UpsertAvatarAsync(signedInUserId, avatar.ImageId);
+
+            if (upserted)
+            {
+                return Ok(avatar.ImageId);
+            }
+
+            return BadRequest();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUserInfo()
+        {
+            //if (avatar.ImageId == Guid.Empty)
+            //{
+            //    return BadRequest();
+            //}
+
+            var signedInUserId = Guid.Empty;
+
+            var userInfo = await _userService.GetUserInfoAsync(signedInUserId);
+
+            if (userInfo != null)
+            {
+                return Ok(userInfo);
+            }
+
+            return NotFound();
         }
     }
 }

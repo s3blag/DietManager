@@ -11,12 +11,7 @@ export default class UserApiCaller {
   ) {
     Axios.post<IndexedResult<User[]>>(
       "/api/user/search",
-      lastReturnedUserSearchResult,
-      {
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
+      lastReturnedUserSearchResult
     )
       .then(response => {
         successHandler(response.data);
@@ -26,8 +21,27 @@ export default class UserApiCaller {
       });
   }
 
-  private static defaultErrorHandler(error: Error) {
+  static deleteUserAvatar(
+    successHandler: () => void,
+    errorHandler: (error: string[] | null) => void
+  ) {
+    Axios.delete("/api/user/avatar")
+      .then(() => successHandler())
+      .catch(errorHandler);
+  }
+
+  static upsertUserAvatar(
+    newAvatarId: string,
+    successHandler: (newAvatarId: string) => void,
+    errorHandler: (error: string[] | null) => void
+  ) {
+    Axios.patch("/api/user/avatar", { imageId: newAvatarId })
+      .then(response => successHandler(response.data))
+      .catch(errorHandler);
+  }
+
+  private static defaultErrorHandler(error: Error | null) {
     // eslint-disable-next-line no-console
-    console.error(error);
+    console.error(error ? error : "null");
   }
 }

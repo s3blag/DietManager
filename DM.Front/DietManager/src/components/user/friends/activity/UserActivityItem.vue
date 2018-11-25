@@ -1,14 +1,17 @@
 <template>
   <div id="user-activity">
     <div id="user">
-      <router-link :to="'/users/' + userActivity.user.id">
-        <image-wrapper :imageId="userActivity.user.imageId" id="image" :asWheel="false">
-          <template slot="placeholder">
+      <router-link :to="'/users/' + userActivity.user.id" class="avatar-image-container">
+        <image-wrapper :imageId="userActivity.user.imageId" id="image" :asWheel="true">
+          <template slot="placeholder" class="placeholder">
             <font-awesome-icon class="user-avatar main-color" icon="user-circle" />
           </template>
         </image-wrapper>
       </router-link>
-      <span id="activity-description">{{activityDescription}}</span>
+      <span id="activity-description">
+        <router-link class="user-link" :to="'/users/' + userActivity.user.id">{{this.userActivity.user.name + " " + this.userActivity.user.surname}}</router-link>
+        {{activityDescription}}
+      </span>
     </div>
     <hr>
     <div id="achievement-content">
@@ -68,19 +71,16 @@ export default class UserActivtyItem extends Vue {
   }
 
   get activityDescription() {
-    let activityDescription =
-      this.userActivity.user.name + " " + this.userActivity.user.surname;
-
     if (this.isAboutNewAchievement) {
-      return activityDescription + "'s gotten a new achievement.";
+      return " got a new achievement.";
     } else if (this.isAboutNewFriend) {
-      return activityDescription + "'s made a new friend.";
+      return " made a new friend.";
     } else if (this.isAboutAddedMeal) {
-      return activityDescription + "'s added a new meal.";
+      return " added a new meal.";
     } else if (this.isAboutAddedMealIngredient) {
-      return activityDescription + "'s added a new meal ingredient.";
+      return " added a new meal ingredient.";
     } else if (this.isAboutNewFavouriteMeal) {
-      return activityDescription + "'s added a meal to his favourites.";
+      return " added a meal to his favourites.";
     } else {
       return "";
     }
@@ -89,14 +89,28 @@ export default class UserActivtyItem extends Vue {
 </script>
 
 <style lang="less" scoped>
+#placeholder {
+  > * {
+    padding: 2px !important;
+  }
+}
 #user {
   display: flex;
 }
+.user-link {
+  text-decoration: underline;
+  color: inherit;
+}
 #image {
-  border-style: solid;
-  border-width: 1px;
-  border-color: rgb(214, 214, 214);
-  border-radius: 5px;
+  margin-top: 10px;
+  display: flex;
+  width: 50px;
+  height: 50px;
+  margin-left: 10px;
+}
+#activity-description {
+  text-align: left;
+  margin: 10px 0px 0px 5px;
 }
 </style>
 

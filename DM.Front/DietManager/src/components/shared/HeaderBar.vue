@@ -65,7 +65,7 @@ export default class Header extends Vue {
   color: #46474bef;
   margin: 5px;
   text-decoration: none;
-  font-size: 18px;
+  font-size: 1.1em;
   line-height: 30px;
 }
 .user-info {

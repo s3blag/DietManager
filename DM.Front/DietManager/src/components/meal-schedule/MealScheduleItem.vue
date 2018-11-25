@@ -208,11 +208,6 @@ button {
     }
   }
 }
-.modal-buttons-container {
-  > * {
-    margin: 0 5px;
-  }
-}
 #details-button {
   padding-top: 5px;
 }

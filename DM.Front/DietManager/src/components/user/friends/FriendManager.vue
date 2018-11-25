@@ -27,7 +27,7 @@ import SideMenu from "@/components/common/SideMenu.vue";
 export default class MealsManager extends Vue {}
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 #news-feed-icon {
   position: relative;
   right: 0px;

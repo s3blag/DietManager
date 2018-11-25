@@ -12,13 +12,15 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace DM.Web.Controllers
 {
-    public class AccountController : Controller
+    [Produces("application/json")]
+    [Route("api/[controller]")]
+    public class AuthController : Controller
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
 
-        public AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager,
+        public AuthController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager,
             IConfiguration configuration)
         {
             _signInManager = signInManager;

@@ -38,6 +38,7 @@ namespace DM.Web
             CreateMap<UserAchievement, UserAchievementVM>().ReverseMap();
             CreateMap<Achievement, AchievementVM>().ReverseMap();
             CreateMap<User, UserVM>().ReverseMap();
+            CreateMap<User, LoggedInUserVM>();
             CreateMap<UserAchievementCreation, UserAchievement>().
                 ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid()));
             CreateMap<User, AwaitingFriendInvitationVM>().

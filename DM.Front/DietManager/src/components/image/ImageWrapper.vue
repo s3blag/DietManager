@@ -1,5 +1,5 @@
 <template>
-  <div id="image-wrapper">
+  <div class="image-wrapper">
     <img v-if="imageId" :src="'/api/image/' + imageId" alt="image" :class="{'as-wheel': asWheel}">
     <span v-else id="placeholder">
       <slot name="placeholder"></slot>
@@ -21,15 +21,6 @@ export default class ImageWrapper extends Vue {
 }
 </script>
 <style lang="less" scoped>
-#image-wrapper {
-  width: 65px;
-  height: 65px;
-  > * {
-    width: 100%;
-    height: 100%;
-    border-radius: 8px;
-  }
-}
 .as-wheel {
   border-radius: 50% !important;
 }
@@ -41,3 +32,16 @@ export default class ImageWrapper extends Vue {
   text-align: center;
 }
 </style>
+
+<style lang="less">
+.image-wrapper {
+  width: 65px;
+  height: 65px;
+  > * {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+  }
+}
+</style>
+

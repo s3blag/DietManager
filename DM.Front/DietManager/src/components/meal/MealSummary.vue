@@ -215,6 +215,7 @@ li {
   display: flex;
   border-bottom-width: 1px;
   border-bottom-style: solid;
+  border-color: rgb(190, 190, 190);
   margin: 15px 0px;
   font-size: 16px;
 }

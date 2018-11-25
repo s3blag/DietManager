@@ -10,7 +10,7 @@ namespace DM.Repositories
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        public async Task<User> GetUserAsync(Guid id)
+        public async Task<User> GetUserByIdAsync(Guid id)
         {
             using (var db = new DietManagerDB())
             {
@@ -51,6 +51,19 @@ namespace DM.Repositories
                    Where(u => u.Id == userId).
                    Set(u => u.LastLoginDate, DateTimeOffset.Now).
                    UpdateAsync();
+            }
+        }
+
+        public async Task<bool> UpdateUserAvatar(Guid userId, Guid? newAvatarId)
+        {
+            using (var db = new DietManagerDB())
+            {
+                int rowsAffected = await db.Users.
+                   Where(u => u.Id == userId).
+                   Set(u => u.ImageId, newAvatarId).
+                   UpdateAsync();
+
+                return rowsAffected == 1;
             }
         }
 

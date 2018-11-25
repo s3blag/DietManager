@@ -6,6 +6,7 @@ using DM.Models.Exceptions;
 using DM.Models.Models;
 using DM.Models.ViewModels;
 using DM.Repositories.Interfaces;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.IO;
@@ -19,12 +20,18 @@ namespace DM.Logic.Services
         private readonly ImageServiceConfig _config; 
         private readonly IImageRepository _imageRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<ImageService> _logger;
 
-        public ImageService(IImageRepository imageRepository, IMapper mapper, IOptions<ImageServiceConfig> options)
+        public ImageService(
+            IImageRepository imageRepository, 
+            IMapper mapper, 
+            IOptions<ImageServiceConfig> options, 
+            ILogger<ImageService> logger)
         {
             _imageRepository = imageRepository;
             _mapper = mapper;
             _config = options.Value;
+            _logger = logger;
         }
 
         public async Task<ImageVM> GetImageByIdAsync(Guid imageId)
@@ -63,6 +70,18 @@ namespace DM.Logic.Services
             return dbImage.Id;
         }
 
+        public async Task<bool> DeleteImageAsync(Guid imageId)
+        {
+            var imageMetaData = await _imageRepository.GetImageByIdAsync(imageId);
+
+            if (imageMetaData == null)
+            {
+                return false;
+            }
+
+            return await DeleteImageAsync(imageMetaData);
+        }
+
         private string GetExtension(string base64Image)
         {
             var match = Regex.Match(base64Image, Constants.Base64ExtensionRegex);
@@ -77,6 +96,20 @@ namespace DM.Logic.Services
 
         private async Task WriteImageAsync(ImageCreation imageCreation, string base64Image) => 
             await File.WriteAllBytesAsync(imageCreation.Path, Convert.FromBase64String(base64Image));
+
+        private async Task<bool> DeleteImageAsync(Image image)
+        {
+            try
+            {
+                await Task.Run(() => { File.Delete(image.Path); });
+                return true;
+            }
+            catch( Exception ex)
+            {
+                _logger.LogError(ex, "Deleting an image failed for path {image}", image);
+                return false;
+            }
+        }
 
         private async Task<ImageCreation> CreateFullImagePathAsync(string basePath, string extension)
         {

@@ -23,7 +23,7 @@ export default class ImageApiCaller {
     );
   }
 
-  private static defaultErrorHandler(error: Error) {
+  private static defaultErrorHandler(error: Error | null) {
     // eslint-disable-next-line no-console
     console.error(error);
   }

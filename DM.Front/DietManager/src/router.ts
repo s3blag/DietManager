@@ -6,11 +6,14 @@ import AddMeal from "@/components/meal/AddMeal.vue";
 import MyMeals from "@/components/meal/MyMeals.vue";
 import FavouriteMeals from "@/components/meal/FavouriteMeals.vue";
 import SearchMeals from "@/components/meal/SearchMeals.vue";
-import FriendManager from "./components/user/FriendManager.vue";
-import MyFriends from "@/components/user/MyFriends.vue";
-import SearchUsers from "@/components/user/SearchUsers.vue";
+import FriendManager from "./components/user/friends/FriendManager.vue";
+import MyFriends from "@/components/user/friends/MyFriends.vue";
+import SearchUsers from "@/components/user/friends/SearchUsers.vue";
 import MealSchedule from "./components/meal-schedule/MealSchedule.vue";
-import NewsFeed from "./components/user/NewsFeed.vue";
+import NewsFeed from "./components/user/friends/NewsFeed.vue";
+import UserPanel from "@/components/user/user-panel/UserPanel.vue";
+import AccountManager from "@/components/user/user-panel/AccountManager.vue";
+import UserAchievements from "@/components/user/user-panel/UserAchievements.vue";
 
 Vue.use(Router);
 
@@ -20,7 +23,26 @@ export default new Router({
     {
       path: "/",
       name: "Home",
-      component: Home
+      component: Home,
+      redirect: { name: "MySchedule" }
+    },
+    {
+      path: "/user-panel",
+      name: "UserPanel",
+      component: UserPanel,
+      redirect: { name: "AccountManager" },
+      children: [
+        {
+          path: "manage",
+          name: "AccountManager",
+          component: AccountManager
+        },
+        {
+          path: "achievements",
+          name: "UserAchievements",
+          component: UserAchievements
+        }
+      ]
     },
     {
       path: "/meal-manager",
