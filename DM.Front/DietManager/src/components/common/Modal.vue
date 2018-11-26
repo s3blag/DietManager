@@ -40,7 +40,7 @@ export default Vue.extend({});
   display: flex;
   flex-wrap: wrap;
   max-height: 90%;
-  max-width: 95%;
+  max-width: 90%;
   width: fit-content;
   margin: 0px auto;
   padding: 20px 30px;

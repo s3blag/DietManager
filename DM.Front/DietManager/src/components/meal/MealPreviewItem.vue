@@ -1,5 +1,5 @@
 <template>
-  <div id="preview-item">
+  <div id="preview-item" :class="mealPreview.isSelected ? 'meal-selected' : ''">
     <div class="avatar-image-container">
       <image-wrapper :imageId="mealPreview.imageId">
         <template slot="placeholder">
@@ -15,7 +15,7 @@
     </div>
     <div class="meal-info-element meal-name">
       <div class="label">Name</div>
-      <div class="value">{{mealPreview.name}} </div>
+      <router-link :class="emitEvents ? 'meal-link' : ''" :to="'/meal/' + mealPreview.id" class="value">{{mealPreview.name}} </router-link>
     </div>
     <div class="meal-info-element">
       <div class="label">Calories</div>
@@ -38,9 +38,12 @@
       </div>
     </div>
 
-    <router-link class="go-to-meal" :to="'/meal/' + mealPreview.id">
+    <router-link v-if="!emitEvents" class="go-to-meal" :to="'/meal/' + mealPreview.id">
       <font-awesome-icon class="main-color" icon="arrow-alt-circle-right" size="2x" />
     </router-link>
+    <div v-else @click="onMealSelected">
+       <font-awesome-icon id="add-icon" class="option-icon" icon="plus-circle" />
+    </div>
   </div>
 </template>
 
@@ -72,6 +75,16 @@ export default class MyMeals extends Vue {
     required: true
   })
   private enableFavouriteMarkToggling!: boolean;
+
+  @Prop({
+    required: false,
+    default: false
+  })
+  private emitEvents!: boolean;
+
+  onMealSelected() {
+    this.$emit("mealSelected", this.mealPreview.id);
+  }
 
   get isMobile() {
     if (window.innerWidth < 860) {
@@ -154,6 +167,14 @@ export default class MyMeals extends Vue {
 }
 #add-to-favourites-button {
   padding: 20px;
+}
+
+.meal-link {
+  text-decoration: underline;
+}
+
+.meal-selected {
+  background-color: rgb(105, 180, 223);
 }
 
 @keyframes button-animation {

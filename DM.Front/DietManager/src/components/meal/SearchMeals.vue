@@ -6,7 +6,7 @@
         <font-awesome-icon id="search-icon" icon="search" />
       </button>
     </div>
-    <meal-preview-item class="meal" v-for="mealPreview in mealPreviews" :key="mealPreview.id" :mealPreview="mealPreview" :enableFavouriteMarkToggling="true" />
+    <meal-preview-item class="meal" v-for="mealPreview in mealPreviews" :key="mealPreview.id" :mealPreview="mealPreview" :enableFavouriteMarkToggling="asEmittingComponent ? false : true" :emitEvents="asEmittingComponent" @mealSelected="onMealSelected"/>
     <button v-if="!isLast && lastReturned" @click="loadMore" class="load-more-button main-background-color">
       Load more...
     </button>
@@ -16,7 +16,7 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { Watch } from "vue-property-decorator";
+import { Watch, Prop } from "vue-property-decorator";
 import MealPreviewItem from "./MealPreviewItem.vue";
 import IndexedResult from "@/ViewModels/wrappers/indexedResult";
 import MealPreview from "@/ViewModels/meal/mealPreview";
@@ -30,11 +30,13 @@ import MealSearch from "@/ViewModels/meal/mealSearch";
   }
 })
 export default class SearchMeals extends Vue {
+  @Prop({ required: false, default: false })
+  private asEmittingComponent!: boolean;
   private mealPreviews: MealPreview[] = [];
   private lastReturned: IndexedResult<MealPreview> | null = null;
   private searchQuery: string = "";
   private previousSearchQuery: string = "";
-
+  private selectedMealId: string | null = null;
   get isLast() {
     if (!this.lastReturned) {
       return false;
@@ -117,6 +119,17 @@ export default class SearchMeals extends Vue {
         isLast: indexedMealPreviews.isLast
       };
     }
+  }
+
+  onMealSelected(id: string) {
+    const previousMeal = this.mealPreviews.find(
+      m => m.id === this.selectedMealId
+    );
+    previousMeal!.isSelected = false;
+    const meal = this.mealPreviews.find(m => m.id === id);
+    meal!.isSelected = true;
+
+    this.$emit("meal-selected", meal!.id);
   }
 }
 </script>

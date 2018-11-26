@@ -14,6 +14,7 @@
         <meal-schedule-item :mealScheduleEntry="scheduleEntry" @schedule-changed="onScheduleChanged" />
       </div>
     </div>
+    <add-new-entry v-if="showAddNewEntryModal" />
   </div>
 </template>
 
@@ -28,11 +29,13 @@ import _ from "lodash";
 import { Actions } from "@/ViewModels/enums/actions";
 import MealScheduleEntryCreation from "@/ViewModels/meal-schedule/mealScheduleEntryCreation";
 import Modal from "@/components/common/Modal.vue";
+import AddNewEntryModal from "@/components/meal-schedule/AddMealScheduleEntry.vue";
 
 @Component({
   components: {
     "meal-schedule-item": MealScheduleItem,
-    modal: Modal
+    modal: Modal,
+    "add-new-entry": AddNewEntryModal
   }
 })
 export default class MealScheduleContainer extends Vue {
@@ -85,7 +88,9 @@ export default class MealScheduleContainer extends Vue {
     this.mealSchedule.splice(indexOfDeletedItem, 1);
   }
 
-  addMealScheduleEntry() {}
+  addMealScheduleEntry() {
+    this.showAddNewEntryModal = true;
+  }
 }
 </script>
 

@@ -2,7 +2,7 @@
 <template>
   <div class="list-container">
     <h1 class="main-color">Favourite Meals</h1>
-    <meal-preview-item class="meal" v-for="mealPreview in mealPreviews" :key="mealPreview.id" :mealPreview="mealPreview" :enableFavouriteMarkToggling="true" @deleted-from-favourites="onDeletedFromFavourites" />
+    <meal-preview-item class="meal" v-for="mealPreview in mealPreviews" :key="mealPreview.id" :mealPreview="mealPreview" :enableFavouriteMarkToggling="asEmittingComponent ? false : true" @deleted-from-favourites="onDeletedFromFavourites" :emitEvents="asEmittingComponent" @selectedMeal="onMealSelected"/>
     <button @click="getMealPreviews" class="load-more-button main-background-color" v-if="elementsRemainingToLoad">
       Load more...
     </button>
@@ -18,6 +18,7 @@ import FavouritesApiCaller from "@/services/api-callers/favouritesApi";
 import IndexedResult from "@/ViewModels/wrappers/indexedResult";
 import ImageApiCaller from "@/services/api-callers/imageApi";
 import MealPreviewItem from "./MealPreviewItem.vue";
+import { Prop } from "vue-property-decorator";
 
 Component.registerHooks(["beforeRouteEnter"]);
 
@@ -27,9 +28,11 @@ Component.registerHooks(["beforeRouteEnter"]);
   }
 })
 export default class MyMeals extends Vue {
+  @Prop({ required: false, default: false })
+  private asEmittingComponent!: boolean;
   private mealPreviews: MealPreview[] = [];
   private lastReturned: IndexedResult<MealPreview> | null = null;
-
+  private selectedMealId: string | null = null;
   beforeRouteEnter(
     to: any,
     from: any,
@@ -85,6 +88,17 @@ export default class MyMeals extends Vue {
     const indexOfDeletedItem = this.mealPreviews.findIndex(m => m.id == guid);
 
     this.mealPreviews.splice(indexOfDeletedItem, 1);
+  }
+
+  onMealSelected(id: string) {
+    const previousMeal = this.mealPreviews.find(
+      m => m.id === this.selectedMealId
+    );
+    previousMeal!.isSelected = false;
+    const meal = this.mealPreviews.find(m => m.id === id);
+    meal!.isSelected = true;
+
+    this.$emit("meal-selected", meal!.id);
   }
 }
 </script>
