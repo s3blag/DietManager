@@ -2,19 +2,39 @@
   <div class="meal-schedule">
     <div class="meal-schedule-container content-background">
       <div class="schedule-header">
-        <button @click="previousWeek" class="btn main-background-color">
+        <button @click="previousWeek" class="button">
           <font-awesome-icon icon="arrow-left" />
         </button>
         {{parsedWeekStartDate}} - {{parsedWeekEndDate}}
-        <button @click="nextWeek" class="btn main-background-color">
+        <button @click="nextWeek" class="button">
           <font-awesome-icon icon="arrow-right" />
         </button>
       </div>
       <div id="calendar">
         <meal-schedule-container class="daily-schedule" v-for="(day, index) in daysOfWeek" :key="index" :mealSchedule="mealSchedule[day]" :label="day" :class="{'current-day': index+1 === currentDayOfWeek}" @on-schedule-changed="getMealSchedule" />
       </div>
+      <div id="show-shopping-list-button">
+        <button class="button" @click="showShoppingList = true">
+          Shopping list
+        </button>
+      </div>
     </div>
     <meal-schedule-summary id="meal-schedule-summary" :mealIngredients="mealIngredients" />
+
+    <modal v-if="showShoppingList">
+      <div id="modal-content">
+        <h3>Shopping list</h3>
+        <div id="shopping-list-items-wrapper">
+          <div class="shopping-list-item soft-border bottom" v-for="item in shoppingList" :key="item.name">
+            <span class="name">{{item.name}}</span>
+            <span class="quantity">{{item.quantity + 'x'}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-buttons-container">
+        <button class="button" @click="showShoppingList = false">Ok</button>
+      </div>
+    </modal>
   </div>
 </template>
 
@@ -29,16 +49,20 @@ import MealIngredientWithQuantity from "@/ViewModels/meal-ingredient/mealIngredi
 import MealScheduleSummary from "@/components/meal/MealSummary.vue";
 import { DaysOfWeek } from "@/ViewModels/enums/daysOfWeek";
 import MealScheduleContainer from "./MealScheduleContainer.vue";
+import Modal from "@/components/common/Modal.vue";
+import _ from "lodash";
 
 @Component({
   components: {
     "meal-schedule-summary": MealScheduleSummary,
-    "meal-schedule-container": MealScheduleContainer
+    "meal-schedule-container": MealScheduleContainer,
+    modal: Modal
   }
 })
 export default class MealSchedule extends Vue {
-  mealSchedule: WeeklyMealSchedule = this.emptyMealSchedule;
-  selectedWeekStartDate: Date = this.getCurrentWeekStartDate();
+  private mealSchedule: WeeklyMealSchedule = this.emptyMealSchedule;
+  private selectedWeekStartDate: Date = this.getCurrentWeekStartDate();
+  private showShoppingList = false;
 
   created() {
     this.mealSchedule = this.emptyMealSchedule;
@@ -76,14 +100,126 @@ export default class MealSchedule extends Vue {
   }
 
   get emptyMealSchedule() {
+    let counter = 0;
+    const init: MealScheduleEntry[] = [
+      {
+        id: "1",
+        date: new Date(),
+        meal: {
+          id: "1",
+          name: "qwert sadasdz zxczxc zc",
+          ingredients: [
+            {
+              mealIngredient: { name: "ingredient" + counter },
+              quantity: 2
+            },
+            {
+              mealIngredient: { name: "ingredient2" + counter },
+              quantity: 1
+            }
+          ]
+        }
+      } as MealScheduleEntry,
+      {
+        id: "2",
+        date: new Date(),
+        meal: {
+          id: "2",
+          name: "jajecznica po sopocku",
+          ingredients: [
+            {
+              mealIngredient: { name: "ingrsedient" + counter++ },
+              quantity: 2
+            },
+            {
+              mealIngredient: { name: "ingredsient2" + counter },
+              quantity: 1
+            }
+          ]
+        }
+      } as MealScheduleEntry,
+      {
+        id: "3",
+        date: new Date(),
+        meal: {
+          id: "3",
+          name: "jajecznica po sopocku 1 ",
+          ingredients: [
+            {
+              mealIngredient: { name: "ingredient" },
+              quantity: 2
+            },
+            {
+              mealIngredient: { name: "ingrdsedient2" + counter },
+              quantity: 1
+            }
+          ]
+        }
+      } as MealScheduleEntry,
+      {
+        id: "4",
+        date: new Date(),
+        meal: {
+          id: "4",
+          name: "jajecznica po sopocku 2",
+          ingredients: [
+            {
+              mealIngredient: { name: "ingredient" },
+              quantity: 2
+            },
+            {
+              mealIngredient: { name: "ingredident2" + counter++ },
+              quantity: 1
+            }
+          ]
+        }
+      } as MealScheduleEntry,
+      {
+        id: "5",
+        date: new Date(),
+        meal: {
+          id: "5",
+          name: "jajecznica po sopocku 3",
+          ingredients: [
+            {
+              mealIngredient: { name: "ingresddient" + counter },
+              quantity: 2
+            },
+            {
+              mealIngredient: { name: "ingrdedient2" + counter },
+              quantity: 1
+            }
+          ]
+        }
+      } as MealScheduleEntry,
+      {
+        id: "6",
+        date: new Date(),
+        meal: {
+          id: "6",
+          name: "jajecznica po sopocku 4",
+          ingredients: [
+            {
+              mealIngredient: { name: "ingredient" + counter++ },
+              quantity: 2
+            },
+            {
+              mealIngredient: { name: "indsagredient2" + counter++ },
+              quantity: 1
+            }
+          ]
+        }
+      } as MealScheduleEntry
+    ];
+
     const mealSchedule = {
-      monday: [],
-      tuesday: [],
-      wednesday: [],
-      thursday: [],
-      friday: [],
-      saturday: [],
-      sunday: []
+      monday: init,
+      tuesday: init,
+      wednesday: init,
+      thursday: init,
+      friday: init,
+      saturday: init,
+      sunday: init
     } as WeeklyMealSchedule;
 
     return mealSchedule;
@@ -155,6 +291,16 @@ export default class MealSchedule extends Vue {
   getMealScheduleSuccessHandler(mealSchedule: WeeklyMealSchedule) {
     this.mealSchedule = mealSchedule;
   }
+
+  get shoppingList() {
+    return _(this.mealIngredients)
+      .groupBy(m => m.mealIngredient.name)
+      .map((value, key) => ({
+        name: key,
+        quantity: _.sumBy(value, v => v.quantity)
+      }))
+      .value();
+  }
 }
 </script>
 
@@ -171,6 +317,7 @@ export default class MealSchedule extends Vue {
   width: 90%;
   border-radius: 10px;
   height: 750px;
+  min-height: fit-content;
 }
 #meal-schedule-summary {
   padding: 15px;
@@ -203,7 +350,38 @@ export default class MealSchedule extends Vue {
 .current-day {
   background-color: rgba(37, 102, 207, 0.534);
 }
-button {
-  color: white;
+.button {
+  width: 35px;
+  height: 35px;
+}
+#show-shopping-list-button {
+  margin: 20px 0px 10px 0px;
+  height: 50px;
+  width: 100%;
+  > * {
+    height: 80%;
+  }
+}
+#modal-content {
+  width: 100%;
+
+  h3 {
+    font-weight: bold;
+    margin-bottom: 25px;
+  }
+}
+.shopping-list-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.shopping-list-item:last-child {
+  margin-bottom: 5px;
+}
+.modal-buttons-container {
+  button {
+    width: 75px;
+    height: 40px;
+  }
 }
 </style>

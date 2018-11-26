@@ -39,56 +39,7 @@ export default class MealScheduleContainer extends Vue {
   @Prop({
     required: true
   })
-  private mealSchedule: MealScheduleEntry[] = [
-    {
-      id: "1",
-      date: new Date(),
-      meal: {
-        id: "1",
-        name: "qwert sadasdz zxczxc zc"
-      }
-    } as MealScheduleEntry,
-    {
-      id: "2",
-      date: new Date(),
-      meal: {
-        id: "2",
-        name: "jajecznica po sopocku"
-      }
-    } as MealScheduleEntry,
-    {
-      id: "3",
-      date: new Date(),
-      meal: {
-        id: "3",
-        name: "jajecznica po sopocku 1 "
-      }
-    } as MealScheduleEntry,
-    {
-      id: "4",
-      date: new Date(),
-      meal: {
-        id: "4",
-        name: "jajecznica po sopocku 2"
-      }
-    } as MealScheduleEntry,
-    {
-      id: "5",
-      date: new Date(),
-      meal: {
-        id: "5",
-        name: "jajecznica po sopocku 3"
-      }
-    } as MealScheduleEntry,
-    {
-      id: "6",
-      date: new Date(),
-      meal: {
-        id: "6",
-        name: "jajecznica po sopocku 4"
-      }
-    } as MealScheduleEntry
-  ];
+  private mealSchedule!: MealScheduleEntry[];
 
   @Prop({
     required: true
