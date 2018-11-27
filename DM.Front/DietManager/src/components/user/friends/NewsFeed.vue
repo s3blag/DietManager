@@ -1,7 +1,6 @@
 <template>
   <div class="list-container">
     <h3 class="main-color">News feed</h3>
-
     <div class="tile-container">
       <h4 v-if="activities.length === 0 && lastReturned">There are no news to show</h4>
       <user-activity-item
@@ -96,6 +95,10 @@ export default class NewsFeed extends Vue {
 }
 h1 {
   margin-bottom: 15px !important;
+}
+h4 {
+  color: grey;
+  margin-top: 50px !important;
 }
 .load-more-button {
   border-radius: 7px;

@@ -10,17 +10,6 @@ namespace DM.Repositories
 {
     public class FavouriteRepository : BaseRepository<Favourite>, IFavouriteRepository
     {
-        //public async Task<IDictionary<Guid, int>> GetNumberOfFavouritesMarksAsync(IEnumerable<Guid> mealIds)
-        //{
-        //    using (var db = new DietManagerDB())
-        //    {
-        //        return await db.Favourites.
-        //            GroupBy(f => f.MealId).
-        //            Having(_ => mealIds.Contains(_.Key)).
-        //            ToDictionaryAsync(_ => _.Key, _ => _.Count());
-        //    }
-        //}
-
         public async Task<ICollection<Favourite>> GetUserFavouritesAsync(Guid userId, int index, int takeAmount, string nameFilter = null)
         {
             using (var db = new DietManagerDB())

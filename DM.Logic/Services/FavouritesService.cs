@@ -53,9 +53,7 @@ namespace DM.Logic.Services
             {
                 throw new DataAccessException($"Adding to favourites failed for model: {dbFavourite}");
             }
-
-            await _mealRepository.IncrementNumberOfFavouriteMarksAsync(favouriteCreation.MealId.Value);
-
+           
             var checkForNumberOfFavouriteMarksTask = _achievementService.CheckForNumberOfFavouriteMarksAsync(dbFavourite.MealId);
             var LogNewFavouriteAddedTask = _activityService.LogNewFavouriteMealAddedAsync(dbFavourite.UserId, dbFavourite.MealId);
 
@@ -66,13 +64,7 @@ namespace DM.Logic.Services
 
         public async Task<bool> RemoveFromFavouritesAsync(Guid userId, Guid mealId)
         {
-            var deleted = await  _favouriteRepository.DeleteAsync(userId, mealId);
-            if (deleted)
-            {
-                await _mealRepository.DecrementNumberOfFavouriteMarksAsync(mealId);
-            }
-
-            return deleted;
+            return await _favouriteRepository.DeleteAsync(userId, mealId);
         }
     }
 }

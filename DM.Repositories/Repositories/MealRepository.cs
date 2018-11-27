@@ -85,35 +85,5 @@ namespace DM.Repositories
                 return await mealPreviewsQuery.ToListAsync();
             }
         }
-
-        public async Task IncrementNumberOfUsesAsync(Guid mealId) => await UpdateNumberOfUsesAsync(mealId, 1);
-
-        public async Task DecrementNumberOfUsesAsync(Guid mealId) => await UpdateNumberOfUsesAsync(mealId, -1);
-
-        public async Task IncrementNumberOfFavouriteMarksAsync(Guid mealId) => await UpdateNumberOfFavouriteMarksAsync(mealId, 1);
-
-        public async Task DecrementNumberOfFavouriteMarksAsync(Guid mealId) => await UpdateNumberOfFavouriteMarksAsync(mealId, -1);
-
-        private async Task UpdateNumberOfUsesAsync(Guid mealId, int valueToAdd)
-        {
-            using (var db = new DietManagerDB())
-            {
-                await db.Meals.
-                    Where(m => m.Id == mealId).
-                    Set(m => m.NumberOfUses, m => m.NumberOfUses + valueToAdd).
-                    UpdateAsync();
-            }
-        }
-
-        private async Task UpdateNumberOfFavouriteMarksAsync(Guid mealId, int valueToAdd)
-        {
-            using (var db = new DietManagerDB())
-            {
-                await db.Meals.
-                    Where(m => m.Id == mealId).
-                    Set(m => m.NumberOfFavouriteMarks, m => m.NumberOfFavouriteMarks + valueToAdd).
-                    UpdateAsync();
-            }
-        }
     }
 }

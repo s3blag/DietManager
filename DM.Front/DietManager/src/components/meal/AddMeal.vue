@@ -1,40 +1,64 @@
 <template>
   <div class="add-meal">
-    <modal v-if="showAddMealIngredientModal" class="modal-window">
-      <add-meal-ingredient id="add-meal-ingredient" @cancel="showAddMealIngredientModal = false" @meal-ingredient-added="mealIngredientAddedHandler"></add-meal-ingredient>
-    </modal>
-    <div class="form-container content-background">
+    <meal-ingredients-manager
+      v-if="showMealIngredientsManager"
+      @cancel="showMealIngredientsManager = false"
+      @meal-ingredient-added="mealIngredientAddedHandler"
+    />
+
+    <div v-else class="form-container content-background">
       <div class="column left">
         <form>
           <div class="form-group">
             <label for="mealName">Name</label>
-            <input type="text" class="form-control" id="mealName" placeholder="Enter meal name..." v-model="mealFormData.name">
+            <input
+              type="text"
+              class="form-control"
+              id="mealName"
+              placeholder="Enter meal name..."
+              v-model="mealFormData.name"
+            >
           </div>
           <div class="form-group">
-            <label for="mealDescription">Description</label>
-            <textarea class="form-control" height="200" width="200" id="mealDescription" placeholder="Enter meal description..." rows="10" v-model="mealFormData.description"></textarea>
+            <label for="mealDescription">Recipe</label>
+            <textarea
+              class="form-control"
+              height="200"
+              width="200"
+              id="mealDescription"
+              placeholder="Enter meal description..."
+              rows="10"
+              v-model="mealFormData.description"
+            ></textarea>
           </div>
         </form>
       </div>
       <div class="column right">
         <div class="picture-input">
-          <picture-input ref="pictureInput" @change="onPictureChange" width="400" height="200" radius="5" accept="image/jpeg,image/png" size="10" :removable="true" :customStrings="{
+          <picture-input
+            ref="pictureInput"
+            @change="onPictureChange"
+            width="400"
+            height="200"
+            radius="5"
+            accept="image/jpeg, image/png"
+            size="10"
+            :removable="true"
+            :custom-strings="{
             drag: '+'
-          }">
-          </picture-input>
+          }"
+          ></picture-input>
         </div>
         <div class="meal-ingredients-container">
           <div>
-            <label for="mealName">Add Meal Ingredients</label>
-            <div class="meal-ingredients-search">
-              <input type="text" class="form-control" id="mealIngredientSearchName" placeholder="Search..." v-model="mealIngredientSearchQuery">
-              <button id="searchMealIngredients" class="btn main-background-color" @click="searchMealIngredients">
-                <font-awesome-icon id="search-icon" icon="search" />
-              </button>
-            </div>
+            <h5 class="soft-border top">Added Meal Ingredients:</h5>
           </div>
           <ul class="added-meal-ingredients">
-            <li class="meal-ingredient" v-for="mealIngredientWithQuantity in addedMealIngredients" :key="mealIngredientWithQuantity.mealIngredient.id">
+            <li
+              class="meal-ingredient"
+              v-for="mealIngredientWithQuantity in addedMealIngredients"
+              :key="mealIngredientWithQuantity.mealIngredient.id"
+            >
               <div class="image"></div>
               <span class="name">{{mealIngredientWithQuantity.mealIngredient.name}}</span>
               <span class="quantity">{{mealIngredientWithQuantity.quantity}}</span>
@@ -42,9 +66,18 @@
           </ul>
         </div>
       </div>
-      <button id="addMealButton" type="submit" class="btn main-background-color" @click="submit">Add Meal</button>
+      <div class="buttons-container">
+        <button
+          id="addMealButton"
+          type="submit"
+          :class="!formValid ? 'disabled' : ''"
+          class="button"
+          @click="submit"
+        >Add Meal</button>
+        <button type="submit" class="button" @click="showMealIngredientsManager = true">Next</button>
+      </div>
     </div>
-    <meal-summary class="summary" :mealIngredients="addedMealIngredients" />
+    <meal-summary class="summary" :mealIngredients="addedMealIngredients"/>
   </div>
 </template>
 
@@ -60,40 +93,30 @@ import MealApiCaller from "@/services/api-callers/mealApi";
 import imageApiCaller from "@/services/api-callers/imageApi";
 import MealLookup from "@/ViewModels/meal/mealLookup";
 import MealSummary from "@/components/meal/MealSummary.vue";
-import AddMealIngredient from "@/components/meal-ingredient/AddMealIngredient.vue";
+
 import MealIngredientWithQuantity from "@/ViewModels/meal-ingredient/mealIngredientWithQuantity";
 import MealIngredientIdWithQuantity from "@/ViewModels/meal-ingredient/mealIngredientIdWithQuantity";
 import MealIngredientApiCaller from "@/services/api-callers/mealIngredientApi";
 import IndexedResult from "@/ViewModels/wrappers/indexedResult";
 import MealIngredientSearch from "@/ViewModels/meal-ingredient/mealIngredientSearch";
 import Modal from "@/components/common/Modal.vue";
+import MealIngredientsManager from "@/components/meal-ingredient/SearchMealIngredients.vue";
 
 @Component({
   components: {
     modal: Modal,
     "meal-summary": MealSummary,
-    "add-meal-ingredient": AddMealIngredient,
+    "meal-ingredients-manager": MealIngredientsManager,
     "picture-input": PictureInput
   }
 })
 export default class AddMeal extends Vue {
-  private showAddMealIngredientModal: boolean = false;
   private mealFormData: MealCreation = {
     name: "",
     description: ""
   } as MealCreation;
   private addedMealIngredients: MealIngredientWithQuantity[] = [];
-
-  private mealIngredientSearchQuery: string = "";
-  private lastReturnedMealIngredientSearch: IndexedResult<
-    MealIngredientSearch
-  > | null = null;
-  private foundMealIngredients: MealIngredient[] = [];
-
-  @Watch("mealIngredientSearchQuery")
-  onSearchQueryChanged() {
-    this.lastReturnedMealIngredientSearch = null;
-  }
+  private showMealIngredientsManager = false;
 
   get mealCalories() {
     return _.sum(
@@ -105,7 +128,18 @@ export default class AddMeal extends Vue {
     );
   }
 
+  get formValid() {
+    return (
+      this.addedMealIngredients.length > 0 &&
+      this.mealFormData.name.length > 2 &&
+      this.mealFormData.description.length > 5
+    );
+  }
+
   submit() {
+    if (!this.formValid) {
+      return;
+    }
     const { name, description, imageId } = this.mealFormData;
     const completeMealCreation = {
       calories: this.mealCalories,
@@ -126,8 +160,7 @@ export default class AddMeal extends Vue {
   }
 
   addMealSuccessHandler(addedMealGuid: string) {
-    // eslint-disable-next-line no-console
-    console.log(addedMealGuid);
+    this.$router.push({ path: "/meal/" + addedMealGuid });
   }
 
   onPictureChange(base64ImageString: string) {
@@ -142,43 +175,16 @@ export default class AddMeal extends Vue {
     addedMealIngredientWithQuantity: MealIngredientWithQuantity
   ) {
     this.addedMealIngredients.push(addedMealIngredientWithQuantity);
-    this.showAddMealIngredientModal = false;
-  }
-
-  searchMealIngredients() {
-    this.showAddMealIngredientModal = true;
-    // MealIngredientApiCaller.search(
-    //   {
-    //     isLast: false,
-    //     index: 0,
-    //     result: { query: this.mealIngredientSearchQuery }
-    //   },
-    //   this.mealIngredientFoundHandler
-    // );
-  }
-
-  loadMoreSearchMealIngredientResults() {
-    MealIngredientApiCaller.search(
-      this.lastReturnedMealIngredientSearch,
-      this.mealIngredientFoundHandler
-    );
-  }
-
-  //on search text change delete lest returned
-  mealIngredientFoundHandler(
-    indexedSearchResults: IndexedResult<MealIngredient[]>
-  ) {
-    this.foundMealIngredients.push(...indexedSearchResults.result);
-    this.lastReturnedMealIngredientSearch = {
-      result: { query: this.mealIngredientSearchQuery },
-      isLast: indexedSearchResults.isLast,
-      index: indexedSearchResults.index
-    };
+    this.showMealIngredientsManager = false;
   }
 }
 </script>
 
 <style lang="less" scoped>
+h5 {
+  margin-top: 5px;
+  padding-top: 10px;
+}
 .add-meal {
   font-size: 18px;
   width: 100%;
@@ -186,17 +192,17 @@ export default class AddMeal extends Vue {
   float: left;
 }
 .form-container {
-  margin: 0px 20px;
+  margin: 0px 5px;
   padding: 10px;
-  width: 82%;
-  height: 750px;
+  width: 100%;
+  height: 765px;
   border-radius: 10px;
 }
 .summary {
   overflow: hidden;
-  margin: 0px 20px;
+  margin: 0px 15px;
   padding: 20px;
-  width: 13%;
+  min-width: 170px;
   height: fit-content;
 }
 .add-meal:after {
@@ -210,6 +216,7 @@ button {
 label {
   display: block;
   text-align: left;
+  color: rgb(119, 119, 119);
 }
 #mealDescription {
   height: 500px;
@@ -235,12 +242,6 @@ label {
 }
 .picture-input {
   margin: 15px auto 10px auto;
-}
-#addMealButton {
-  display: block;
-  position: relative;
-  top: -50px;
-  margin: 0 auto;
 }
 .meal-ingredients-container {
   padding-top: 15px;
@@ -276,6 +277,24 @@ label {
   width: 400px;
   min-width: 320px;
   height: 98%;
+}
+.buttons-container {
+  position: relative;
+  top: -80px;
+  height: 65px;
+  display: inline-flex;
+  width: 300px;
+  margin: 0px auto;
+
+  button {
+    height: 45px;
+    width: 85px;
+    font-size: 0.9em;
+    margin: 0px 10px;
+  }
+}
+.disabled {
+  background-color: grey;
 }
 @media screen and (max-width: 860px) {
   .form-container {

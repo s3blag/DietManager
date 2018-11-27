@@ -9,7 +9,7 @@
         placeholder="Search..."
         v-model="searchQuery"
       >
-      <button id="searchMeals" class="btn main-background-color" @click="searchMeals">
+      <button id="searchMeals" class="button main-background-color" @click="searchMeals">
         <font-awesome-icon id="search-icon" icon="search"/>
       </button>
     </div>

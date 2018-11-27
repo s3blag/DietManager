@@ -30,13 +30,14 @@ export default class SideMenu extends Vue {}
   border: gray;
   border-radius: 10px;
   background-color: #e6e4e4;
-  width: 10%;
-  min-width: 250px;
+  max-width: 8%;
+  min-width: 180px;
   height: fit-content;
   padding: 2px;
+  flex-grow: 1;
 }
 .column.content {
-  width: 84.3%;
+  width: 95%;
   min-height: 750px;
   height: fit-content;
   border-radius: 10px;
@@ -44,6 +45,8 @@ export default class SideMenu extends Vue {}
 .row {
   margin: 20px;
   height: 75%;
+  display: flex;
+  flex-wrap: nowrap;
 }
 .row:after {
   content: "";
@@ -68,7 +71,7 @@ li:hover {
   background-color: #4495d8;
   color: white;
 }
-@media screen and (max-width: 1300px) {
+@media screen and (max-width: 1000px) {
   .column {
     margin-left: auto;
     margin-right: auto;

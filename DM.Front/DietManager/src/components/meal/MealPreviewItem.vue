@@ -78,7 +78,7 @@ Component.registerHooks(["beforeRouteEnter"]);
     "image-wrapper": ImageWrapper
   }
 })
-export default class MyMeals extends Vue {
+export default class MealPreviewItem extends Vue {
   @Prop({
     required: true
   })

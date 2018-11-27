@@ -3,13 +3,10 @@
     <div class="mask">
       <div class="wrapper">
         <div class="container">
-          <slot>
-            default header
-          </slot>
+          <slot>default header</slot>
         </div>
       </div>
     </div>
-
   </transition>
 </template>
 
@@ -75,6 +72,7 @@ export default Vue.extend({});
 <style lang="less">
 .container {
   display: flex;
+  overflow-y: auto;
   flex-wrap: wrap;
   max-height: 90%;
   max-width: 90%;

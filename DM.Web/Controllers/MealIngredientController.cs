@@ -59,11 +59,6 @@ namespace DM.Web.Controllers
 
             var result = await _searchService.SearchMealIngredientsAsync(lastReturned);
 
-            if (!result.Result.Any())
-            {
-                return NotFound();
-            }
-
             return Ok(result);
         }
 

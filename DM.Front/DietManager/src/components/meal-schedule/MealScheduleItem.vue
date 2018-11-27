@@ -3,8 +3,10 @@
     <modal v-if="showDeleteModal" class="modal-window">
       <div id="delete-modal-content">
         <h4>Are you sure you want to delete this item?</h4>
-        <button class="btn main-background-color" @click="scheduleChanged('Delete')">Delete</button>
-        <button class="btn main-background-color" @click="showDeleteModal = false">Cancel</button>
+        <div class="modal-buttons-container">
+          <button class="button main-background-color" @click="scheduleChanged('Delete')">Delete</button>
+          <button class="button main-background-color" @click="showDeleteModal = false">Cancel</button>
+        </div>
       </div>
     </modal>
 
@@ -15,21 +17,18 @@
           <input type="time" class="form-control" v-model="time">
         </div>
         <div class="modal-buttons-container">
-          <button class="btn main-background-color" @click="scheduleChanged('Update')">Save</button>
-          <button class="btn main-background-color" @click="showEditModal = false">Cancel</button>
+          <button class="button main-background-color" @click="scheduleChanged('Update')">Save</button>
+          <button class="button main-background-color" @click="showEditModal = false">Cancel</button>
         </div>
       </div>
     </modal>
 
-    <modal v-if="showDetails">
-      <button class="btn main-background-color" @click="showDetails = false">Ok</button>
-    </modal>
     <div id="date">{{date}}</div>
 
     <div id="image-and-buttons">
       <button
         id="edit-button"
-        class="btn main-background-color hoverable"
+        class="button main-background-color hoverable"
         @click="showEditModal = true"
       >
         <font-awesome-icon icon="pencil-alt"/>
@@ -43,7 +42,7 @@
       </div>
       <button
         id="delete-button"
-        class="btn main-background-color hoverable"
+        class="button main-background-color hoverable"
         @click="showDeleteModal = true"
       >
         <font-awesome-icon icon="trash-alt"/>
@@ -52,8 +51,8 @@
     <div id="meal-name">{{mealScheduleEntry.meal.name}}</div>
     <button
       id="details-button"
-      class="btn main-background-color hoverable"
-      @click="showDetails = true"
+      class="button main-background-color hoverable"
+      @click="showDetails"
     >Details</button>
   </div>
 </template>
@@ -80,7 +79,6 @@ export default class MealScheduleItem extends Vue {
     required: true
   })
   mealScheduleEntry!: MealScheduleEntry;
-  showDetails: boolean = false;
   showDeleteModal: boolean = false;
   showEditModal: boolean = false;
 
@@ -144,6 +142,10 @@ export default class MealScheduleItem extends Vue {
         newDate: this.dateWithUpdatedTime
       };
     }
+  }
+
+  showDetails() {
+    this.$router.push({ path: "/meal/" + this.mealScheduleEntry.meal.id });
   }
 }
 </script>
@@ -216,5 +218,10 @@ button {
 }
 input {
   width: 150px;
+}
+.modal-buttons-container {
+  button {
+    height: 40px;
+  }
 }
 </style>

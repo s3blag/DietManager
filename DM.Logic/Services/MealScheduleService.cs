@@ -64,8 +64,6 @@ namespace DM.Logic.Services
                 return null;
             }
 
-            await _mealRepository.IncrementNumberOfUsesAsync(newMealScheduleEntry.MealId.Value);
-
             var checkNumberOfMealUsesTask = _achievementService.CheckForNumberOfMealUsesAsync(userId, dbMealScheduleEntry.MealId);
             var checkConsequentUpdatesTask =  _achievementService.CheckForConsequentScheduleUpdatesAsync(userId);
 
@@ -83,14 +81,7 @@ namespace DM.Logic.Services
                 return false;
             }
 
-            bool deleted = await _mealScheduleRepository.DeleteAsync(userId, mealScheduleEntryId);
-
-            if (deleted)
-            {
-                await _mealRepository.DecrementNumberOfUsesAsync(scheduleEntry.MealId);
-            }
-
-            return deleted;
+            return await _mealScheduleRepository.DeleteAsync(userId, mealScheduleEntryId);
         }
 
         public async Task<bool> UpdateMealScheduleEntryAsync(Guid userId, MealScheduleEntryUpdateVM scheduleEntryUpdateVM)

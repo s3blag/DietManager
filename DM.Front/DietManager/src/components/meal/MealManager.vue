@@ -1,19 +1,19 @@
 <template>
   <side-menu>
     <router-link tag="li" class="link" :to="{ name: 'AddMeal'}">
-      <font-awesome-icon id="add-icon" class="option-icon" icon="plus-circle" /> Add
+      <font-awesome-icon id="add-icon" class="option-icon" icon="plus-circle"/>Add
     </router-link>
 
     <router-link tag="li" class="link" :to="{ name: 'BrowseMeals'}">
-      <font-awesome-icon id="search-icon" class="option-icon" icon="search" /> Browse
+      <font-awesome-icon id="search-icon" class="option-icon" icon="search"/>Browse
     </router-link>
 
     <router-link tag="li" class="link" :to="{ name: 'MyMeals'}">
-      <font-awesome-icon id="book-icon" class="option-icon" icon="book" /> My Meals
+      <font-awesome-icon id="book-icon" class="option-icon" icon="book"/>My Meals
     </router-link>
 
     <router-link tag="li" class="link" :to="{ name: 'FavouriteMeals'}">
-      <font-awesome-icon id="book-icon" class="option-icon" icon="star" /> Favourite
+      <font-awesome-icon id="book-icon" class="option-icon" icon="star"/>Favourites
     </router-link>
   </side-menu>
 </template>

@@ -18,7 +18,7 @@ namespace DM.Models.ViewModels
         public int? Calories { get; set; }
 
         [Required]
-        [MinLength(2)]
+        [MinLength(1)]
         public IEnumerable<MealIngredientIdWithQuantityVM> IngredientsIdsWithQuantity { get; set; }
     }
 }

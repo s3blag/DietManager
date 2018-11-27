@@ -80,7 +80,7 @@ export default class MyFriends extends Vue {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 h1 {
   margin-bottom: 15px !important;
 }
