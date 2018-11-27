@@ -4,4 +4,5 @@ export default interface GroupedAchievements {
   userAchievement: { [key: string]: number[] };
   mealScheduleAchievement: { [key: string]: number[] };
   friendAchievement: { [key: string]: number[] };
+  any: boolean;
 }

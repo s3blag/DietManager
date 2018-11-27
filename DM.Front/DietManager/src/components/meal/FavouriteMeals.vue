@@ -2,7 +2,9 @@
 <template>
   <div class="list-container">
     <h1 class="main-color">Favourite Meals</h1>
+    <h3 v-if="mealPreviews.length === 0">You have no favourite meals</h3>
     <meal-preview-item
+      v-else
       class="meal"
       v-for="mealPreview in mealPreviews"
       :key="mealPreview.id"
@@ -12,10 +14,11 @@
       :emitEvents="asEmittingComponent"
       @selectedMeal="onMealSelected"
     />
+
     <button
       @click="getMealPreviews"
       class="load-more-button main-background-color"
-      v-if="elementsRemainingToLoad"
+      v-if="elementsRemainingToLoad && mealPreviews.length > 0"
     >Load more...</button>
   </div>
 </template>
@@ -118,7 +121,7 @@ export default class MyMeals extends Vue {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 h1 {
   margin-bottom: 15px !important;
 }
@@ -145,5 +148,9 @@ h1 {
   height: 30px;
   text-align: center;
   color: white;
+}
+h3 {
+  margin-top: 100px !important;
+  color: grey !important;
 }
 </style>

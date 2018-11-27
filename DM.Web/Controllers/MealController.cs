@@ -91,11 +91,6 @@ namespace DM.Web.Controllers
 
             var result = await _mealService.GetUsersMealsPreviewsAsync(userId, lastReturned);
 
-            if (result == null)
-            {
-                return NotFound();
-            }
-
             return Ok(result);
         }
 
@@ -111,11 +106,6 @@ namespace DM.Web.Controllers
             var userId = Guid.Empty;
 
             var result = await _searchService.SearchMealsAsync(userId, lastReturned);
-
-            if (!result.Result.Any())
-            {
-                return NotFound();
-            }
 
             return Ok(result);
         }

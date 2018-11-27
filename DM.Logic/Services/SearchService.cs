@@ -86,11 +86,11 @@ namespace DM.Logic.Services
                     takeAmount)
             ); 
 
-            if (!searchResult.Any())
-            {
-                searchResult = await _mealIngredientsApi.GetMealIngredientsByQueryAsync(searchArgumentsVM.Result.Query);
-                //save to the database
-            }
+            //if (!searchResult.Any())
+            //{
+            //    searchResult = await _mealIngredientsApi.GetMealIngredientsByQueryAsync(searchArgumentsVM.Result.Query);
+            //    //save to the database
+            //}
 
             return new IndexedResult<IEnumerable<MealIngredientVM>>
             {

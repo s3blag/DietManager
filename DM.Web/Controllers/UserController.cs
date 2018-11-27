@@ -33,11 +33,6 @@ namespace DM.Web.Controllers
 
             var result = await _searchService.SearchUsersAsync(loggedUserId, lastReturned);
 
-            if (!result.Result.Any())
-            {
-                return NotFound();
-            }
-
             return Ok(result);
         }
 

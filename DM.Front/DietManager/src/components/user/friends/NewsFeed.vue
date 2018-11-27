@@ -3,12 +3,21 @@
     <h3 class="main-color">News feed</h3>
 
     <div class="tile-container">
-      <user-activity-item class="activity-item" v-for="(activity, index) in activities" :key="index" :userActivity="activity" />
+      <h4 v-if="activities.length === 0 && lastReturned">There are no news to show</h4>
+      <user-activity-item
+        v-else
+        class="activity-item"
+        v-for="(activity, index) in activities"
+        :key="index"
+        :userActivity="activity"
+      />
     </div>
 
-    <button @click="getFriendsActivities" class="load-more-button main-background-color" v-if="elementsRemainingToLoad">
-      Load more...
-    </button>
+    <button
+      @click="getFriendsActivities"
+      class="load-more-button main-background-color"
+      v-if="elementsRemainingToLoad"
+    >Load more...</button>
   </div>
 </template>
 

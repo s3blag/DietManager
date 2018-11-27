@@ -1,7 +1,9 @@
 <template>
   <div id="user-achievements">
     <div class="achievements">
+      <h4 v-if="!groupedAchievements.any">You haven't earned any achievements yet</h4>
       <div
+        v-else
         class="achievement-wrapper"
         v-for="(achievements, categoryName) in groupedAchievements"
         :key="categoryName"
@@ -9,18 +11,9 @@
         <div
           v-if="!isEmpty(achievements)"
           class="category soft-border bottom"
-        >
-          {{translate[categoryName]}}
-        </div>
-        <div
-          class="achievement"
-          v-for="(values, name) in achievements"
-          :key="name"
-        >
-          <user-achievement
-            :values="values"
-            :type="name"
-          />
+        >{{translate[categoryName]}}</div>
+        <div class="achievement" v-for="(values, name) in achievements" :key="name">
+          <user-achievement :values="values" :type="name"/>
         </div>
       </div>
     </div>
@@ -47,7 +40,8 @@ export default class UserAchievements extends Vue {
     mealIngredientAchievement: {},
     userAchievement: {},
     mealScheduleAchievement: {},
-    friendAchievement: {}
+    friendAchievement: {},
+    any: true
   };
   private any: boolean = true;
   private translate = Translate;
@@ -94,5 +88,9 @@ export default class UserAchievements extends Vue {
 .achievement {
   width: fit-content;
   margin: 10px;
+}
+h4 {
+  margin-top: 100px !important;
+  color: grey !important;
 }
 </style>

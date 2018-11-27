@@ -2,17 +2,34 @@
   <div id="search">
     <h3 class="main-color">User search</h3>
     <div id="search-input">
-      <input @keyup.enter="search" type="text" class="form-control" id="search-query" placeholder="Search..." v-model="searchQuery">
+      <input
+        @keyup.enter="search"
+        type="text"
+        class="form-control"
+        id="search-query"
+        placeholder="Search..."
+        v-model="searchQuery"
+      >
       <button id="search-button" class="btn main-background-color" @click="search">
-        <font-awesome-icon id="search-icon" icon="search" />
+        <font-awesome-icon id="search-icon" icon="search"/>
       </button>
     </div>
     <div id="users-container">
-      <user-preview-item class="result-item" v-for="user in users" :key="user.id" :userPreview="user" :showFriendPin="true" />
+      <h4 v-if="users.length === 0 && lastReturned">No users were found</h4>
+      <user-preview-item
+        v-else
+        class="result-item"
+        v-for="user in users"
+        :key="user.id"
+        :userPreview="user"
+        :showFriendPin="true"
+      />
     </div>
-    <button v-if="!isLast && lastReturned" @click="loadMore" class="load-more-button main-background-color">
-      Load more...
-    </button>
+    <button
+      v-if="!isLast && lastReturned"
+      @click="loadMore"
+      class="load-more-button main-background-color"
+    >Load more...</button>
   </div>
 </template>
 
@@ -140,5 +157,9 @@ export default class SearchUsers extends Vue {
 }
 .result-item {
   margin-bottom: 5px !important;
+}
+h4 {
+  margin-top: 80px;
+  color: grey;
 }
 </style>

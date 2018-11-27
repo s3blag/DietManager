@@ -1,10 +1,20 @@
 <template>
   <div class="list-container">
     <h3 class="main-color">My Friends</h3>
-    <user-preview-item class="user-preview-item" v-for="user in friends" :key="user.id" :userPreview="user" :showFriendPin="false" />
-    <button @click="getFriends" class="load-more-button main-background-color" v-if="elementsRemainingToLoad">
-      Load more...
-    </button>
+    <h4 v-if="friends.length === 0 && lastReturned">You have no friends added</h4>
+    <user-preview-item
+      v-else
+      class="user-preview-item"
+      v-for="user in friends"
+      :key="user.id"
+      :userPreview="user"
+      :showFriendPin="false"
+    />
+    <button
+      @click="getFriends"
+      class="load-more-button main-background-color"
+      v-if="elementsRemainingToLoad"
+    >Load more...</button>
   </div>
 </template>
 
@@ -80,5 +90,9 @@ h1 {
   height: 30px;
   text-align: center;
   color: white;
+}
+h4 {
+  margin-top: 100px !important;
+  color: grey !important;
 }
 </style>

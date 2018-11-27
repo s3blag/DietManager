@@ -13,6 +13,7 @@
         <font-awesome-icon id="search-icon" icon="search"/>
       </button>
     </div>
+    <h3 v-if="mealPreviews.length === 0 && lastReturned">No meals were found</h3>
     <meal-preview-item
       class="meal"
       v-for="mealPreview in mealPreviews"
