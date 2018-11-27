@@ -1,15 +1,32 @@
 <template>
   <div id="search-meals">
     <div id="search-input">
-      <input @keyup.enter="searchMeals" type="text" class="form-control" id="mealSearchName" placeholder="Search..." v-model="searchQuery">
+      <input
+        @keyup.enter="searchMeals"
+        type="text"
+        class="form-control"
+        id="mealSearchName"
+        placeholder="Search..."
+        v-model="searchQuery"
+      >
       <button id="searchMeals" class="btn main-background-color" @click="searchMeals">
-        <font-awesome-icon id="search-icon" icon="search" />
+        <font-awesome-icon id="search-icon" icon="search"/>
       </button>
     </div>
-    <meal-preview-item class="meal" v-for="mealPreview in mealPreviews" :key="mealPreview.id" :mealPreview="mealPreview" :enableFavouriteMarkToggling="asEmittingComponent ? false : true" :emitEvents="asEmittingComponent" @mealSelected="onMealSelected"/>
-    <button v-if="!isLast && lastReturned" @click="loadMore" class="load-more-button main-background-color">
-      Load more...
-    </button>
+    <meal-preview-item
+      class="meal"
+      v-for="mealPreview in mealPreviews"
+      :key="mealPreview.id"
+      :mealPreview="mealPreview"
+      :enableFavouriteMarkToggling="asEmittingComponent ? false : true"
+      :emitEvents="asEmittingComponent"
+      @mealSelected="onMealSelected"
+    />
+    <button
+      v-if="!isLast && lastReturned"
+      @click="loadMore"
+      class="load-more-button main-background-color"
+    >Load more...</button>
   </div>
 </template>
 
@@ -110,6 +127,9 @@ export default class SearchMeals extends Vue {
       !indexedMealPreviews.result !== null ||
       indexedMealPreviews.result.length > 0
     ) {
+      indexedMealPreviews.result.forEach(element => {
+        element.isSelected = false;
+      });
       this.mealPreviews.push(...indexedMealPreviews.result);
 
       this.lastReturned = {
@@ -125,9 +145,13 @@ export default class SearchMeals extends Vue {
     const previousMeal = this.mealPreviews.find(
       m => m.id === this.selectedMealId
     );
-    previousMeal!.isSelected = false;
+    if (previousMeal) {
+      previousMeal!.isSelected = false;
+    }
+
     const meal = this.mealPreviews.find(m => m.id === id);
     meal!.isSelected = true;
+    this.selectedMealId = meal!.id;
 
     this.$emit("meal-selected", meal!.id);
   }

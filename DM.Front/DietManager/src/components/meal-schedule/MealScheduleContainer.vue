@@ -1,20 +1,28 @@
 <template>
   <div id="schedule-container">
-    <modal v-if="showAddNewEntryModal">
-
-    </modal>
     <div class="label">
       <span id="label">{{label}}</span>
-      <span id="add-icon" @click="addMealScheduleEntry">
-        <font-awesome-icon class="option-icon" icon="plus-circle" size="lg" />
+      <span id="add-icon" @click="showAddNewEntryModal = true">
+        <font-awesome-icon class="option-icon" icon="plus-circle" size="lg"/>
       </span>
     </div>
     <div class="content">
-      <div id="schedule-entry" v-for="scheduleEntry in sortedMealScheduleEntries" :key="scheduleEntry.id">
-        <meal-schedule-item :mealScheduleEntry="scheduleEntry" @schedule-changed="onScheduleChanged" />
+      <div
+        id="schedule-entry"
+        v-for="scheduleEntry in sortedMealScheduleEntries"
+        :key="scheduleEntry.id"
+      >
+        <meal-schedule-item
+          :mealScheduleEntry="scheduleEntry"
+          @schedule-changed="onScheduleChanged"
+        />
       </div>
     </div>
-    <add-new-entry v-if="showAddNewEntryModal" />
+    <add-new-entry
+      v-if="showAddNewEntryModal"
+      @close-modal="showAddNewEntryModal = false"
+      @add-schedule-entry="addMealScheduleEntry"
+    />
   </div>
 </template>
 
@@ -30,6 +38,7 @@ import { Actions } from "@/ViewModels/enums/actions";
 import MealScheduleEntryCreation from "@/ViewModels/meal-schedule/mealScheduleEntryCreation";
 import Modal from "@/components/common/Modal.vue";
 import AddNewEntryModal from "@/components/meal-schedule/AddMealScheduleEntry.vue";
+import MealScheduleApi from "@/services/api-callers/mealScheduleApi";
 
 @Component({
   components: {
@@ -39,18 +48,14 @@ import AddNewEntryModal from "@/components/meal-schedule/AddMealScheduleEntry.vu
   }
 })
 export default class MealScheduleContainer extends Vue {
-  @Prop({
-    required: true
-  })
+  @Prop({ required: true })
   private mealSchedule!: MealScheduleEntry[];
-
-  @Prop({
-    required: true
-  })
+  @Prop({ required: true })
   private label!: string;
+  @Prop({ required: true })
+  private date!: Date;
 
   private showAddNewEntryModal = false;
-  private entryCreation: MealScheduleEntryCreation = {} as MealScheduleEntryCreation;
 
   get sortedMealScheduleEntries() {
     return _.sortBy(this.mealSchedule, entry => entry.date);
@@ -71,25 +76,38 @@ export default class MealScheduleContainer extends Vue {
   }
 
   updateEntry(id: string, newDate: Date) {
-    const indexOfUpdatedItem = this.mealSchedule.findIndex(e => e.id == id);
-    const oldValue = this.mealSchedule[indexOfUpdatedItem];
-    const newEntry = {
-      id: oldValue.id,
-      meal: oldValue.meal,
-      date: newDate
-    } as MealScheduleEntry;
-
-    this.$set(this.mealSchedule, indexOfUpdatedItem, newEntry);
+    MealScheduleApi.update({ id: id, newDate: newDate }, () =>
+      this.$router.go(0)
+    );
   }
 
   deleteEntry(id: string) {
-    const indexOfDeletedItem = this.mealSchedule.findIndex(e => e.id == id);
-
-    this.mealSchedule.splice(indexOfDeletedItem, 1);
+    MealScheduleApi.delete(id, () => this.$router.go(0));
   }
 
-  addMealScheduleEntry() {
-    this.showAddNewEntryModal = true;
+  addMealScheduleEntry(entryCreation: { id: string; time: string }) {
+    if (
+      entryCreation.time === "" ||
+      entryCreation.time.length != 5 ||
+      !entryCreation.id
+    ) {
+      return;
+    }
+
+    const completeDate = this.getDateWithTime(entryCreation.time);
+
+    MealScheduleApi.add({ mealId: entryCreation.id, date: completeDate }, id =>
+      this.$router.go(0)
+    );
+  }
+
+  getDateWithTime(time: string) {
+    const hourAndMinutes = time.split(":");
+
+    const newDate = new Date(this.date.getTime());
+    newDate.setHours(parseInt(hourAndMinutes[0]), parseInt(hourAndMinutes[1]));
+
+    return newDate;
   }
 }
 </script>
@@ -125,5 +143,8 @@ export default class MealScheduleContainer extends Vue {
 }
 button {
   color: white;
+}
+.container {
+  width: 90% !important;
 }
 </style>

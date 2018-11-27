@@ -1,4 +1,5 @@
 ﻿using DM.Database;
+using DM.Models;
 using DM.Repositories.Extensions;
 using DM.Repositories.Interfaces;
 using LinqToDB;
@@ -11,7 +12,14 @@ namespace DM.Repositories
 {
     public class MealScheduleRepository : BaseRepository<MealScheduleEntry>, IMealScheduleRepository
     {
-        public async Task<IEnumerable<MealScheduleEntry>> GetMealScheduleEntriesInDateRangeAsync(Guid userId, DateTimeOffset from, DateTimeOffset to)
+        private readonly IMealIngredientRepository _mealIngredientRepository;
+
+        public MealScheduleRepository(IMealIngredientRepository mealIngredientRepository)
+        {
+            _mealIngredientRepository = mealIngredientRepository;
+        }
+
+        public async Task<IEnumerable<CompleteMealScheduleEntry>> GetMealScheduleEntriesInDateRangeAsync(Guid userId, DateTimeOffset from, DateTimeOffset to)
         {
             using (var db = new DietManagerDB())
             {
@@ -21,7 +29,25 @@ namespace DM.Repositories
                     Where(m => m.Date >= from && m.Date <= to).
                     ToListAsync();
 
-                return mealSchedule.OrderBy(m => m.Date);
+                if (!mealSchedule.Any())
+                {
+                    return Enumerable.Empty<CompleteMealScheduleEntry>();
+                }
+
+                var mealMealIngredients = await _mealIngredientRepository.GetMealIngredientsForMealsAsync(mealSchedule.Select(m => m.MealId).ToList());
+
+                var completeMealScheduleEntry = mealSchedule.Select(m => 
+                    new CompleteMealScheduleEntry()
+                    {
+                        Date = m.Date,
+                        Id = m.Id,
+                        MealId = m.MealId,
+                        User = m.User,
+                        UserId = m.UserId,
+                        Meal = new MealWithIngredients(m.Meal, mealMealIngredients[m.MealId])
+                    });
+
+                return completeMealScheduleEntry;
             }
         }
 
@@ -121,8 +147,8 @@ namespace DM.Repositories
                 db.BeginTransaction();
                 bool succeeded;
 
-                succeeded = (await db.InsertAsync(model) == 1);
-
+                succeeded = await db.Meals.Where(m => m.Id == model.MealId).AnyAsync();
+                
                 if (!succeeded)
                 {
                     return false;
@@ -131,7 +157,14 @@ namespace DM.Repositories
                 succeeded = (await db.Meals.
                         Where(m => m.Id == model.MealId).
                         Set(m => m.NumberOfUses, m => m.NumberOfUses + 1).
-                        UpdateAsync() == 1);
+                        UpdateAsync() == 1); 
+
+                if (!succeeded)
+                {
+                    return false;
+                }
+
+                succeeded = (await db.InsertAsync(model) == 1);
 
                 db.CommitTransaction();
 

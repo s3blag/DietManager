@@ -20,7 +20,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpGet("week/{weekStartDate}")]
-        public async Task<IActionResult> GetMealIngredient(DateTimeOffset weekStartDate)
+        public async Task<IActionResult> GetMealScheduleEntries(DateTimeOffset weekStartDate)
         {
             if (weekStartDate == default)
             {
@@ -51,14 +51,17 @@ namespace DM.Web.Controllers
 
             var entryId = await _mealScheduleService.AddMealScheduleEntry(userId, mealScheduleCreation);
 
+            if (entryId == null)
+            {
+                return Unauthorized();
+            } 
+
             return Ok(entryId);
         }
 
         [HttpDelete("entry/{scheduleEntryId}")]
         public async Task<IActionResult> DeleteMealScheduleEntry (Guid scheduleEntryId)
         {
-            return Ok();
-
             if (scheduleEntryId == Guid.Empty)
             {
                 return NotFound();
@@ -81,11 +84,8 @@ namespace DM.Web.Controllers
         [HttpPatch("entry")]
         public async Task<IActionResult> UpdateMealScheduleEntry([FromBody] MealScheduleEntryUpdateVM scheduleEntryUpdate)
         {
-            
-
             var userId = Guid.Empty;
 
-            return Ok();
             bool updated = await _mealScheduleService.UpdateMealScheduleEntryAsync(userId, scheduleEntryUpdate);
 
             if (updated)

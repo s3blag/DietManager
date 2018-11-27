@@ -12,7 +12,8 @@ namespace DM.Web
     {
         public MappingProfile()
         {
-            CreateMap<MealScheduleEntry, MealScheduleEntryVM>();
+            CreateMap<CompleteMealScheduleEntry, MealScheduleEntryVM>();
+            CreateMap<MealVM, MealWithIngredients>().ReverseMap();
             CreateMap<MealWithIngredients, MealVM>();
             CreateMap<MealIngredientWithQuantityVM, MealIngredientWithQuantity>().ReverseMap();
             CreateMap<MealPreview, MealPreviewVM>().ReverseMap();
@@ -32,6 +33,8 @@ namespace DM.Web
             CreateMap<MealIngredientCreationVM, MealIngredient>().
                 ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid())).
                 ReverseMap();
+            CreateMap<MealScheduleEntryCreationVM, MealScheduleEntry>().
+                ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid()));
             CreateMap<ImageCreation, Image>().
                 ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid())).
                 ReverseMap();

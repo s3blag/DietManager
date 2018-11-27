@@ -86,7 +86,7 @@ export default class AddMealIngredient extends Vue {
         imageId: mealIngredientCreation.mealIngredient.imageId,
         name: mealIngredientCreation.mealIngredient.name,
         calories: mealIngredientCreation.mealIngredient.calories,
-        nutritions: mealIngredientCreation.mealIngredient.nutrition
+        nutrition: mealIngredientCreation.mealIngredient.nutrition
       } as MealIngredient,
       quantity: mealIngredientCreation.quantity
     } as MealIngredientWithQuantity;

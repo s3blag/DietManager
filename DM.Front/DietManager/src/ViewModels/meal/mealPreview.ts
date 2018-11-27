@@ -9,6 +9,6 @@ export default interface MealPreview {
   numberOfFavouriteMarks: number;
   creationDate: string;
   isFavourite: boolean | null;
-  isSelected: boolean;
+  isSelected?: boolean | null;
   creator: User;
 }

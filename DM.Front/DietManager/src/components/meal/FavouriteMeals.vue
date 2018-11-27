@@ -2,10 +2,21 @@
 <template>
   <div class="list-container">
     <h1 class="main-color">Favourite Meals</h1>
-    <meal-preview-item class="meal" v-for="mealPreview in mealPreviews" :key="mealPreview.id" :mealPreview="mealPreview" :enableFavouriteMarkToggling="asEmittingComponent ? false : true" @deleted-from-favourites="onDeletedFromFavourites" :emitEvents="asEmittingComponent" @selectedMeal="onMealSelected"/>
-    <button @click="getMealPreviews" class="load-more-button main-background-color" v-if="elementsRemainingToLoad">
-      Load more...
-    </button>
+    <meal-preview-item
+      class="meal"
+      v-for="mealPreview in mealPreviews"
+      :key="mealPreview.id"
+      :mealPreview="mealPreview"
+      :enableFavouriteMarkToggling="asEmittingComponent ? false : true"
+      @deleted-from-favourites="onDeletedFromFavourites"
+      :emitEvents="asEmittingComponent"
+      @selectedMeal="onMealSelected"
+    />
+    <button
+      @click="getMealPreviews"
+      class="load-more-button main-background-color"
+      v-if="elementsRemainingToLoad"
+    >Load more...</button>
   </div>
 </template>
 
@@ -94,9 +105,13 @@ export default class MyMeals extends Vue {
     const previousMeal = this.mealPreviews.find(
       m => m.id === this.selectedMealId
     );
-    previousMeal!.isSelected = false;
+    if (previousMeal) {
+      previousMeal!.isSelected = false;
+    }
+
     const meal = this.mealPreviews.find(m => m.id === id);
     meal!.isSelected = true;
+    this.selectedMealId = meal!.id;
 
     this.$emit("meal-selected", meal!.id);
   }

@@ -1,12 +1,26 @@
 <template>
   <div id="user-achievements">
     <div class="achievements">
-      <div class="achievement-wrapper" v-for="(achievements, categoryName) in groupedAchievements" :key="categoryName">
-        <div v-if="!isEmpty(achievements)" class="category soft-border bottom">
+      <div
+        class="achievement-wrapper"
+        v-for="(achievements, categoryName) in groupedAchievements"
+        :key="categoryName"
+      >
+        <div
+          v-if="!isEmpty(achievements)"
+          class="category soft-border bottom"
+        >
           {{translate[categoryName]}}
         </div>
-        <div class="achievement" v-for="(values, name) in achievements" :key="name">
-          <user-achievement :values="values" :type="name" />
+        <div
+          class="achievement"
+          v-for="(values, name) in achievements"
+          :key="name"
+        >
+          <user-achievement
+            :values="values"
+            :type="name"
+          />
         </div>
       </div>
     </div>
@@ -20,7 +34,7 @@ import GroupedAchievements from "@/ViewModels/achievement/groupedAchievements";
 import AchievementsApi from "@/services/api-callers/achievementsApi";
 import Achievement from "@/ViewModels/achievement/achievement";
 import UserAchievement from "@/components/achievement/UserAchievement.vue";
-import Translate from "@/services/translationDictionary.js";
+import Translate from "@/services/translationDictionary";
 
 @Component({
   components: {

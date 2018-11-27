@@ -13,6 +13,6 @@ namespace DM.Repositories.Interfaces
         Task<MealIngredient> GetMealIngredientByIdAsync(Guid id);
         Task<IEnumerable<MealIngredientWithQuantity>> GetMealIngredientsForMealAsync(Guid mealId);
         Task<ICollection<MealIngredient>> GetMealIngredientsByQueryAsync(string query, int index, int takeAmount);
-        //Task<int> GetMealIngredientsAddedByUserCountAsync(Guid userId);
+        Task<Dictionary<Guid, List<MealIngredientWithQuantity>>> GetMealIngredientsForMealsAsync(IEnumerable<Guid> mealIds);
     }
 }

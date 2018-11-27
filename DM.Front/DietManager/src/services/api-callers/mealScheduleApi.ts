@@ -8,11 +8,15 @@ export default class MealScheduleApiCaller {
   static get(
     selectedWeekStartDateIsoString: string,
     successHandler: (mealIngredientVM: WeeklyMealSchedule) => void,
-    errorHandler: (error: Error) => void = this.defaultErrorHandler
+    errorHandler: (error: Error | string) => void = this.defaultErrorHandler
   ) {
     Axios.get(`/api/meal-schedule/week/${selectedWeekStartDateIsoString}`)
       .then(response => {
-        successHandler(response.data as WeeklyMealSchedule);
+        if (response.status === 200) {
+          successHandler(response.data as WeeklyMealSchedule);
+        } else {
+          errorHandler(response.statusText);
+        }
       })
       .catch(error => errorHandler(error));
   }
@@ -20,11 +24,15 @@ export default class MealScheduleApiCaller {
   static add(
     mealScheduleEntryCreation: MealScheduleEntryCreation,
     successHandler: (createdMealScheduleEntryGuid: string) => void,
-    errorHandler: (error: Error) => void = this.defaultErrorHandler
+    errorHandler: (error: Error | string) => void = this.defaultErrorHandler
   ) {
     Axios.post("/api/meal-schedule/entry", mealScheduleEntryCreation)
       .then(response => {
-        successHandler(response.data as string);
+        if (response.status === 200) {
+          successHandler(response.data as string);
+        } else {
+          errorHandler(response.statusText);
+        }
       })
       .catch(error => errorHandler(error));
   }
@@ -32,11 +40,15 @@ export default class MealScheduleApiCaller {
   static delete(
     mealScheduleEntryId: string,
     successHandler: (arg: Actions) => void,
-    errorHandler: (error: Error) => void = this.defaultErrorHandler
+    errorHandler: (error: Error | string) => void = this.defaultErrorHandler
   ) {
     Axios.delete(`/api/meal-schedule/entry/${mealScheduleEntryId}`)
-      .then(() => {
-        successHandler(Actions.Delete);
+      .then(response => {
+        if (response.status === 200) {
+          successHandler(Actions.Delete);
+        } else {
+          errorHandler(response.statusText);
+        }
       })
       .catch(error => errorHandler(error));
   }
@@ -44,16 +56,23 @@ export default class MealScheduleApiCaller {
   static update(
     mealScheduleEntryUpdate: MealScheduleEntryUpdate,
     successHandler: (actionType: Actions) => void,
-    errorHandler: (error: Error) => void = this.defaultErrorHandler
+    errorHandler: (error: Error | string) => void = this.defaultErrorHandler
   ) {
-    Axios.patch("/api/meal-schedule/entry/", mealScheduleEntryUpdate)
-      .then(() => {
-        successHandler(Actions.Update);
+    Axios.patch("/api/meal-schedule/entry/", {
+      id: mealScheduleEntryUpdate.id,
+      newDate: mealScheduleEntryUpdate.newDate.toISOString()
+    })
+      .then(response => {
+        if (response.status === 200) {
+          successHandler(Actions.Update);
+        } else {
+          errorHandler(response.statusText);
+        }
       })
       .catch(error => errorHandler(error));
   }
 
-  private static defaultErrorHandler(error: Error) {
+  private static defaultErrorHandler(error: Error | string) {
     // eslint-disable-next-line no-console
     console.error(error);
   }

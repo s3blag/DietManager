@@ -71,3 +71,21 @@ export default Vue.extend({});
   }
 }
 </style>
+
+<style lang="less">
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  max-height: 90%;
+  max-width: 90%;
+  width: fit-content;
+  margin: 0px auto;
+  padding: 20px 30px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+  transition: all 0.3s ease;
+  font-family: Helvetica, Arial, sans-serif;
+}
+</style>
+

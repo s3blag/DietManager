@@ -3,29 +3,43 @@
     <div class="meal-schedule-container content-background">
       <div class="schedule-header">
         <button @click="previousWeek" class="button">
-          <font-awesome-icon icon="arrow-left" />
+          <font-awesome-icon icon="arrow-left"/>
         </button>
         {{parsedWeekStartDate}} - {{parsedWeekEndDate}}
-        <button @click="nextWeek" class="button">
-          <font-awesome-icon icon="arrow-right" />
+        <button
+          @click="nextWeek"
+          class="button"
+        >
+          <font-awesome-icon icon="arrow-right"/>
         </button>
       </div>
       <div id="calendar">
-        <meal-schedule-container class="daily-schedule" v-for="(day, index) in daysOfWeek" :key="index" :mealSchedule="mealSchedule[day]" :label="day" :class="{'current-day': index+1 === currentDayOfWeek}" @on-schedule-changed="getMealSchedule" />
+        <meal-schedule-container
+          class="daily-schedule"
+          v-for="(day, index) in daysOfWeek"
+          :key="index"
+          :mealSchedule="mealSchedule[day]"
+          :label="day"
+          :class="{'current-day': index+1 === currentDayOfWeek}"
+          :date="getFullDateFromDayOfWeek(index)"
+          @on-schedule-changed="getMealSchedule"
+        />
       </div>
       <div id="show-shopping-list-button">
-        <button class="button" @click="showShoppingList = true">
-          Shopping list
-        </button>
+        <button class="button" @click="showShoppingList = true">Shopping list</button>
       </div>
     </div>
-    <meal-schedule-summary id="meal-schedule-summary" :mealIngredients="mealIngredients" />
+    <meal-schedule-summary id="meal-schedule-summary" :mealIngredients="mealIngredients"/>
 
     <modal v-if="showShoppingList">
       <div id="modal-content">
         <h3>Shopping list</h3>
         <div id="shopping-list-items-wrapper">
-          <div class="shopping-list-item soft-border bottom" v-for="item in shoppingList" :key="item.name">
+          <div
+            class="shopping-list-item soft-border bottom"
+            v-for="item in shoppingList"
+            :key="item.name"
+          >
             <span class="name">{{item.name}}</span>
             <span class="quantity">{{item.quantity + 'x'}}</span>
           </div>
@@ -99,127 +113,21 @@ export default class MealSchedule extends Vue {
     return currentDate.getDay();
   }
 
-  get emptyMealSchedule() {
-    let counter = 0;
-    const init: MealScheduleEntry[] = [
-      {
-        id: "1",
-        date: new Date(),
-        meal: {
-          id: "1",
-          name: "qwert sadasdz zxczxc zc",
-          ingredients: [
-            {
-              mealIngredient: { name: "ingredient" + counter },
-              quantity: 2
-            },
-            {
-              mealIngredient: { name: "ingredient2" + counter },
-              quantity: 1
-            }
-          ]
-        }
-      } as MealScheduleEntry,
-      {
-        id: "2",
-        date: new Date(),
-        meal: {
-          id: "2",
-          name: "jajecznica po sopocku",
-          ingredients: [
-            {
-              mealIngredient: { name: "ingrsedient" + counter++ },
-              quantity: 2
-            },
-            {
-              mealIngredient: { name: "ingredsient2" + counter },
-              quantity: 1
-            }
-          ]
-        }
-      } as MealScheduleEntry,
-      {
-        id: "3",
-        date: new Date(),
-        meal: {
-          id: "3",
-          name: "jajecznica po sopocku 1 ",
-          ingredients: [
-            {
-              mealIngredient: { name: "ingredient" },
-              quantity: 2
-            },
-            {
-              mealIngredient: { name: "ingrdsedient2" + counter },
-              quantity: 1
-            }
-          ]
-        }
-      } as MealScheduleEntry,
-      {
-        id: "4",
-        date: new Date(),
-        meal: {
-          id: "4",
-          name: "jajecznica po sopocku 2",
-          ingredients: [
-            {
-              mealIngredient: { name: "ingredient" },
-              quantity: 2
-            },
-            {
-              mealIngredient: { name: "ingredident2" + counter++ },
-              quantity: 1
-            }
-          ]
-        }
-      } as MealScheduleEntry,
-      {
-        id: "5",
-        date: new Date(),
-        meal: {
-          id: "5",
-          name: "jajecznica po sopocku 3",
-          ingredients: [
-            {
-              mealIngredient: { name: "ingresddient" + counter },
-              quantity: 2
-            },
-            {
-              mealIngredient: { name: "ingrdedient2" + counter },
-              quantity: 1
-            }
-          ]
-        }
-      } as MealScheduleEntry,
-      {
-        id: "6",
-        date: new Date(),
-        meal: {
-          id: "6",
-          name: "jajecznica po sopocku 4",
-          ingredients: [
-            {
-              mealIngredient: { name: "ingredient" + counter++ },
-              quantity: 2
-            },
-            {
-              mealIngredient: { name: "indsagredient2" + counter++ },
-              quantity: 1
-            }
-          ]
-        }
-      } as MealScheduleEntry
-    ];
+  getFullDateFromDayOfWeek(dayOfWeek: number) {
+    const date = new Date(this.selectedWeekStartDate);
+    date.setDate(date.getDate() + dayOfWeek);
+    return date;
+  }
 
+  get emptyMealSchedule() {
     const mealSchedule = {
-      monday: init,
-      tuesday: init,
-      wednesday: init,
-      thursday: init,
-      friday: init,
-      saturday: init,
-      sunday: init
+      monday: [],
+      tuesday: [],
+      wednesday: [],
+      thursday: [],
+      friday: [],
+      saturday: [],
+      sunday: []
     } as WeeklyMealSchedule;
 
     return mealSchedule;

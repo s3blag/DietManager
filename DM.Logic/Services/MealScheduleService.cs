@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
 using DM.Database;
 using DM.Logic.Interfaces;
-using DM.Models.Exceptions;
 using DM.Models.ViewModels;
 using DM.Repositories.Interfaces;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +47,7 @@ namespace DM.Logic.Services
             return groupedMealScheduleEntries;
         }
 
-        public async Task<Guid> AddMealScheduleEntry(Guid userId, MealScheduleEntryCreationVM newMealScheduleEntry)
+        public async Task<Guid?> AddMealScheduleEntry(Guid userId, MealScheduleEntryCreationVM newMealScheduleEntry)
         {
             ValidateArgument(
                 (userId, nameof(userId)),
@@ -61,9 +59,9 @@ namespace DM.Logic.Services
 
             bool addedSuccessfully = await _mealScheduleRepository.AddAsync(dbMealScheduleEntry);
 
-            if (addedSuccessfully)
+            if (!addedSuccessfully)
             {
-                throw new DataAccessException($"Adding meal schedule entry failed for model: {JsonConvert.SerializeObject(dbMealScheduleEntry)}");
+                return null;
             }
 
             await _mealRepository.IncrementNumberOfUsesAsync(newMealScheduleEntry.MealId.Value);

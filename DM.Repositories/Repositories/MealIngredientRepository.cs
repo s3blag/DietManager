@@ -68,7 +68,7 @@ namespace DM.Repositories
                     Where(m => m.MealId == mealId).
                     Select(m => new MealIngredientWithQuantity()
                     {   Quantity = m.Quantity.Value,
-                        MealIngredient =new MealIngredient()
+                        MealIngredient = new MealIngredient()
                         {
                             Id = m.MealIngredientId.Value,
                             ImageId = m.MealIngredientImageId.GetValueOrDefault(),
@@ -87,6 +87,40 @@ namespace DM.Repositories
                         }
                     }).
                     ToListAsync();
+
+                return mealIngredients;
+            }
+        }
+
+        public async Task<Dictionary<Guid, List<MealIngredientWithQuantity>>> GetMealIngredientsForMealsAsync(IEnumerable<Guid> mealIds)
+        {
+            using (var db = new DietManagerDB())
+            {
+                var mealIngredients = await db.MealFullMealIngredients.
+                    Where(m => mealIds.Contains(m.MealId.Value)).
+                    GroupBy(m => m.MealId.Value).
+                    ToDictionaryAsync(kv => kv.Key, kv => kv.Select(m => 
+                    new MealIngredientWithQuantity()
+                    {
+                        Quantity = m.Quantity.Value,
+                        MealIngredient = new MealIngredient()
+                        {
+                            Id = m.MealIngredientId.Value,
+                            ImageId = m.MealIngredientImageId.GetValueOrDefault(),
+                            Name = m.MealIngredientName,
+                            Calories = m.MealIngredientCalories.Value,
+                            Nutrition = new Nutrition()
+                            {
+                                Protein = m.Protein.Value,
+                                Carbohydrates = m.Carbohydrates.Value,
+                                Fats = m.Fats.Value,
+                                VitaminA = m.VitaminA,
+                                VitaminC = m.VitaminC,
+                                VitaminB6 = m.VitaminB6,
+                                VitaminD = m.VitaminD
+                            }
+                        }
+                    }).ToList());
 
                 return mealIngredients;
             }

@@ -3,23 +3,27 @@
     <div class="avatar-image-container">
       <image-wrapper :imageId="mealPreview.imageId">
         <template slot="placeholder">
-          <font-awesome-icon class="main-color" icon="utensils" size="2x" />
+          <font-awesome-icon class="main-color" icon="utensils" size="2x"/>
         </template>
       </image-wrapper>
       <div v-if="mealPreview.isFavourite" class="pin">
-        <font-awesome-icon class="main-color" icon="star" />
+        <font-awesome-icon class="main-color" icon="star"/>
       </div>
       <div v-else-if="createdByUser && enableFavouriteMarkToggling" class="pin">
-        <font-awesome-icon class="main-color" icon="user-circle" />
+        <font-awesome-icon class="main-color" icon="user-circle"/>
       </div>
     </div>
     <div class="meal-info-element meal-name">
       <div class="label">Name</div>
-      <router-link :class="emitEvents ? 'meal-link' : ''" :to="'/meal/' + mealPreview.id" class="value">{{mealPreview.name}} </router-link>
+      <router-link
+        :class="emitEvents ? 'meal-link' : ''"
+        :to="'/meal/' + mealPreview.id"
+        class="value"
+      >{{mealPreview.name}}</router-link>
     </div>
     <div class="meal-info-element">
       <div class="label">Calories</div>
-      <div class="value">{{mealPreview.calories}} </div>
+      <div class="value">{{mealPreview.calories}}</div>
     </div>
     <span v-if="!isMobile" class="details">
       <div class="meal-info-element">
@@ -32,17 +36,26 @@
       </div>
     </span>
     <div id="add-to-favourites-wrapper" v-if="enableFavouriteMarkToggling">
-      <div v-if="enableFavouriteMarkToggling && mealPreview.isFavourite !== null" id="add-to-favourites-button" @click="toggleFavouriteMark">
-        <font-awesome-icon v-if="mealPreview.isFavourite === false" id="add-icon" class="option-icon" icon="plus-circle" />
-        <font-awesome-icon v-else id="delete-icon" class="option-icon" icon="minus-circle" />
+      <div
+        v-if="enableFavouriteMarkToggling && mealPreview.isFavourite !== null"
+        id="add-to-favourites-button"
+        @click="toggleFavouriteMark"
+      >
+        <font-awesome-icon
+          v-if="mealPreview.isFavourite === false"
+          id="add-icon"
+          class="option-icon"
+          icon="plus-circle"
+        />
+        <font-awesome-icon v-else id="delete-icon" class="option-icon" icon="minus-circle"/>
       </div>
     </div>
 
     <router-link v-if="!emitEvents" class="go-to-meal" :to="'/meal/' + mealPreview.id">
-      <font-awesome-icon class="main-color" icon="arrow-alt-circle-right" size="2x" />
+      <font-awesome-icon class="main-color" icon="arrow-alt-circle-right" size="2x"/>
     </router-link>
-    <div v-else @click="onMealSelected">
-       <font-awesome-icon id="add-icon" class="option-icon" icon="plus-circle" />
+    <div v-else @click="onMealSelected" id="select-button">
+      <font-awesome-icon id="add-icon" class="option-icon" icon="plus-circle"/>
     </div>
   </div>
 </template>
@@ -172,9 +185,11 @@ export default class MyMeals extends Vue {
 .meal-link {
   text-decoration: underline;
 }
-
+#select-button {
+  margin: auto auto;
+}
 .meal-selected {
-  background-color: rgb(105, 180, 223);
+  background-color: rgb(105, 180, 223) !important;
 }
 
 @keyframes button-animation {

@@ -67,7 +67,7 @@ export default class MealSummary extends Vue {
     let result = _.sum(
       this.mealIngredients.map(
         ingredientWithQuantity =>
-          ingredientWithQuantity.mealIngredient.nutritions.protein *
+          ingredientWithQuantity.mealIngredient.nutrition.protein *
           ingredientWithQuantity.quantity
       )
     );
@@ -79,7 +79,7 @@ export default class MealSummary extends Vue {
     let result = _.sum(
       this.mealIngredients.map(
         ingredientWithQuantity =>
-          ingredientWithQuantity.mealIngredient.nutritions.carbohydrates *
+          ingredientWithQuantity.mealIngredient.nutrition.carbohydrates *
           ingredientWithQuantity.quantity
       )
     );
@@ -91,7 +91,7 @@ export default class MealSummary extends Vue {
     let result = _.sum(
       this.mealIngredients.map(
         ingredientWithQuantity =>
-          ingredientWithQuantity.mealIngredient.nutritions.fats *
+          ingredientWithQuantity.mealIngredient.nutrition.fats *
           ingredientWithQuantity.quantity
       )
     );
@@ -108,11 +108,11 @@ export default class MealSummary extends Vue {
         );
         if (
           !this.isNullOrUndefined(
-            ingredientWithQuantity.mealIngredient.nutritions.vitaminA
+            ingredientWithQuantity.mealIngredient.nutrition.vitaminA
           )
         ) {
           return (
-            ingredientWithQuantity.mealIngredient.nutritions.vitaminA! *
+            ingredientWithQuantity.mealIngredient.nutrition.vitaminA! *
             ingredientWithQuantity.quantity
           );
         } else {
@@ -129,11 +129,11 @@ export default class MealSummary extends Vue {
       this.mealIngredients.map(ingredientWithQuantity => {
         if (
           !this.isNullOrUndefined(
-            ingredientWithQuantity.mealIngredient.nutritions.vitaminC
+            ingredientWithQuantity.mealIngredient.nutrition.vitaminC
           )
         ) {
           return (
-            ingredientWithQuantity.mealIngredient.nutritions.vitaminC! *
+            ingredientWithQuantity.mealIngredient.nutrition.vitaminC! *
             ingredientWithQuantity.quantity
           );
         } else {
@@ -150,11 +150,11 @@ export default class MealSummary extends Vue {
       this.mealIngredients.map(ingredientWithQuantity => {
         if (
           !this.isNullOrUndefined(
-            ingredientWithQuantity.mealIngredient.nutritions.vitaminB6
+            ingredientWithQuantity.mealIngredient.nutrition.vitaminB6
           )
         ) {
           return (
-            ingredientWithQuantity.mealIngredient.nutritions.vitaminB6! *
+            ingredientWithQuantity.mealIngredient.nutrition.vitaminB6! *
             ingredientWithQuantity.quantity
           );
         } else {
@@ -171,11 +171,11 @@ export default class MealSummary extends Vue {
       this.mealIngredients.map(ingredientWithQuantity => {
         if (
           !this.isNullOrUndefined(
-            ingredientWithQuantity.mealIngredient.nutritions.vitaminD
+            ingredientWithQuantity.mealIngredient.nutrition.vitaminD
           )
         ) {
           return (
-            ingredientWithQuantity.mealIngredient.nutritions.vitaminD! *
+            ingredientWithQuantity.mealIngredient.nutrition.vitaminD! *
             ingredientWithQuantity.quantity
           );
         } else {

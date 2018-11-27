@@ -5,5 +5,5 @@ export default interface MealIngredient {
   imageId: string | null;
   name: string;
   calories: number;
-  nutritions: Nutritions;
+  nutrition: Nutritions;
 }
