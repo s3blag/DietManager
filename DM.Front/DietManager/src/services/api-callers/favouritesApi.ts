@@ -2,7 +2,7 @@ import Axios from "axios";
 import IndexedResult from "@/ViewModels/wrappers/indexedResult";
 import MealPreview from "@/ViewModels/meal/mealPreview";
 
-export default class FriendsApiCaller {
+export default class FavouritesApiCaller {
   static add(
     mealId: string,
     successHandler: (guid: string) => void,

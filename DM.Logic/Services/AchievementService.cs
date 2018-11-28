@@ -53,14 +53,14 @@ namespace DM.Logic.Services
         public async Task<IEnumerable<AchievementVM>> GetAllAchievementsAsync() => 
             _mapper.Map<IEnumerable<AchievementVM>>(await _achievementRepository.GetAllAsync());
 
-        public async Task<GroupedUserAchievementsVM> GetUsersAchievements(Guid userId)
+        public async Task<GroupedUserAchievementsVM> GetUserAchievementsAsync(Guid userId)
         {
             var achievements =  _mapper.Map<IEnumerable<UserAchievementVM>>(await _userAchievementRepository.GetUsersAchievementsAsync(userId));
 
-            var groupedByCategoryAchievements = achievements.GroupBy(a => ToCamelCase(a.Category)).
+            var groupedByCategoryAchievements = achievements.GroupBy(a => a.Category.FirstToLower()).
                 ToDictionary(
                     kv => kv.Key, 
-                    kv => kv.AsEnumerable().GroupBy(_ => ToCamelCase(_.Type)).
+                    kv => kv.AsEnumerable().GroupBy(_ => _.Type.FirstToLower()).
                             ToDictionary(_ => _.Key, _ => _.Select(__ => __.Value)));
 
             return new GroupedUserAchievementsVM()
@@ -284,9 +284,6 @@ namespace DM.Logic.Services
                 throw new DataAccessException($"Adding achievement ${JsonConvert.SerializeObject(model)} failed");
             }
         }
-
-        private string ToCamelCase(string pascalCaseString) => char.ToLowerInvariant(pascalCaseString[0]) + pascalCaseString.Substring(1);
-
         #endregion
     }
 }

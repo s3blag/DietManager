@@ -55,8 +55,9 @@ export default class MealSummary extends Vue {
     let result = _.sum(
       this.mealIngredients.map(
         ingredientWithQuantity =>
-          ingredientWithQuantity.mealIngredient.calories *
-          ingredientWithQuantity.quantity
+          (ingredientWithQuantity.mealIngredient.calories *
+            ingredientWithQuantity.quantity) /
+          100
       )
     );
 
@@ -67,8 +68,9 @@ export default class MealSummary extends Vue {
     let result = _.sum(
       this.mealIngredients.map(
         ingredientWithQuantity =>
-          ingredientWithQuantity.mealIngredient.nutrition.protein *
-          ingredientWithQuantity.quantity
+          (ingredientWithQuantity.mealIngredient.nutrition.protein *
+            ingredientWithQuantity.quantity) /
+          100
       )
     );
 
@@ -79,8 +81,9 @@ export default class MealSummary extends Vue {
     let result = _.sum(
       this.mealIngredients.map(
         ingredientWithQuantity =>
-          ingredientWithQuantity.mealIngredient.nutrition.carbohydrates *
-          ingredientWithQuantity.quantity
+          (ingredientWithQuantity.mealIngredient.nutrition.carbohydrates *
+            ingredientWithQuantity.quantity) /
+          100
       )
     );
 
@@ -91,8 +94,9 @@ export default class MealSummary extends Vue {
     let result = _.sum(
       this.mealIngredients.map(
         ingredientWithQuantity =>
-          ingredientWithQuantity.mealIngredient.nutrition.fats *
-          ingredientWithQuantity.quantity
+          (ingredientWithQuantity.mealIngredient.nutrition.fats *
+            ingredientWithQuantity.quantity) /
+          100
       )
     );
 
@@ -112,8 +116,9 @@ export default class MealSummary extends Vue {
           )
         ) {
           return (
-            ingredientWithQuantity.mealIngredient.nutrition.vitaminA! *
-            ingredientWithQuantity.quantity
+            (ingredientWithQuantity.mealIngredient.nutrition.vitaminA! *
+              ingredientWithQuantity.quantity) /
+            100
           );
         } else {
           return 0;
@@ -133,8 +138,9 @@ export default class MealSummary extends Vue {
           )
         ) {
           return (
-            ingredientWithQuantity.mealIngredient.nutrition.vitaminC! *
-            ingredientWithQuantity.quantity
+            (ingredientWithQuantity.mealIngredient.nutrition.vitaminC! *
+              ingredientWithQuantity.quantity) /
+            100
           );
         } else {
           return 0;
@@ -154,8 +160,9 @@ export default class MealSummary extends Vue {
           )
         ) {
           return (
-            ingredientWithQuantity.mealIngredient.nutrition.vitaminB6! *
-            ingredientWithQuantity.quantity
+            (ingredientWithQuantity.mealIngredient.nutrition.vitaminB6! *
+              ingredientWithQuantity.quantity) /
+            100
           );
         } else {
           return 0;
@@ -175,8 +182,9 @@ export default class MealSummary extends Vue {
           )
         ) {
           return (
-            ingredientWithQuantity.mealIngredient.nutrition.vitaminD! *
-            ingredientWithQuantity.quantity
+            (ingredientWithQuantity.mealIngredient.nutrition.vitaminD! *
+              ingredientWithQuantity.quantity) /
+            100
           );
         } else {
           return 0;

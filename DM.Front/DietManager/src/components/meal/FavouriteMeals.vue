@@ -1,7 +1,7 @@
 // todo: reuse MyMealsComponent
 <template>
   <div class="list-container">
-    <h1 class="main-color">Favourite Meals</h1>
+    <h2 class="main-color">Favourite Meals</h2>
     <h3 v-if="mealPreviews.length === 0">You have no favourite meals</h3>
     <meal-preview-item
       v-else

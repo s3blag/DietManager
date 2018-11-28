@@ -2,6 +2,7 @@
 using DM.Database;
 using DM.Logic.Interfaces;
 using DM.Models.Exceptions;
+using DM.Models.Extensions;
 using DM.Models.ViewModels;
 using DM.Models.Wrappers;
 using DM.Repositories.Interfaces;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DM.Logic.Services
@@ -31,7 +33,7 @@ namespace DM.Logic.Services
             _logger = logger;
         }
 
-        public async Task<IndexedResult<IEnumerable<UserVM>>> GetUserFriendsAsync(
+        public async Task<IndexedResult<IEnumerable<UserVM>>> GetFriendsAsync(
             Guid userId, 
             IndexedResult<UserVM> lastReturned, 
             int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE)
@@ -41,7 +43,8 @@ namespace DM.Logic.Services
                 return null;
             }
 
-            var usersVM = _mapper.Map<ICollection<UserVM>>(await _friendRepository.GetFriendsAsync(userId, lastReturned?.Index ?? 0, takeAmount));
+            var usersVM = _mapper.Map<ICollection<UserVM>>(
+                await _friendRepository.GetFriendsAsync(userId, lastReturned?.Index ?? 0, takeAmount));
 
             foreach (var user in usersVM)
             {
@@ -55,6 +58,29 @@ namespace DM.Logic.Services
                 IsLast = usersVM.Count != takeAmount
             };
         }
+
+        public async Task<UserWithAchievementsVM> GetFriendWithAchievementsAsync(Guid userId, Guid friendId)
+        {
+            var friendWithAchievements = await _friendRepository.GetFriendAsync(userId, friendId);
+
+            var achievementsVM = _mapper.Map<IEnumerable<UserAchievementVM>>(friendWithAchievements.Achievements);
+
+            var groupedByCategoryAchievements = achievementsVM.
+                GroupBy(a => a.Category.FirstToLower()).
+                ToDictionary(
+                    kv => kv.Key,
+                    kv => kv.AsEnumerable().GroupBy(_ => _.Type.FirstToLower()).
+                            ToDictionary(_ => _.Key, _ => _.Select(__ => __.Value)));
+
+            var groupedAchievementsVM = new GroupedUserAchievementsVM() { GroupedAchievements = groupedByCategoryAchievements,
+                                                                          Any = groupedByCategoryAchievements.SelectMany(kv => kv.Value).Any()};
+
+            return new UserWithAchievementsVM(
+                groupedAchievementsVM,
+                _mapper.Map<UserVM>(friendWithAchievements.User));
+  
+        }
+          
 
         public async Task<IndexedResult<IEnumerable<UserActivityVM>>> GetFriendsActivitiesFeedAsync(
             Guid userId, 
@@ -135,7 +161,7 @@ namespace DM.Logic.Services
             }
         }
 
-        public async Task RemoveFromFriends(Guid friendId, Guid userId)
+        public async Task RemoveFromFriendsAsync(Guid friendId, Guid userId)
         {
             if (!await _friendRepository.RemoveFriendAsync(userId, friendId))
             {

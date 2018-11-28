@@ -3,24 +3,31 @@
     <div class="image-container">
       <image-wrapper :imageId="userPreview.imageId">
         <template slot="placeholder">
-          <font-awesome-icon class="user-avatar main-color" icon="user-circle" />
+          <font-awesome-icon class="user-avatar main-color" icon="user-circle"/>
         </template>
       </image-wrapper>
       <div v-if="showFriendPin && userPreview.isFriend" class="pin">
-        <font-awesome-icon id="my-friends-icon" class="option-icon" icon="user-friends" />
+        <font-awesome-icon id="my-friends-icon" class="option-icon" icon="user-friends"/>
       </div>
     </div>
     <div class="user-info-element user-name">
       <div class="label">Name</div>
-      <div class="value">{{userPreview.name + ' ' + userPreview.surname}} </div>
+      <router-link
+        :to="{ name: 'Friend', params: { userId: userPreview.id}}"
+        v-if="userPreview.isFriend"
+        class="link"
+      >
+        <div class="value">{{userPreview.name + ' ' + userPreview.surname}}</div>
+      </router-link>
+      <div v-else class="value">{{userPreview.name + ' ' + userPreview.surname}}</div>
     </div>
     <div class="user-info-element">
       <div class="label">City</div>
-      <div class="value">{{userPreview.city}} </div>
+      <div class="value">{{userPreview.city}}</div>
     </div>
     <div id="invite-wrapper" v-if="!userPreview.isFriend">
       <div id="invite-button" @click="addToFriends">
-        <font-awesome-icon id="invite-icon" class="option-icon" icon="user-plus" />
+        <font-awesome-icon id="invite-icon" class="option-icon" icon="user-plus"/>
       </div>
     </div>
   </div>

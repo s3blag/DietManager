@@ -1,7 +1,10 @@
 <template>
   <div id="user-achievements">
     <div class="achievements">
-      <h4 v-if="!groupedAchievements.any">You haven't earned any achievements yet</h4>
+      <h4 v-if="!groupedAchievements.any">
+        <span v-if="friendsGroupedAchievements">This user hasn't earned any achievements yet</span>
+        <span v-else>You haven't earned any achievements yet</span>
+      </h4>
       <div
         v-else
         class="achievement-wrapper"
@@ -28,6 +31,7 @@ import AchievementsApi from "@/services/api-callers/achievementsApi";
 import Achievement from "@/ViewModels/achievement/achievement";
 import UserAchievement from "@/components/achievement/UserAchievement.vue";
 import Translate from "@/services/translationDictionary";
+import { Prop } from "vue-property-decorator";
 
 @Component({
   components: {
@@ -35,15 +39,17 @@ import Translate from "@/services/translationDictionary";
   }
 })
 export default class UserAchievements extends Vue {
+  @Prop({ required: false, default: null })
+  private friendsGroupedAchievements!: GroupedAchievements | null;
+
   private groupedAchievements: GroupedAchievements = {
     mealAchievement: {},
     mealIngredientAchievement: {},
     userAchievement: {},
     mealScheduleAchievement: {},
     friendAchievement: {},
-    any: true
+    any: false
   };
-  private any: boolean = true;
   private translate = Translate;
 
   beforeRouteEnter(
@@ -54,7 +60,12 @@ export default class UserAchievements extends Vue {
     next(instance => {
       //TODO:
       //instance.getLoggedInUser();
-      instance.fetchAchievements();
+
+      if (!this.friendsGroupedAchievements) {
+        instance.fetchAchievements();
+      } else {
+        this.groupedAchievements = this.friendsGroupedAchievements;
+      }
     });
   }
 
@@ -87,7 +98,7 @@ export default class UserAchievements extends Vue {
 }
 .achievement {
   width: fit-content;
-  margin: 10px;
+  margin: 25px 10px 10px 10px;
 }
 h4 {
   margin-top: 100px !important;

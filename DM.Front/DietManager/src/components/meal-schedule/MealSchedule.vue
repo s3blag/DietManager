@@ -18,7 +18,7 @@
           class="daily-schedule"
           v-for="(day, index) in daysOfWeek"
           :key="index"
-          :mealSchedule="mealSchedule[day]"
+          :mealSchedule="mealSchedule[firstLetterToLower(day)]"
           :label="day"
           :class="{'current-day': index+1 === currentDayOfWeek}"
           :date="getFullDateFromDayOfWeek(index)"
@@ -153,9 +153,9 @@ export default class MealSchedule extends Vue {
   }
 
   get daysOfWeek() {
-    return Object.keys(DaysOfWeek).filter(
+    return (Object.keys(DaysOfWeek).filter(
       k => typeof (DaysOfWeek as any)[k] === "number"
-    ) as string[];
+    ) as string[]).map(k => k.charAt(0).toUpperCase() + k.slice(1));
   }
 
   getCurrentWeekStartDate() {
@@ -177,6 +177,10 @@ export default class MealSchedule extends Vue {
 
   previousWeek() {
     this.addDaysToTheSelectedWeekDate(-7);
+  }
+
+  firstLetterToLower(str: string) {
+    return str.charAt(0).toLowerCase() + str.slice(1);
   }
 
   addDaysToTheSelectedWeekDate(days: number) {

@@ -7,6 +7,7 @@
     />
 
     <div v-else class="form-container content-background">
+      <h2 class="main-color">Add Meal</h2>
       <div class="column left">
         <form>
           <div class="form-group">
@@ -195,7 +196,7 @@ h5 {
   margin: 0px 5px;
   padding: 10px;
   width: 100%;
-  height: 765px;
+  height: 780px;
   border-radius: 10px;
 }
 .summary {
@@ -280,7 +281,7 @@ label {
 }
 .buttons-container {
   position: relative;
-  top: -80px;
+  top: -105px;
   height: 65px;
   display: inline-flex;
   width: 300px;

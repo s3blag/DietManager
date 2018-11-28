@@ -8,7 +8,7 @@ namespace DM.Logic.Interfaces
 {
     public interface IAchievementService
     {
-        Task<GroupedUserAchievementsVM> GetUsersAchievements(Guid userId);
+        Task<GroupedUserAchievementsVM> GetUserAchievementsAsync(Guid userId);
         Task<bool> MarkAchievementsAsReadAsync(IEnumerable<Guid> userAchievementIds, Guid userId);
         Task<IEnumerable<AchievementVM>> GetAllAchievementsAsync();
 

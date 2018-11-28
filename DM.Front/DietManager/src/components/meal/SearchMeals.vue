@@ -1,5 +1,6 @@
 <template>
   <div id="search-meals">
+    <h2 class="main-color">Search Meals</h2>
     <div id="search-input">
       <input
         @keyup.enter="searchMeals"

@@ -28,7 +28,7 @@ namespace DM.Web.Controllers
 
             var userId = Guid.Empty;
 
-            var friends = await _friendService.GetUserFriendsAsync(userId, lastReturned);
+            var friends = await _friendService.GetFriendsAsync(userId, lastReturned);
 
             if (friends == null)
             {
@@ -49,6 +49,23 @@ namespace DM.Web.Controllers
 
             return Ok();
         }
+
+        [HttpGet("{friendId}")]
+        public async Task<IActionResult> GetFriend(Guid friendId)
+        {
+            var userId = Guid.Empty;
+
+            var result = await _friendService.GetFriendWithAchievementsAsync(userId, friendId);
+
+            if (result == null || result.User == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
+
+
 
         [HttpPost("invitations")]
         public async Task<IActionResult> GetInvitations([FromBody] IndexedResult<AwaitingFriendInvitationVM> lastReturned)
@@ -95,7 +112,7 @@ namespace DM.Web.Controllers
         {
             var userId = Guid.Empty;
 
-            await _friendService.RemoveFromFriends(friendId, userId);
+            await _friendService.RemoveFromFriendsAsync(friendId, userId);
 
             return Ok();
         }

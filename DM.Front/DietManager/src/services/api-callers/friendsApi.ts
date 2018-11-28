@@ -3,6 +3,7 @@ import User from "@/ViewModels/user/user";
 import IndexedResult from "@/ViewModels/wrappers/indexedResult";
 import FriendInvitation from "@/ViewModels/user/friendInvitation";
 import UserActivity from "@/ViewModels/user/userActivity";
+import FriendWithAchievements from "@/ViewModels/user/friendWithAchievement";
 
 export default class FriendsApiCaller {
   static getFriends(
@@ -22,12 +23,30 @@ export default class FriendsApiCaller {
       });
   }
 
+  static get(
+    friendId: string,
+    successHandler: (userWithAchievements: FriendWithAchievements) => void,
+    errorHandler: (error: Error | string) => void = this.defaultErrorHandler
+  ) {
+    Axios.get(`/api/friends/${friendId}`)
+      .then(response => {
+        if (response.status === 200) {
+          successHandler(response.data as FriendWithAchievements);
+        } else {
+          errorHandler(response.statusText);
+        }
+      })
+      .catch(error => errorHandler(error));
+  }
+
   static sendInvitation(
     invitedUserId: string,
     successHandler: () => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.post("/api/friends/invite", { invitedUserId: invitedUserId })
+    Axios.post("/api/friends/invite", {
+      invitedUserId: invitedUserId
+    })
       .then(() => {
         successHandler();
       })
@@ -104,7 +123,7 @@ export default class FriendsApiCaller {
       });
   }
 
-  private static defaultErrorHandler(error: Error) {
+  private static defaultErrorHandler(error: Error | string | number) {
     // eslint-disable-next-line no-console
     console.error(error);
   }

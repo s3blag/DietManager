@@ -5,7 +5,7 @@
     </router-link>
 
     <router-link tag="li" class="link" :to="{ name: 'BrowseMeals'}">
-      <font-awesome-icon id="search-icon" class="option-icon" icon="search"/>Browse
+      <font-awesome-icon id="search-icon" class="option-icon" icon="search"/>Search
     </router-link>
 
     <router-link tag="li" class="link" :to="{ name: 'MyMeals'}">
@@ -13,7 +13,7 @@
     </router-link>
 
     <router-link tag="li" class="link" :to="{ name: 'FavouriteMeals'}">
-      <font-awesome-icon id="book-icon" class="option-icon" icon="star"/>Favourites
+      <font-awesome-icon id="favourites-icon" class="option-icon" icon="star"/>Favourites
     </router-link>
   </side-menu>
 </template>
@@ -38,10 +38,14 @@ export default class MealsManager extends Vue {}
 }
 #search-icon {
   position: relative;
-  right: 16px;
+  right: 18px;
 }
 #book-icon {
   position: relative;
-  right: 10px;
+  right: 9px;
+}
+#favourites-icon {
+  position: relative;
+  right: 5px;
 }
 </style>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DM.Database;
+using DM.Models;
 using DM.Models.Enums;
 
 namespace DM.Repositories.Interfaces
@@ -13,5 +14,6 @@ namespace DM.Repositories.Interfaces
         Task<bool> SetFriendInvitationStatusAsync(Guid invitingUserId, Guid invitedUserId, FriendInvitationStatus status);
         Task<int> GetNumberOfFriendsAsync(Guid userId);
         Task<bool> RemoveFriendAsync(Guid userId, Guid friendId);
+        Task<UserWithAchievements> GetFriendAsync(Guid userId, Guid friendId);
     }
 }

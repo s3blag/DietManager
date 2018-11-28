@@ -14,6 +14,7 @@ import NewsFeed from "./components/user/friends/NewsFeed.vue";
 import UserPanel from "@/components/user/user-panel/UserPanel.vue";
 import AccountManager from "@/components/user/user-panel/AccountManager.vue";
 import UserAchievements from "@/components/user/user-panel/UserAchievements.vue";
+import Friend from "@/components/user/friends/Friend.vue";
 
 Vue.use(Router);
 
@@ -25,6 +26,11 @@ export default new Router({
       name: "Home",
       component: Home,
       redirect: { name: "MySchedule" }
+    },
+    {
+      path: "/user/:userId",
+      name: "Friend",
+      component: Friend
     },
     {
       path: "/user-panel",
@@ -92,6 +98,10 @@ export default new Router({
           path: "my-friends",
           name: "MyFriends",
           component: MyFriends
+        },
+        {
+          path: "invitations",
+          name: "FriendInvitations"
         }
       ]
     },

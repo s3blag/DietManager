@@ -39,7 +39,7 @@ namespace DM.Web.Controllers
         {
             var userId = Guid.Empty;
 
-            var result = await _achievementService.GetUsersAchievements(userId);
+            var result = await _achievementService.GetUserAchievementsAsync(userId);
 
             return result;
         }

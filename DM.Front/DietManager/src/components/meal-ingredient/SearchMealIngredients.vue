@@ -1,6 +1,7 @@
 <template>
   <div id="search-meal-ingredients">
     <div>
+      <h2 class="main-color">Ingredients Manager</h2>
       <modal v-if="showAddMealIngredientModal">
         <add-meal-ingredient
           id="add-meal-ingredient"
@@ -22,18 +23,20 @@
         </button>
       </div>
       <h3 v-if="mealIngredients.length === 0 && lastReturned">No meal ingredients were found</h3>
-      <meal-ingredient-preview-item
-        class="meal-ingredient"
-        v-for="mealIngredient in mealIngredients"
-        :key="mealIngredient.id"
-        :mealIngredient="mealIngredient"
-        @meal-ingredient-added="mealIngredientAddedHandler"
-      />
-      <button
-        v-if="!isLast && lastReturned"
-        @click="loadMore"
-        class="load-more-button main-background-color"
-      >Load more...</button>
+      <div id="ingredients-container">
+        <meal-ingredient-preview-item
+          class="meal-ingredient"
+          v-for="mealIngredient in mealIngredients"
+          :key="mealIngredient.id"
+          :mealIngredient="mealIngredient"
+          @meal-ingredient-added="mealIngredientAddedHandler"
+        />
+        <button
+          v-if="!isLast && lastReturned"
+          @click="loadMore"
+          class="load-more-button main-background-color"
+        >Load more...</button>
+      </div>
     </div>
     <div>
       <div class="modal-buttons-container">
@@ -113,7 +116,7 @@ export default class SearchMealIngredients extends Vue {
     this.mealIngredients = [];
     this.previousSearchQuery = this.searchQuery;
 
-    const lastReturnedSearch: IndexedResult<MealSearch> = {
+    const lastReturnedSearch: IndexedResult<MealIngredientSearch> = {
       result: { query: this.searchQuery },
       isLast: this.isLast,
       index: this.searchIndex
@@ -167,6 +170,10 @@ export default class SearchMealIngredients extends Vue {
 </script>
 
 <style lang="less" scoped>
+#ingredients-container {
+  height: 390px;
+  overflow-y: auto;
+}
 #search-meal-ingredients {
   padding: 10px;
   background-color: #e6e4e4;
@@ -202,8 +209,6 @@ h3 {
   margin-top: 50px;
 }
 .modal-buttons-container {
-  position: relative;
-  top: 350px;
   button {
     width: 75px;
     height: 35px;

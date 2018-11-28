@@ -1,4 +1,5 @@
 ﻿using DM.Database;
+using DM.Models;
 using DM.Models.Enums;
 using DM.Repositories.Interfaces;
 using LinqToDB;
@@ -67,6 +68,40 @@ namespace DM.Repositories
                     Where(f => f.InvitingUserId == userId || f.InvitedUserId == userId).
                     Where(f => f.Status == FriendInvitationStatus.Accepted.ToString()).
                     CountAsync();
+            }
+        }
+
+        public async Task<UserWithAchievements> GetFriendAsync(Guid userId, Guid friendId)
+        {
+            using (var db = new DietManagerDB())
+            {
+                var friend = await db.Friends.
+                    LoadWith(f => f.InvitedUser).
+                    LoadWith(f => f.InvitingUser).
+                    Where(f => f.InvitingUserId == userId && f.InvitedUserId == friendId ||
+                               f.InvitingUserId == friendId && f.InvitedUserId == userId).
+                    Where(f => f.Status == FriendInvitationStatus.Accepted.ToString()).
+                    Select(f => f.InvitingUserId == userId ? f.InvitedUser : f.InvitingUser).
+                    FirstOrDefaultAsync();
+
+                if (friend == null)
+                {
+                    return null;
+                }
+
+                var achievements = await db.UserAchievements.
+                    LoadWith(ua => ua.Achievement).
+                    Where(ua => ua.UserId == friendId).
+                    OrderBy(ua => ua.Achievement.Category).
+                    ThenBy(ua => ua.Achievement.Type).
+                    ThenBy(ua => ua.Achievement.Value).
+                    ToListAsync();
+
+                return new UserWithAchievements()
+                {
+                    Achievements = achievements,
+                    User = friend
+                };
             }
         }
 
