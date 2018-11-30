@@ -8,7 +8,7 @@ export default class MealScheduleApiCaller {
   static get(
     selectedWeekStartDateIsoString: string,
     successHandler: (mealIngredientVM: WeeklyMealSchedule) => void,
-    errorHandler: (error: Error | string) => void = this.defaultErrorHandler
+    errorHandler: (error: string) => void = this.defaultErrorHandler
   ) {
     Axios.get(`/api/meal-schedule/week/${selectedWeekStartDateIsoString}`)
       .then(response => {

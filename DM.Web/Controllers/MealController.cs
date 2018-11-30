@@ -28,15 +28,17 @@ namespace DM.Web.Controllers
             _searchService = searchService;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetMeal(Guid id)
+        [HttpGet("{mealId}")]
+        public async Task<IActionResult> GetMeal(Guid mealId)
         {
-            if (id == Guid.Empty)
+            if (mealId == Guid.Empty)
             {
                 return NotFound();
             }
 
-            var meal = await _mealService.GetMealByIdAsync(id);
+            var userId = Guid.Empty;
+
+            var meal = await _mealService.GetMealByIdAsync(userId, mealId);
 
             if (meal == null)
             {

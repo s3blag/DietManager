@@ -196,12 +196,18 @@ export default class MealSchedule extends Vue {
   getMealSchedule() {
     MealScheduleApi.get(
       this.selectedWeekStartDate.toISOString(),
-      this.getMealScheduleSuccessHandler
+      mealSchedule => {
+        const emptySchedule = this.emptyMealSchedule;
+        this.getMealScheduleSuccessHandler(
+          Object.assign({}, emptySchedule, mealSchedule)
+        );
+      },
+      () => this.getMealScheduleSuccessHandler(this.emptyMealSchedule)
     );
   }
 
   getMealScheduleSuccessHandler(mealSchedule: WeeklyMealSchedule) {
-    this.mealSchedule = mealSchedule;
+    this.mealSchedule = Object.assign({}, this.mealSchedule, mealSchedule);
   }
 
   get shoppingList() {

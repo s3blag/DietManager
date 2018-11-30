@@ -85,5 +85,16 @@ namespace DM.Repositories
                 return succeeded;
             }
         }
+
+        public async Task<bool> ContainsAsync(Guid userId, Guid mealId)
+        {
+            using (var db = new DietManagerDB())
+            {
+                return await db.Favourites.
+                    Where(f => f.UserId == userId).
+                    Where(f => f.MealId == mealId).
+                    AnyAsync();
+            }
+        }
     }
 }

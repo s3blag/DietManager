@@ -8,11 +8,15 @@ export default class MealIngredientApiCaller {
   static get(
     mealIngredientGuid: string,
     successHandler: (mealIngredientVM: MealIngredient) => void,
-    errorHandler: (error: Error) => void = this.defaultErrorHandler
+    errorHandler: (error: Error | string) => void = this.defaultErrorHandler
   ) {
     Axios.get(`/api/meal-ingredient/${mealIngredientGuid}`)
       .then(response => {
-        successHandler(response.data as MealIngredient);
+        if (response.status === 200) {
+          successHandler(response.data as MealIngredient);
+        } else {
+          errorHandler(response.statusText);
+        }
       })
       .catch(error => errorHandler(error));
   }
@@ -36,12 +40,7 @@ export default class MealIngredientApiCaller {
   ) {
     Axios.post<IndexedResult<MealIngredient[]>>(
       "/api/meal-ingredient/search",
-      lastReturnedIndexedSearch,
-      {
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
+      lastReturnedIndexedSearch
     )
       .then(response => {
         successHandler(response.data);
@@ -51,7 +50,7 @@ export default class MealIngredientApiCaller {
       });
   }
 
-  private static defaultErrorHandler(error: Error) {
+  private static defaultErrorHandler(error: Error | string) {
     // eslint-disable-next-line no-console
     console.error(error);
   }

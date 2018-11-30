@@ -37,7 +37,7 @@ namespace DM.Logic.Services
                         await _mealScheduleRepository.GetMealScheduleEntriesInDateRangeAsync(
                                                         userId,
                                                         dateOffset,
-                                                        DateTimeOffset.Now.AddDays(Constants.MEAL_SCHEDULE_FETCH_RANGE_IN_DAYS))
+                                                        dateOffset.AddDays(Constants.MEAL_SCHEDULE_FETCH_RANGE_IN_DAYS - 1))
             );
 
             var groupedMealScheduleEntries = mealScheduleEntries.

@@ -2,7 +2,7 @@
   <div id="user-achievements">
     <div class="achievements">
       <h4 v-if="!groupedAchievements.any">
-        <span v-if="friendsGroupedAchievements">This user hasn't earned any achievements yet</span>
+        <span v-if="!isSelf">This user hasn't earned any achievements yet</span>
         <span v-else>You haven't earned any achievements yet</span>
       </h4>
       <div
@@ -61,12 +61,19 @@ export default class UserAchievements extends Vue {
       //TODO:
       //instance.getLoggedInUser();
 
-      if (!this.friendsGroupedAchievements) {
+      if (instance.isSelf) {
         instance.fetchAchievements();
       } else {
-        this.groupedAchievements = this.friendsGroupedAchievements;
+        instance.groupedAchievements = instance.friendsGroupedAchievements!;
       }
     });
+  }
+
+  get isSelf() {
+    return (
+      typeof this.friendsGroupedAchievements === "undefined" ||
+      !this.friendsGroupedAchievements
+    );
   }
 
   fetchAchievements() {

@@ -9,7 +9,7 @@ namespace DM.Logic.Interfaces
     public interface IMealService
     {
         Task<Guid> AddMealAsync(MealCreationVM mealVM, Guid userId);
-        Task<MealVM> GetMealByIdAsync(Guid id);
+        Task<MealVM> GetMealByIdAsync(Guid userId, Guid mealId);
         Task<IndexedResult<IEnumerable<MealPreviewVM>>> GetUsersMealsPreviewsAsync(Guid userId, IndexedResult<MealPreviewVM> lastReturned, int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE);
     }
 }

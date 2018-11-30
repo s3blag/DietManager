@@ -37,13 +37,30 @@ namespace DM.Logic.Services
             _userRepository = userRepository;
         }
 
-        public async Task<MealVM> GetMealByIdAsync(Guid id)
+        public async Task<MealVM> GetMealByIdAsync(Guid userId, Guid mealId)
         {
-            ValidateArguments((id, nameof(id)));
+            var meal = await _mealRepository.GetMealByIdAsync(mealId);
 
-            var meal = await _mealRepository.GetMealByIdAsync(id);
-            var ingredients = await _mealIngredientRepository.GetMealIngredientsForMealAsync(id);
+            if (meal == null)
+            {
+                return null;
+            }
+
+            var ingredients = await _mealIngredientRepository.GetMealIngredientsForMealAsync(mealId);
+
             var mealVM = _mapper.Map<MealVM>(new MealWithIngredients(meal, ingredients));
+
+            if (meal.CreatorId != userId)
+            {
+                if (await _favouritesRepository.ContainsAsync(userId, mealId))
+                {
+                    mealVM.IsFavourite = true;
+                } else
+                {
+                    mealVM.IsFavourite = false;
+                }
+
+            }
 
             return mealVM;
         }
@@ -141,28 +158,6 @@ namespace DM.Logic.Services
                      }
                  ).
                  ToList();
-        }
-
-        private void ValidateArguments(params (Object value, string name)[] arguments)
-        {
-            foreach (var (value, name) in arguments)
-            {
-                if (value is Guid id)
-                {
-                    if (id == Guid.Empty)
-                    {
-                        throw new ArgumentNullException(name);
-                    }
-                } 
-                else
-                {
-                    if (value is null)
-                    {
-                        throw new ArgumentNullException(name);
-                    }
-                }
-                    
-            }
         }
 
     }

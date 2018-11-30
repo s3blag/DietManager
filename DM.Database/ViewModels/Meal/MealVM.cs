@@ -18,6 +18,21 @@ namespace DM.Models.ViewModels
         public int? Calories { get; set; }
 
         [Required]
+        public string Description { get; set; }
+
+        [Required]
+        public int NumberOfUses { get; set; }
+
+        [Required]
+        public int NumberOfFavouriteMarks { get; set; } = 0;
+
+        [Required]
+        public UserVM Creator { get; set; }
+
+        [Required]
+        public bool? IsFavourite { get; set; }
+
+        [Required]
         [MinLength(2)]
         public IEnumerable<MealIngredientWithQuantityVM> Ingredients { get; set; }
     }

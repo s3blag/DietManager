@@ -19,6 +19,7 @@ namespace DM.Repositories
             using (var db = new DietManagerDB())
             {
                 var meal = await db.Meals.
+                    LoadWith(m => m.Creator).
                     FirstOrDefaultAsync(m => m.Id == id);
 
                 return meal;

@@ -15,7 +15,7 @@ import UserPanel from "@/components/user/user-panel/UserPanel.vue";
 import AccountManager from "@/components/user/user-panel/AccountManager.vue";
 import UserAchievements from "@/components/user/user-panel/UserAchievements.vue";
 import Friend from "@/components/user/friends/Friend.vue";
-
+import Meal from "@/components/meal/Meal.vue";
 Vue.use(Router);
 
 export default new Router({
@@ -31,6 +31,11 @@ export default new Router({
       path: "/user/:userId",
       name: "Friend",
       component: Friend
+    },
+    {
+      path: "/meal/:mealId",
+      name: "Meal",
+      component: Meal
     },
     {
       path: "/user-panel",

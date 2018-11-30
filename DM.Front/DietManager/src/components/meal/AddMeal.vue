@@ -92,7 +92,6 @@ import MealCreation from "@/ViewModels/meal/mealCreation";
 import MealIngredient from "@/ViewModels/meal-ingredient/mealIngredient";
 import MealApiCaller from "@/services/api-callers/mealApi";
 import imageApiCaller from "@/services/api-callers/imageApi";
-import MealLookup from "@/ViewModels/meal/mealLookup";
 import MealSummary from "@/components/meal/MealSummary.vue";
 
 import MealIngredientWithQuantity from "@/ViewModels/meal-ingredient/mealIngredientWithQuantity";
@@ -198,13 +197,6 @@ h5 {
   width: 100%;
   height: 780px;
   border-radius: 10px;
-}
-.summary {
-  overflow: hidden;
-  margin: 0px 15px;
-  padding: 20px;
-  min-width: 170px;
-  height: fit-content;
 }
 .add-meal:after {
   content: "";

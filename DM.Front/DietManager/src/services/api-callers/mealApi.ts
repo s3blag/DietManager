@@ -1,20 +1,24 @@
 import MealCreation from "@/ViewModels/meal/mealCreation";
 import Axios from "axios";
-import MealLookup from "@/ViewModels/meal/mealLookup";
 import MealIngredient from "@/ViewModels/meal-ingredient/mealIngredient";
 import MealPreview from "@/ViewModels/meal/mealPreview";
 import IndexedResult from "@/ViewModels/wrappers/indexedResult";
 import MealSearch from "@/ViewModels/meal/mealSearch";
+import Meal from "@/ViewModels/meal/meal";
 
 export default class MealApiCaller {
   static get(
     mealGuid: string,
-    successHandler: (mealLookupVM: MealLookup) => void,
-    errorHandler: (error: Error) => void = this.defaultErrorHandler
+    successHandler: (mealVM: Meal) => void,
+    errorHandler: (error: Error | string) => void = this.defaultErrorHandler
   ) {
-    Axios.get<MealLookup>(`/api/meal/${mealGuid}`)
+    Axios.get<Meal>(`/api/meal/${mealGuid}`)
       .then(response => {
-        successHandler(response.data);
+        if (response.status === 200) {
+          successHandler(response.data);
+        } else {
+          errorHandler(response.statusText);
+        }
       })
       .catch(error => {
         errorHandler(error);
@@ -24,11 +28,15 @@ export default class MealApiCaller {
   static add(
     mealCreationVM: MealCreation,
     successHandler: (createdMealGuid: string) => void,
-    errorHandler: (error: Error) => void = this.defaultErrorHandler
+    errorHandler: (error: Error | string) => void = this.defaultErrorHandler
   ) {
     Axios.post("/api/meal/add", mealCreationVM)
       .then(response => {
-        successHandler(response.data as string);
+        if (response.status === 200) {
+          successHandler(response.data as string);
+        } else {
+          errorHandler(response.statusText);
+        }
       })
       .catch(error => errorHandler(error));
   }
@@ -36,11 +44,15 @@ export default class MealApiCaller {
   static getMealIngredients(
     mealGuid: string,
     successHandler: (mealIngredientsVM: MealIngredient[]) => void,
-    errorHandler: (error: Error) => void = this.defaultErrorHandler
+    errorHandler: (error: Error | string) => void = this.defaultErrorHandler
   ) {
     Axios.get<MealIngredient[]>(`/api/meal/${mealGuid}/meal-ingredients`)
       .then(response => {
-        successHandler(response.data as MealIngredient[]);
+        if (response.status === 200) {
+          successHandler(response.data as MealIngredient[]);
+        } else {
+          errorHandler(response.statusText);
+        }
       })
       .catch(error => errorHandler(error));
   }
@@ -48,19 +60,18 @@ export default class MealApiCaller {
   static getMealPreviews(
     lastReturnedMealPreview: IndexedResult<MealPreview> | null,
     successHandler: (indexedResult: IndexedResult<MealPreview[]>) => void,
-    errorHandler: (error: Error) => void = this.defaultErrorHandler
+    errorHandler: (error: Error | string) => void = this.defaultErrorHandler
   ) {
     Axios.post<IndexedResult<MealPreview[]>>(
       "/api/meal/meal-previews",
-      lastReturnedMealPreview,
-      {
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
+      lastReturnedMealPreview
     )
       .then(response => {
-        successHandler(response.data);
+        if (response.status === 200) {
+          successHandler(response.data);
+        } else {
+          errorHandler(response.statusText);
+        }
       })
       .catch(error => {
         errorHandler(error);
@@ -70,26 +81,25 @@ export default class MealApiCaller {
   static search(
     lastReturnedIndexedSearch: IndexedResult<MealSearch>,
     successHandler: (indexedResult: IndexedResult<MealPreview[]>) => void,
-    errorHandler: (error: Error) => void = this.defaultErrorHandler
+    errorHandler: (error: Error | string) => void = this.defaultErrorHandler
   ) {
     Axios.post<IndexedResult<MealPreview[]>>(
       "/api/meal/search",
-      lastReturnedIndexedSearch,
-      {
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
+      lastReturnedIndexedSearch
     )
       .then(response => {
-        successHandler(response.data);
+        if (response.status === 200) {
+          successHandler(response.data);
+        } else {
+          errorHandler(response.statusText);
+        }
       })
       .catch(error => {
         errorHandler(error);
       });
   }
 
-  private static defaultErrorHandler(error: Error) {
+  private static defaultErrorHandler(error: Error | string) {
     // eslint-disable-next-line no-console
     console.error(error);
   }
