@@ -1,22 +1,24 @@
 <template>
   <div id="user-achievements">
     <div class="achievements">
-      <h4 v-if="!groupedAchievements.any">
+      <h4 v-if="!any">
         <span v-if="!isSelf">This user hasn't earned any achievements yet</span>
         <span v-else>You haven't earned any achievements yet</span>
       </h4>
       <div
         v-else
         class="achievement-wrapper"
-        v-for="(achievements, categoryName) in groupedAchievements"
+        v-for="(achievement, categoryName) in achievements"
         :key="categoryName"
       >
         <div
           v-if="!isEmpty(achievements)"
           class="category soft-border bottom"
         >{{translate[categoryName]}}</div>
-        <div class="achievement" v-for="(values, name) in achievements" :key="name">
-          <user-achievement :values="values" :type="name"/>
+        <div class="achievement-types-wrapper">
+          <div class="achievement" v-for="(values, name) in achievement" :key="name">
+            <user-achievement :values="values" :type="name"/>
+          </div>
         </div>
       </div>
     </div>
@@ -28,7 +30,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import GroupedAchievements from "@/ViewModels/achievement/groupedAchievements";
 import AchievementsApi from "@/services/api-callers/achievementsApi";
-import Achievement from "@/ViewModels/achievement/achievement";
+import Achievement from "@/ViewModels/achievement/userAchievements";
 import UserAchievement from "@/components/achievement/UserAchievement.vue";
 import Translate from "@/services/translationDictionary";
 import { Prop } from "vue-property-decorator";
@@ -40,14 +42,16 @@ import { Prop } from "vue-property-decorator";
 })
 export default class UserAchievements extends Vue {
   @Prop({ required: false, default: null })
-  private friendsGroupedAchievements!: GroupedAchievements | null;
+  private friendsGroupedAchievements!: Achievement | null;
 
-  private groupedAchievements: GroupedAchievements = {
-    mealAchievement: {},
-    mealIngredientAchievement: {},
-    userAchievement: {},
-    mealScheduleAchievement: {},
-    friendAchievement: {},
+  private groupedAchievements: Achievement = {
+    groupedAchievements: {
+      mealAchievement: {},
+      mealIngredientAchievement: {},
+      userAchievement: {},
+      mealScheduleAchievement: {},
+      friendAchievement: {}
+    },
     any: false
   };
   private translate = Translate;
@@ -58,22 +62,30 @@ export default class UserAchievements extends Vue {
     next: (onBeforeRouteEnter: (instance: UserAchievements) => void) => void
   ) {
     next(instance => {
-      //TODO:
-      //instance.getLoggedInUser();
-
       if (instance.isSelf) {
         instance.fetchAchievements();
-      } else {
-        instance.groupedAchievements = instance.friendsGroupedAchievements!;
       }
     });
   }
 
+  get achievements() {
+    if (!this.isSelf) {
+      return this.friendsGroupedAchievements!.groupedAchievements;
+    } else {
+      return this.groupedAchievements.groupedAchievements;
+    }
+  }
+
+  get any() {
+    if (!this.isSelf) {
+      return this.friendsGroupedAchievements!.any;
+    } else {
+      return this.groupedAchievements.any;
+    }
+  }
+
   get isSelf() {
-    return (
-      typeof this.friendsGroupedAchievements === "undefined" ||
-      !this.friendsGroupedAchievements
-    );
+    return this.friendsGroupedAchievements === null;
   }
 
   fetchAchievements() {
@@ -82,7 +94,7 @@ export default class UserAchievements extends Vue {
         this.groupedAchievements = Object.assign(
           {},
           this.groupedAchievements,
-          achievements.groupedAchievements
+          achievements
         );
       }
     });
@@ -95,6 +107,10 @@ export default class UserAchievements extends Vue {
 </script>
 
 <style lang="less" scoped>
+.achievement-types-wrapper {
+  margin-left: 0px;
+  display: inline-flex;
+}
 .category {
   font-size: 1.05em;
   font-weight: bold;

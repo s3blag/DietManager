@@ -107,7 +107,7 @@ export default class AccountManager extends Vue {
   }
 
   getLoggedInUser() {
-    const loggedInUser = AuthService.loggedInUser;
+    const loggedInUser = AuthService.getloggedInUser();
     if (loggedInUser) {
       this.assignNewUser(loggedInUser);
     } else {

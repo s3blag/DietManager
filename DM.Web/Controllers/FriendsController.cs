@@ -43,7 +43,7 @@ namespace DM.Web.Controllers
         [HttpPost("invite")]
         public async Task<IActionResult> Invite([FromBody] FriendInvitationCreationVM invitation)
         {
-            var userId = new Guid(User.Identity.Name);;
+            var userId = new Guid(User.Identity.Name);
 
             invitation.InvitingUserId = userId;
 
@@ -55,7 +55,7 @@ namespace DM.Web.Controllers
         [HttpGet("{friendId}")]
         public async Task<IActionResult> GetFriend(Guid friendId)
         {
-            var userId = new Guid(User.Identity.Name);;
+            var userId = new Guid(User.Identity.Name);
 
             var result = await _friendService.GetFriendWithAchievementsAsync(userId, friendId);
 
@@ -77,7 +77,7 @@ namespace DM.Web.Controllers
                 return NotFound("Invalid arguments");
             }
 
-            var userId = new Guid(User.Identity.Name);;
+            var userId = new Guid(User.Identity.Name);
 
             var friendInvitations = await _friendService.GetFriendInvitationsAsync(userId, lastReturned);
 
@@ -92,7 +92,7 @@ namespace DM.Web.Controllers
         [HttpPost("invitations/accept")]
         public async Task<IActionResult> AcceptInvitation([FromBody]InvitationAction invitationData)
         {
-            var userId = new Guid(User.Identity.Name);;
+            var userId = new Guid(User.Identity.Name);
 
             await _friendService.AcceptFriendInvitationAsync(invitationData.InvitingUserId.Value, userId);
 
@@ -102,7 +102,7 @@ namespace DM.Web.Controllers
         [HttpPost("invitations/ignore")]
         public async Task<IActionResult> IgnoreInvitation([FromBody]InvitationAction invitationData)
         {
-            var userId = new Guid(User.Identity.Name);;
+            var userId = new Guid(User.Identity.Name);
 
             await _friendService.IgnoreFriendInvitationAsync(invitationData.InvitingUserId.Value, userId);
 
@@ -112,7 +112,7 @@ namespace DM.Web.Controllers
         [HttpDelete("remove/{friendId}")]
         public async Task<IActionResult> Remove(Guid friendId)
         {
-            var userId = new Guid(User.Identity.Name);;
+            var userId = new Guid(User.Identity.Name);
 
             await _friendService.RemoveFromFriendsAsync(friendId, userId);
 
@@ -127,7 +127,7 @@ namespace DM.Web.Controllers
                 return NotFound("Invalid arguments");
             }
 
-            var userId = new Guid("00000000-0000-0000-0000-000000000000");
+            var userId = new Guid(User.Identity.Name);
 
             var newsFeed = await _friendService.GetFriendsActivitiesFeedAsync(userId, lastReturned);
 
