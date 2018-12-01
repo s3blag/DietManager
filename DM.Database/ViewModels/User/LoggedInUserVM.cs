@@ -1,9 +1,18 @@
-﻿using System;
-
-namespace DM.Models.ViewModels
+﻿namespace DM.Models.ViewModels
 {
     public class LoggedInUserVM: UserVM
     {
-        public DateTimeOffset? TokenExpirationDate { get; set; }
+        public LoggedInUserVM(UserVM user, AuthToken token)
+        {
+            Id = user.Id;
+            ImageId = user.ImageId;
+            Name = user.Name;
+            Surname = user.Surname;
+            City = user.City;
+            IsFriend = user.IsFriend;
+            Token = token;
+        }
+
+        public AuthToken Token { get; set; }
     }
 }

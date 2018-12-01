@@ -117,7 +117,9 @@ export default class MyMeals extends Vue {
 #invite-button {
   padding: 20px;
 }
-
+.link {
+  text-decoration: underline;
+}
 @keyframes button-animation {
   0% {
     left: 0.6px;

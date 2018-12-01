@@ -1,24 +1,20 @@
 <template>
   <div class="header-container">
     <router-link class="header-element" to="/">
-      <font-awesome-icon class="site-logo main-color" icon="apple-alt" />
+      <font-awesome-icon class="site-logo main-color" icon="apple-alt"/>
     </router-link>
-    <router-link class="header-element hover" to="/friend-manager">
-      Friends
-    </router-link>
-    <router-link class="header-element hover" to="/my-schedule">
-      Schedule
-    </router-link>
-    <router-link class="header-element hover" to="/meal-manager">
-      Meals
-    </router-link>
-    <div class="user-info">
-      <div class="header-element">
-        Hi, {{username}}!
-      </div>
+    <router-link class="header-element hover" to="/friend-manager">Friends</router-link>
+    <router-link class="header-element hover" to="/my-schedule">Schedule</router-link>
+    <router-link class="header-element hover" to="/meal-manager">Meals</router-link>
+    <div class="float-right" v-if="isUserLoggedIn">
+      <div class="header-element">Hi, {{username}}!</div>
       <router-link class="header-element" to="/user-panel">
-        <font-awesome-icon v-if="!avatarId" class="user-avatar main-color" icon="user-circle" />
+        <font-awesome-icon v-if="!avatarId" class="user-avatar main-color" icon="user-circle"/>
       </router-link>
+    </div>
+    <div id="login-and-registration" class="float-right">
+      <router-link class="header-element hover" :to="{name: 'Login'}">Login</router-link>
+      <router-link class="header-element hover" :to="{name: 'Register'}">Register</router-link>
     </div>
   </div>
 </template>
@@ -29,11 +25,16 @@ import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 
 import User from "@/ViewModels/user/user";
+import AuthService from "@/services/authService";
 
 @Component({})
 export default class Header extends Vue {
   @Prop()
   private user!: User;
+
+  get isUserLoggedIn() {
+    return AuthService.isLoggedIn;
+  }
 
   get username() {
     //return user.username;
@@ -68,7 +69,7 @@ export default class Header extends Vue {
   font-size: 1.1em;
   line-height: 30px;
 }
-.user-info {
+.float-right {
   float: right;
 }
 .site-logo {

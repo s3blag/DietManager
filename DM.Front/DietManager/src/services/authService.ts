@@ -1,17 +1,21 @@
 import UserLogin from "@/ViewModels/user/userLogin";
 import Axios from "axios";
 import User from "@/ViewModels/user/user";
-import UserRegistration from "@/ViewModels/user/passwordRegistration";
 import LoggedInUser from "@/ViewModels/user/loggedInUser";
+import UserRegistrationForm from "@/ViewModels/user/userRegistrationForm";
 
 export default class AuthService {
-  private static signedInUser: LoggedInUser | null = null;
+  private static get signedInUser() {
+    return JSON.parse(localStorage.getItem(
+      "user"
+    ) as string) as LoggedInUser | null;
+  }
 
   static get isLoggedIn() {
     return (
       this.signedInUser !== null &&
-      this.signedInUser.tokenExpirationDate &&
-      this.signedInUser.tokenExpirationDate > new Date()
+      this.signedInUser.token &&
+      this.signedInUser.token.expiration > new Date()
     );
   }
 
@@ -31,7 +35,7 @@ export default class AuthService {
     this.sendSignInRequest(
       userLogin,
       userLogin => {
-        this.signedInUser = userLogin;
+        this.setUser(userLogin);
         onSuccess();
       },
       onError
@@ -39,14 +43,14 @@ export default class AuthService {
   }
 
   static register(
-    userRegistration: UserRegistration,
+    userRegistration: UserRegistrationForm,
     onSuccess: (user: User) => void,
     onError: (errors: any) => void
   ) {
     this.sendRegistrationRequest(
       userRegistration,
       user => {
-        this.signedInUser = user;
+        this.setUser(user);
         onSuccess(user);
       },
       onError
@@ -58,7 +62,7 @@ export default class AuthService {
     onError: () => void
   ) {
     this.sendGetLoggedUserRequest(loggedInUser => {
-      this.signedInUser = loggedInUser;
+      this.setUser(loggedInUser);
       onSuccess(loggedInUser);
     }, onError);
   }
@@ -68,31 +72,57 @@ export default class AuthService {
     onError: (errors: string[]) => void
   ) {
     this.sendDeleteAccountRequest(() => {
-      this.signedInUser = null;
+      this.logout();
       onSuccess();
     }, onError);
+  }
+
+  static get authHeader() {
+    let user = JSON.parse(localStorage.getItem(
+      "user"
+    ) as string) as LoggedInUser;
+
+    if (user && user.token) {
+      return { Authorization: "Bearer " + user.token.value };
+    } else {
+      return {} as any;
+    }
+  }
+
+  public static logout() {
+    localStorage.removeItem("user");
+  }
+
+  private static setUser(user: LoggedInUser) {
+    if (user.token) {
+      localStorage.setItem("user", JSON.stringify(user));
+    }
   }
 
   private static sendSignInRequest(
     userLogin: UserLogin,
     successHandler: (loggedInUser: LoggedInUser) => void,
-    errorHandler: (error: Error) => void
+    errorHandler: (error: Error | string) => void
   ) {
-    Axios.post<LoggedInUser>("/api/user/sign-in", userLogin)
+    Axios.post<LoggedInUser>("/api/auth/login", userLogin)
       .then(response => {
-        successHandler(response.data);
+        if (response.status === 400) {
+          errorHandler(response.statusText);
+        } else {
+          successHandler(response.data);
+        }
       })
       .catch(error => {
-        errorHandler(error);
+        if (error.response.status === 400) errorHandler(error.response.data);
       });
   }
 
   private static sendRegistrationRequest(
-    userRegistration: UserRegistration,
+    userRegistration: UserRegistrationForm,
     successHandler: (loggedInUser: LoggedInUser) => void,
     errorHandler: (error: Error) => void
   ) {
-    Axios.post<LoggedInUser>("/api/user/register", userRegistration)
+    Axios.post<LoggedInUser>("/api/auth/register", userRegistration)
       .then(response => {
         successHandler(response.data);
       })
@@ -105,7 +135,7 @@ export default class AuthService {
     onSuccess: (user: LoggedInUser) => void,
     onError: (errors: any) => void
   ) {
-    Axios.get<LoggedInUser>("/api/user")
+    Axios.get<LoggedInUser>("/api/user", this.authHeader)
       .then(response => {
         onSuccess(response.data);
       })
@@ -118,7 +148,7 @@ export default class AuthService {
     onSuccess: () => void,
     onError: (errors: any) => void
   ) {
-    Axios.delete("/api/user")
+    Axios.delete("/api/user", this.authHeader)
       .then(() => {
         onSuccess();
       })

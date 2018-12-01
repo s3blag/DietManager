@@ -88,21 +88,21 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost("invitations/accept")]
-        public async Task<IActionResult> AcceptInvitation([FromBody]Guid friendId)
+        public async Task<IActionResult> AcceptInvitation([FromBody]InvitationAction invitationData)
         {
             var userId = Guid.Empty;
 
-            await _friendService.AcceptFriendInvitationAsync(friendId, userId);
+            await _friendService.AcceptFriendInvitationAsync(invitationData.InvitingUserId.Value, userId);
 
             return Ok();
         }
 
         [HttpPost("invitations/ignore")]
-        public async Task<IActionResult> IgnoreInvitation([FromBody]Guid friendId)
+        public async Task<IActionResult> IgnoreInvitation([FromBody]InvitationAction invitationData)
         {
             var userId = Guid.Empty;
 
-            await _friendService.IgnoreFriendInvitationAsync(friendId, userId);
+            await _friendService.IgnoreFriendInvitationAsync(invitationData.InvitingUserId.Value, userId);
 
             return Ok();
         }

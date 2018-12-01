@@ -1,14 +1,14 @@
-import Axios from "axios";
 import IndexedResult from "@/ViewModels/wrappers/indexedResult";
 import MealPreview from "@/ViewModels/meal/mealPreview";
+import BaseApiCaller from "./baseApiCaller";
 
-export default class FavouritesApiCaller {
+export default class FavouritesApiCaller extends BaseApiCaller {
   static add(
     mealId: string,
     successHandler: (guid: string) => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.post("/api/favourites", {
+    super.Axios.post("/api/favourites", {
       mealId: mealId
     })
       .then(response => successHandler(response.data))
@@ -20,7 +20,7 @@ export default class FavouritesApiCaller {
     successHandler: (guid: string) => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.delete(`/api/favourites/${mealId}`)
+    super.Axios.delete(`/api/favourites/${mealId}`)
       .then(response => successHandler(response.data))
       .catch(error => errorHandler(error));
   }
@@ -30,7 +30,7 @@ export default class FavouritesApiCaller {
     successHandler: (indexedResult: IndexedResult<MealPreview[]>) => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.post<IndexedResult<MealPreview[]>>(
+    super.Axios.post<IndexedResult<MealPreview[]>>(
       "/api/favourites/get",
       lastReturnedMealPreview,
       {

@@ -1,19 +1,13 @@
 <template>
   <div id="achievement">
     <div id="achievement-icon">
-      <font-awesome-icon class="user-avatar main-color" icon="trophy" size="lg" />
+      <font-awesome-icon class="user-avatar main-color" icon="trophy" size="lg"/>
     </div>
     <hr>
     <div id="achievement-details">
-      <div>
-        Category: {{achievement.category}}
-      </div>
-      <div>
-        Type: {{achievement.type}}
-      </div>
-      <div>
-        Value: {{achievement.value}}
-      </div>
+      <div>Category: {{translation[firstLetterToLower(achievement.category)]}}</div>
+      <div>Type: {{translation[firstLetterToLower(achievement.type)]}}</div>
+      <div>Value: {{achievement.value}}</div>
     </div>
   </div>
 </template>
@@ -23,11 +17,16 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import Achievement from "@/ViewModels/achievement/achievement";
 import { Prop } from "vue-property-decorator";
-
+import Translation from "@/services/translationDictionary";
 @Component
 export default class AchievementItem extends Vue {
   @Prop({ required: true })
   private achievement!: Achievement;
+  private translation = Translation;
+
+  firstLetterToLower(str: string) {
+    return str.charAt(0).toLowerCase() + str.slice(1);
+  }
 }
 </script>
 

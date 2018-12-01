@@ -1,14 +1,12 @@
-import Axios from "axios";
+import BaseApiCaller from "./baseApiCaller";
 
-export default class ImageApiCaller {
+export default class ImageApiCaller extends BaseApiCaller {
   static add(
     imageString: string,
     successHandler: (guid: string) => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.post("/api/image/add", {
-      image: imageString
-    })
+    super.Axios.post("/api/image/add", { image: imageString })
       .then(response => successHandler(response.data))
       .catch(error => errorHandler(error));
   }
@@ -18,7 +16,7 @@ export default class ImageApiCaller {
     successHandler: (imageString: string) => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.get("/api/image/" + imageGuid).then(response =>
+    super.Axios.get("/api/image/" + imageGuid).then(response =>
       successHandler(response.data)
     );
   }

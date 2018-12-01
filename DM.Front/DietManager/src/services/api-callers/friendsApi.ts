@@ -1,17 +1,17 @@
-import Axios from "axios";
 import User from "@/ViewModels/user/user";
 import IndexedResult from "@/ViewModels/wrappers/indexedResult";
 import FriendInvitation from "@/ViewModels/user/friendInvitation";
 import UserActivity from "@/ViewModels/user/userActivity";
 import FriendWithAchievements from "@/ViewModels/user/friendWithAchievement";
+import BaseApiCaller from "./baseApiCaller";
 
-export default class FriendsApiCaller {
+export default class FriendsApiCaller extends BaseApiCaller {
   static getFriends(
     lastReturnedFriend: IndexedResult<User> | null,
     successHandler: (indexedResult: IndexedResult<User[]>) => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.post<IndexedResult<User[]>>(
+    super.Axios.post<IndexedResult<User[]>>(
       "/api/friends/my-friends",
       lastReturnedFriend
     )
@@ -28,7 +28,7 @@ export default class FriendsApiCaller {
     successHandler: (userWithAchievements: FriendWithAchievements) => void,
     errorHandler: (error: Error | string) => void = this.defaultErrorHandler
   ) {
-    Axios.get(`/api/friends/${friendId}`)
+    super.Axios.get(`/api/friends/${friendId}`)
       .then(response => {
         if (response.status === 200) {
           successHandler(response.data as FriendWithAchievements);
@@ -44,7 +44,7 @@ export default class FriendsApiCaller {
     successHandler: () => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.post("/api/friends/invite", {
+    super.Axios.post("/api/friends/invite", {
       invitedUserId: invitedUserId
     })
       .then(() => {
@@ -58,7 +58,7 @@ export default class FriendsApiCaller {
     successHandler: (indexedResult: IndexedResult<FriendInvitation[]>) => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.post<IndexedResult<FriendInvitation[]>>(
+    super.Axios.post<IndexedResult<FriendInvitation[]>>(
       "/api/friends/invitations",
       lastReturnedInvitation
     )
@@ -75,7 +75,9 @@ export default class FriendsApiCaller {
     successHandler: () => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.post("/api/friends/invitations/accept", invitingUserId)
+    super.Axios.post("/api/friends/invitations/accept", {
+      invitingUserId: invitingUserId
+    })
       .then(() => {
         successHandler();
       })
@@ -87,7 +89,9 @@ export default class FriendsApiCaller {
     successHandler: () => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.post("/api/friends/invitations/ignore", invitingUserId)
+    super.Axios.post("/api/friends/invitations/ignore", {
+      invitingUserId: invitingUserId
+    })
       .then(() => {
         successHandler();
       })
@@ -99,7 +103,7 @@ export default class FriendsApiCaller {
     successHandler: () => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.delete(`/api/friends/remove/${friendId}`)
+    super.Axios.delete(`/api/friends/remove/${friendId}`)
       .then(() => {
         successHandler();
       })
@@ -111,7 +115,7 @@ export default class FriendsApiCaller {
     successHandler: (indexedResult: IndexedResult<UserActivity[]>) => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.post<IndexedResult<UserActivity[]>>(
+    super.Axios.post<IndexedResult<UserActivity[]>>(
       "/api/friends/news-feed",
       lastReturnedActivity
     )

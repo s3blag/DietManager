@@ -12,7 +12,7 @@
       <font-awesome-icon id="my-friends-icon" class="option-icon" icon="user-friends"/>My Friends
     </router-link>
 
-    <router-link tag="li" class="link" :to="{ name: 'Invitations'}">
+    <router-link tag="li" class="link" :to="{ name: 'FriendInvitations'}">
       <font-awesome-icon id="friend-invitations-icon" class="option-icon" icon="envelope"/>Invitations
     </router-link>
   </side-menu>

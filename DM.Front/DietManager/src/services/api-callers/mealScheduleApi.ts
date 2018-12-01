@@ -1,16 +1,16 @@
-import Axios from "axios";
 import WeeklyMealSchedule from "@/ViewModels/meal-schedule/weeklyMealSchedule";
 import MealScheduleEntryCreation from "@/ViewModels/meal-schedule/mealScheduleEntryCreation";
 import MealScheduleEntryUpdate from "@/ViewModels/meal-schedule/mealScheduleEntryUpdate";
 import { Actions } from "@/ViewModels/enums/actions";
+import BaseApiCaller from "./baseApiCaller";
 
-export default class MealScheduleApiCaller {
+export default class MealScheduleApiCaller extends BaseApiCaller {
   static get(
     selectedWeekStartDateIsoString: string,
     successHandler: (mealIngredientVM: WeeklyMealSchedule) => void,
     errorHandler: (error: string) => void = this.defaultErrorHandler
   ) {
-    Axios.get(`/api/meal-schedule/week/${selectedWeekStartDateIsoString}`)
+    super.Axios.get(`/api/meal-schedule/week/${selectedWeekStartDateIsoString}`)
       .then(response => {
         if (response.status === 200) {
           successHandler(response.data as WeeklyMealSchedule);
@@ -26,7 +26,7 @@ export default class MealScheduleApiCaller {
     successHandler: (createdMealScheduleEntryGuid: string) => void,
     errorHandler: (error: Error | string) => void = this.defaultErrorHandler
   ) {
-    Axios.post("/api/meal-schedule/entry", mealScheduleEntryCreation)
+    super.Axios.post("/api/meal-schedule/entry", mealScheduleEntryCreation)
       .then(response => {
         if (response.status === 200) {
           successHandler(response.data as string);
@@ -42,7 +42,7 @@ export default class MealScheduleApiCaller {
     successHandler: (arg: Actions) => void,
     errorHandler: (error: Error | string) => void = this.defaultErrorHandler
   ) {
-    Axios.delete(`/api/meal-schedule/entry/${mealScheduleEntryId}`)
+    super.Axios.delete(`/api/meal-schedule/entry/${mealScheduleEntryId}`)
       .then(response => {
         if (response.status === 200) {
           successHandler(Actions.Delete);
@@ -58,7 +58,7 @@ export default class MealScheduleApiCaller {
     successHandler: (actionType: Actions) => void,
     errorHandler: (error: Error | string) => void = this.defaultErrorHandler
   ) {
-    Axios.patch("/api/meal-schedule/entry/", {
+    super.Axios.patch("/api/meal-schedule/entry/", {
       id: mealScheduleEntryUpdate.id,
       newDate: mealScheduleEntryUpdate.newDate.toISOString()
     })

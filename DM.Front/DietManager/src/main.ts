@@ -57,13 +57,13 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 Vue.use(BootstrapVue);
 
 import "@/style/global.less";
-
-Axios.defaults.headers.post["Content-Type"] = "application/json";
+import BaseApiCaller from "./services/api-callers/baseApiCaller";
 
 Vue.config.productionTip = false;
 
+BaseApiCaller.initConfig();
+
 new Vue({
   router,
-  store,
   render: h => h(App)
 }).$mount("#app");

@@ -1,15 +1,15 @@
 import Search from "@/ViewModels/meal/mealSearch";
 import IndexedResult from "@/ViewModels/wrappers/indexedResult";
 import User from "@/ViewModels/user/user";
-import Axios from "axios";
+import BaseApiCaller from "./baseApiCaller";
 
-export default class UserApiCaller {
+export default class UserApiCaller extends BaseApiCaller {
   static search(
     lastReturnedUserSearchResult: IndexedResult<Search> | null,
     successHandler: (indexedResult: IndexedResult<User[]>) => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.post<IndexedResult<User[]>>(
+    super.Axios.post<IndexedResult<User[]>>(
       "/api/user/search",
       lastReturnedUserSearchResult
     )
@@ -25,7 +25,7 @@ export default class UserApiCaller {
     successHandler: () => void,
     errorHandler: (error: string[] | null) => void
   ) {
-    Axios.delete("/api/user/avatar")
+    super.Axios.delete("/api/user/avatar")
       .then(() => successHandler())
       .catch(errorHandler);
   }
@@ -35,7 +35,7 @@ export default class UserApiCaller {
     successHandler: (newAvatarId: string) => void,
     errorHandler: (error: string[] | null) => void
   ) {
-    Axios.patch("/api/user/avatar", { imageId: newAvatarId })
+    super.Axios.patch("/api/user/avatar", { imageId: newAvatarId })
       .then(response => successHandler(response.data))
       .catch(errorHandler);
   }

@@ -8,6 +8,7 @@ import FavouriteMeals from "@/components/meal/FavouriteMeals.vue";
 import SearchMeals from "@/components/meal/SearchMeals.vue";
 import FriendManager from "./components/user/friends/FriendManager.vue";
 import MyFriends from "@/components/user/friends/MyFriends.vue";
+import FriendInvitations from "@/components/user/friends/Invitations.vue";
 import SearchUsers from "@/components/user/friends/SearchUsers.vue";
 import MealSchedule from "./components/meal-schedule/MealSchedule.vue";
 import NewsFeed from "./components/user/friends/NewsFeed.vue";
@@ -16,6 +17,8 @@ import AccountManager from "@/components/user/user-panel/AccountManager.vue";
 import UserAchievements from "@/components/user/user-panel/UserAchievements.vue";
 import Friend from "@/components/user/friends/Friend.vue";
 import Meal from "@/components/meal/Meal.vue";
+import Login from "@/components/account/Login.vue";
+import Registration from "@/components/account/Register.vue";
 Vue.use(Router);
 
 export default new Router({
@@ -37,6 +40,18 @@ export default new Router({
       name: "Meal",
       component: Meal
     },
+
+    {
+      path: "register",
+      name: "Register",
+      component: Registration
+    },
+    {
+      path: "login",
+      name: "Login",
+      component: Login
+    },
+
     {
       path: "/user-panel",
       name: "UserPanel",
@@ -106,7 +121,8 @@ export default new Router({
         },
         {
           path: "invitations",
-          name: "FriendInvitations"
+          name: "FriendInvitations",
+          component: FriendInvitations
         }
       ]
     },

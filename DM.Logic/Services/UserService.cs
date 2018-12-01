@@ -20,6 +20,13 @@ namespace DM.Logic.Services
             _mapper = mapper;
         }
 
+        public async Task<UserVM> GetUserByLoginDataAsync(LoginVM login)
+        {
+            return _mapper.Map<UserVM>(
+                await _userRepository.GetUserByLoginDataAsync(login.Username, login.Password)
+                );
+        }
+
         public async Task<bool> DeleteAvatarAsync(Guid userId)
         {
             // get user and take his avatar id

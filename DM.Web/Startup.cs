@@ -6,6 +6,7 @@ using DM.Models.Config;
 using DM.Repositories;
 using DM.Repositories.Interfaces;
 using LinqToDB.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.StaticFiles;
@@ -44,21 +45,29 @@ namespace Diet_Manager
 
             services.AddLinq2Identity<Guid>();
 
-            services.AddAuthentication()
+            services.AddAuthentication(cfg =>
+            {
+                cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                cfg.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
                .AddCookie()
                .AddJwtBearer(cfg =>
                {
+                   cfg.RequireHttpsMetadata = false;
+                   cfg.SaveToken = true;
                    cfg.TokenValidationParameters = new TokenValidationParameters()
                    {
-                       ValidIssuer = Configuration["Tokens:Issuer"],
-                       ValidAudience = Configuration["Tokens:Audience"],
-                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
+                       ValidateIssuerSigningKey = true,
+                       ValidIssuer = Configuration["SecuritySettings:Issuer"],
+                       ValidAudience = Configuration["SecuritySettings:Audience"],
+                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecuritySettings:Key"]))
                    };
                });
 
             services.Configure<ImageServiceConfig>(options => Configuration.GetSection("ImageServiceConfig").Bind(options));
             services.Configure<AchievementsConfig>(options => Configuration.GetSection("AchievementsConfig").Bind(options));
-
+            services.Configure<SecuritySettings>(options => Configuration.GetSection("SecuritySettings").Bind(options));
+            
             services.AddScoped<IMealRepository, MealRepository>();
             services.AddScoped<IMealIngredientRepository, MealIngredientRepository>();
             services.AddScoped<IImageRepository, ImageRepository>();
@@ -106,7 +115,9 @@ namespace Diet_Manager
                 ).Wait();
 
             app.UseStaticFiles();
-            
+
+            app.UseAuthentication();
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

@@ -6,6 +6,7 @@ using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
 using DM.Models.Wrappers;
 using DM.Web.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DM.Web.Controllers
@@ -96,10 +97,10 @@ namespace DM.Web.Controllers
             return Ok(result);
         }
 
-        
         [HttpPost("search")]
         public async Task<IActionResult> SearchMeals([FromBody]IndexedResult<MealSearchVM> lastReturned)
         {
+            var usr = User.Identity.IsAuthenticated;
             if (lastReturned != null && lastReturned.IsLast)
             {
                 return NotFound("Invalid arguments");

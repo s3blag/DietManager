@@ -208,7 +208,7 @@ export default class MealSummary extends Vue {
       return `-- ${suffix}`;
     }
 
-    return `${result} ${suffix}`;
+    return `${Math.round(result * 100) / 100} ${suffix}`;
   }
 }
 </script>

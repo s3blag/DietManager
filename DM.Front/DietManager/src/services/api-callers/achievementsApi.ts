@@ -1,15 +1,17 @@
-import Axios from "axios";
-import GroupedAchievements from "@/ViewModels/achievement/groupedAchievements";
 import UserAchievements from "@/ViewModels/achievement/userAchievements";
+import BaseApiCaller from "./baseApiCaller";
 
-export default class FriendsApiCaller {
+export default class FriendsApiCaller extends BaseApiCaller {
   static markAsRead(
     achievementIds: string[],
     successHandler: () => void,
     errorHandler: (errorCode: number | string) => void = this
       .defaultErrorHandler
   ) {
-    Axios.post("/api/achievements/my-achievements/mark-as-read", achievementIds)
+    super.Axios.post(
+      "/api/achievements/my-achievements/mark-as-read",
+      achievementIds
+    )
       .then(response => {
         if (response.status === 200) {
           successHandler();
@@ -26,7 +28,7 @@ export default class FriendsApiCaller {
     successHandler: (achievements: UserAchievements) => void,
     errorHandler: (error: number) => void = this.defaultErrorHandler
   ) {
-    Axios.get<UserAchievements>("/api/achievements/my-achievements")
+    super.Axios.get<UserAchievements>("/api/achievements/my-achievements")
       .then(response => {
         if (response.status === 200) {
           successHandler(response.data);

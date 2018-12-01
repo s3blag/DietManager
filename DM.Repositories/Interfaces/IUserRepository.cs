@@ -7,6 +7,7 @@ namespace DM.Repositories.Interfaces
 {
     public interface IUserRepository : IBaseRepository<User>
     {
+        Task<User> GetUserByLoginDataAsync(string login, string password);
         Task<User> GetUserByIdAsync(Guid id);
         Task<ICollection<User>> GetUsersByQueryAsync(string query, int index, int takeAmount);
         Task IncrementCreatedMealsCountAsync(Guid userId);

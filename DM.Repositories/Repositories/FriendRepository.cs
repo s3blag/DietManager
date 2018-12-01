@@ -19,14 +19,23 @@ namespace DM.Repositories
                 var userFriendsQuery = db.Friends.
                     LoadWith(f => f.InvitingUser).
                     LoadWith(f => f.InvitedUser).
-                    Where(f => f.InvitingUserId == userId || f.InvitedUserId == userId).
                     Where(f => f.Status == status.ToString()).
                     OrderBy(f => f.CreationDate).
                     Skip(index).
-                    Take(takeAmount).
-                    Select(f => f.InvitingUserId == userId ? f.InvitedUser : f.InvitingUser);
+                    Take(takeAmount);
 
-                return await userFriendsQuery.ToListAsync();
+                if (status == FriendInvitationStatus.Awaiting)
+                {
+                    userFriendsQuery = userFriendsQuery.Where(f => f.InvitedUserId == userId);
+                }
+                else
+                {
+                    userFriendsQuery = userFriendsQuery.Where(f => f.InvitingUserId == userId || f.InvitedUserId == userId);
+                }
+
+                return await userFriendsQuery.
+                    Select(f => f.InvitingUserId == userId ? f.InvitedUser : f.InvitingUser).
+                    ToListAsync();
             }
         }
 

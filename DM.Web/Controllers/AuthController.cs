@@ -3,11 +3,14 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using DM.Logic.Interfaces;
+using DM.Models.Config;
 using DM.Models.Models;
 using DM.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace DM.Web.Controllers
@@ -16,16 +19,13 @@ namespace DM.Web.Controllers
     [Route("api/[controller]")]
     public class AuthController : Controller
     {
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IConfiguration _configuration;
+        private readonly IUserService _userService;
+        private readonly SecuritySettings _securitySettings;
 
-        public AuthController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager,
-            IConfiguration configuration)
+        public AuthController(IUserService userService, IOptions<SecuritySettings> options)
         {
-            _signInManager = signInManager;
-            _userManager = userManager;
-            _configuration = configuration;
+            _userService = userService;
+            _securitySettings = options.Value;
         }
 
         public IActionResult Index()
@@ -33,56 +33,50 @@ namespace DM.Web.Controllers
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateToken([FromBody] LoginVM model)
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginVM model)
         {
-            if (model == null)
+            var user1 = User;
+            if (model == null || !ModelState.IsValid)
             {
-                throw new ArgumentNullException(nameof(model));
+                return BadRequest("Invalid login data.");
             }
 
-            if (ModelState.IsValid)
-            {
-                var user = await _userManager.FindByNameAsync(model.Username);
+            var user = await _userService.GetUserByLoginDataAsync(model);
 
-                if (user != null)
+            if (user == null)
+            {
+                return BadRequest("Invalid username or password.");
+            }
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_securitySettings.Key));
+
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Issuer = _securitySettings.Issuer,
+                Audience = _securitySettings.Audience,
+                Subject = new ClaimsIdentity(new Claim[]
                 {
-                    var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
+                    new Claim(ClaimTypes.Name, user.Id.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = credentials
+            };
 
-                    if (result.Succeeded)
-                    {
-                        var claims = new[]
-                        {
-                            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName)
-                        };
+            var token = new JwtSecurityTokenHandler().CreateToken(tokenDescriptor);
 
-                        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Tokens:Key"]));
+            var results = new AuthToken
+            {
+                Value = new JwtSecurityTokenHandler().WriteToken(token),
+                Expiration = token.ValidTo
+            };
 
-                        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var loggedInUser = new LoggedInUserVM(user, results);
 
-                        var token = new JwtSecurityToken(
-                            _configuration["Tokens:Issuer"],
-                            _configuration["Tokens:Audience"],
-                            claims,
-                            expires: DateTime.UtcNow.AddMinutes(30),
-                            signingCredentials: credentials
-                            );
-
-                        var results = new
-                        {
-                            token = new JwtSecurityTokenHandler().WriteToken(token),
-                            expiration = token.ValidTo
-                        };
-
-                        return Created("", results);
-                    }
-                }
-
-            }
-
-            return BadRequest();
+            return Ok(loggedInUser);
+            
         }
     }
 }

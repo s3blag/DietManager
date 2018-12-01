@@ -1,16 +1,16 @@
 import MealIngredient from "@/ViewModels/meal-ingredient/mealIngredient";
-import Axios from "axios";
 import MealIngredientCreation from "@/ViewModels/meal-ingredient/mealIngredientCreation";
 import MealIngredientSearch from "@/ViewModels/meal-ingredient/mealIngredientSearch";
 import IndexedResult from "@/ViewModels/wrappers/indexedResult";
+import BaseApiCaller from "./baseApiCaller";
 
-export default class MealIngredientApiCaller {
+export default class MealIngredientApiCaller extends BaseApiCaller {
   static get(
     mealIngredientGuid: string,
     successHandler: (mealIngredientVM: MealIngredient) => void,
     errorHandler: (error: Error | string) => void = this.defaultErrorHandler
   ) {
-    Axios.get(`/api/meal-ingredient/${mealIngredientGuid}`)
+    super.Axios.get(`/api/meal-ingredient/${mealIngredientGuid}`)
       .then(response => {
         if (response.status === 200) {
           successHandler(response.data as MealIngredient);
@@ -26,7 +26,7 @@ export default class MealIngredientApiCaller {
     successHandler: (createdMealIngredientGuid: string) => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.post("/api/meal-ingredient/add", mealIngredientCreationVM)
+    super.Axios.post("/api/meal-ingredient/add", mealIngredientCreationVM)
       .then(response => {
         successHandler(response.data as string);
       })
@@ -38,7 +38,7 @@ export default class MealIngredientApiCaller {
     successHandler: (indexedResult: IndexedResult<MealIngredient[]>) => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
-    Axios.post<IndexedResult<MealIngredient[]>>(
+    super.Axios.post<IndexedResult<MealIngredient[]>>(
       "/api/meal-ingredient/search",
       lastReturnedIndexedSearch
     )

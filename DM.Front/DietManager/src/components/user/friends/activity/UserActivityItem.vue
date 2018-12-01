@@ -1,25 +1,34 @@
 <template>
   <div id="user-activity">
     <div id="user">
-      <router-link :to="'/users/' + userActivity.user.id" class="avatar-image-container">
+      <router-link :to="'/user/' + userActivity.user.id" class="avatar-image-container">
         <image-wrapper :imageId="userActivity.user.imageId" id="image" :asWheel="true">
           <template slot="placeholder" class="placeholder">
-            <font-awesome-icon class="user-avatar main-color" icon="user-circle" />
+            <font-awesome-icon class="user-avatar main-color" icon="user-circle"/>
           </template>
         </image-wrapper>
       </router-link>
       <span id="activity-description">
-        <router-link class="user-link" :to="'/users/' + userActivity.user.id">{{this.userActivity.user.name + " " + this.userActivity.user.surname}}</router-link>
+        <router-link
+          class="user-link"
+          :to="'/user/' + userActivity.user.id"
+        >{{this.userActivity.user.name + " " + this.userActivity.user.surname}}</router-link>
         {{activityDescription}}
       </span>
     </div>
     <hr>
     <div id="achievement-content">
-      <new-friend-activity v-if="isAboutNewFriend" :friend="userActivity.friend" />
-      <meal-activity v-else-if="isAboutAddedMeal" :meal="userActivity.meal" />
-      <new-favourite-activity v-else-if="isAboutNewFavouriteMeal" :meal="userActivity.favourite" />
-      <meal-ingredient-activity v-else-if="isAboutAddedMealIngredient" :mealIngredient="userActivity.mealIngredient" />
-      <new-achievement-activity v-else-if="isAboutNewAchievement" :achievement="userActivity.achievement" />
+      <new-friend-activity v-if="isAboutNewFriend" :friend="userActivity.friend"/>
+      <meal-activity v-else-if="isAboutAddedMeal" :meal="userActivity.meal"/>
+      <new-favourite-activity v-else-if="isAboutNewFavouriteMeal" :meal="userActivity.favourite"/>
+      <meal-ingredient-activity
+        v-else-if="isAboutAddedMealIngredient"
+        :mealIngredient="userActivity.mealIngredient"
+      />
+      <new-achievement-activity
+        v-else-if="isAboutNewAchievement"
+        :achievement="userActivity.achievement"
+      />
     </div>
   </div>
 </template>
@@ -111,6 +120,12 @@ export default class UserActivtyItem extends Vue {
 #activity-description {
   text-align: left;
   margin: 10px 0px 0px 5px;
+}
+#achievement-content {
+  > * {
+    margin: 0 auto;
+    border-style: none;
+  }
 }
 </style>
 

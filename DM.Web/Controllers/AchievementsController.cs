@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DM.Web.Controllers
@@ -34,6 +35,7 @@ namespace DM.Web.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("my-achievements")]
         public async Task<GroupedUserAchievementsVM> GetUserAchievements()
         {

@@ -20,6 +20,17 @@ namespace DM.Repositories
             }
         }
 
+        public async Task<User> GetUserByLoginDataAsync(string login, string password)
+        {
+            using (var db = new DietManagerDB())
+            {
+                return await db.Users.
+                    Where(u => u.UserName == login).
+                    Where(u => u.Password == password).
+                    SingleOrDefaultAsync();
+            }
+        }
+
         public async Task<ICollection<User>> GetUsersByQueryAsync(string query, int index, int takeAmount)
         {
             using (var db = new DietManagerDB())
