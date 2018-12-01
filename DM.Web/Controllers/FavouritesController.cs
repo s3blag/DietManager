@@ -1,12 +1,14 @@
 ﻿using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
 using DM.Models.Wrappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
 namespace DM.Web.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route("api/[controller]")]
     public class FavouritesController : Controller
@@ -26,7 +28,7 @@ namespace DM.Web.Controllers
                 return NotFound("Invalid arguments");
             }
 
-            var userId = Guid.Empty;
+            var userId = new Guid(User.Identity.Name);
 
             var favourites = await _favouritesService.GetFavouriteMealsAsync(userId, lastReturned);
 
@@ -46,7 +48,7 @@ namespace DM.Web.Controllers
                 return NotFound();
             }
 
-            var userId = Guid.Empty;
+            var userId = new Guid(User.Identity.Name);
             favouriteCreation.UserId = userId;
 
             var favouriteId = await _favouritesService.AddToFavouritesAsync(favouriteCreation);
@@ -62,7 +64,7 @@ namespace DM.Web.Controllers
                 return NotFound();
             }
 
-            var userId = Guid.Empty;
+            var userId = new Guid(User.Identity.Name);
 
             bool deleted = await _favouritesService.RemoveFromFavouritesAsync(userId, mealId);
 

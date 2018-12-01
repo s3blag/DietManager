@@ -14,15 +14,9 @@ CREATE TABLE "Images"."Image" (
     "Path"  TEXT    NOT NULL
 );
 
-CREATE TABLE "Users"."Role" (
-    "Id"        UUID    PRIMARY KEY,
-    "RoleName"  TEXT    NOT NULL
-);
-
 CREATE TABLE "Users"."User" (
     "Id"                            UUID            PRIMARY KEY,
-    "Email"                         VARCHAR(254)    UNIQUE NULL,
-    "UserName"                      VARCHAR(20)     UNIQUE NULL,
+    "UserName"                      VARCHAR(20)     UNIQUE,
     "Name"                          VARCHAR(20)     NOT NULL,
     "Surname"                       VARCHAR(35)     NOT NULL,
     "FullName"                      VARCHAR(56)     NOT NULL,
@@ -33,13 +27,10 @@ CREATE TABLE "Users"."User" (
     "CreationDate"                  TIMESTAMPTZ     NOT NULL,
     "LastLoginDate"                 TIMESTAMPTZ     NOT NULL,
     "ImageId"                       UUID            NULL,
-    "RoleId"                        UUID            NOT NULL,
     "Deleted"                       BOOL            NOT NULL DEFAULT FALSE
 );
 ALTER TABLE "Users"."User" 
-ADD CONSTRAINT FK_User_Image      FOREIGN KEY ("ImageId")     REFERENCES "Images"."Image"("Id"),
-ADD CONSTRAINT FK_User_Role       FOREIGN KEY ("RoleId")      REFERENCES "Users"."Role"("Id"),
-ADD CONSTRAINT UserName_Or_Email  CHECK (("Email" IS NOT NULL) OR ("UserName" IS NOT NULL));
+ADD CONSTRAINT FK_User_Image      FOREIGN KEY ("ImageId")     REFERENCES "Images"."Image"("Id");
 
 CREATE TABLE "Socials"."Friend" (
     PRIMARY KEY ("InvitingUserId", "InvitedUserId"),
@@ -202,106 +193,83 @@ JOIN "Meals"."MealIngredientsWithNutritions" min ON mmi."MealIngredientId" = min
 
 -- built in values
 
-INSERT INTO "Users"."Role"(
-    "Id",
-    "RoleName"
-)
-VALUES (
-    '00000000-0000-0000-0000-000000000000',
-    'DefaultRole'
-);
-
 INSERT INTO "Users"."User"(
     "Id", 
     "City",
-    "Email", 
     "UserName", 
     "Name",
     "Surname",
     "FullName",
     "Password", 
     "LastLoginDate",
-    "CreationDate", 
-    "RoleId"
+    "CreationDate"
 )
 VALUES 
 (
     '00000000-0000-0000-0000-000000000000',
     'Wroclaw',
-    'ad1@m.in',
-    'ad1@m.in',
+    'ad',
     'Sebastian',
     'Łągiewski',
     'Sebastian Łągiewski',
-    'password',
+    'ad',
     '25.10.2018 20:58:57 +02:00',
-    '25.10.2018 20:58:57 +02:00',
-    '00000000-0000-0000-0000-000000000000'
+    '25.10.2018 20:58:57 +02:00'
 ),
 (
     '10000000-0000-0000-0000-000000000000',
     'Wroclaw',
-    'ad2@m.in',
     'ad2@m.in',
     'Marcepan',
     'Marcepański',
     'Marcepan Marcepański',
     'password',
     '25.10.2018 20:58:57 +02:00',
-    '25.10.2018 20:58:57 +02:00',
-    '00000000-0000-0000-0000-000000000000'
+    '25.10.2018 20:58:57 +02:00'
 ),
 (
     '20000000-0000-0000-0000-000000000000',
     'Wroclaw',
-    'ad3@m.in',
     'ad3@m.in',
     'Klaudia',
     'Łągiewska',
     'Klaudia Łągiewski',
     'password',
     '25.10.2018 20:58:57 +02:00',
-    '25.10.2018 20:58:57 +02:00',
-    '00000000-0000-0000-0000-000000000000'
+    '25.10.2018 20:58:57 +02:00'
 ),
 (
     '30000000-0000-0000-0000-000000000000',
     'Wroclaw',
-    'ad4@m.in',
     'ad4@m.in',
     'Dawid',
     'Lorek',
     'Dawid Lorek',
     'password',
     '25.10.2018 20:58:57 +02:00',
-    '25.10.2018 20:58:57 +02:00',
-    '00000000-0000-0000-0000-000000000000'
+    '25.10.2018 20:58:57 +02:00'
 ),
 (
     '40000000-0000-0000-0000-000000000000',
     'Wroclaw',
-    'ad5@m.in',
     'ad5@m.in',
     'Przemyslaw',
     'Salata',
     'Przemyslaw Salata',
     'password',
     '25.10.2018 20:58:57 +02:00',
-    '25.10.2018 20:58:57 +02:00',
-    '00000000-0000-0000-0000-000000000000'
+    '25.10.2018 20:58:57 +02:00'
 ),
 (
     '50000000-0000-0000-0000-000000000000',
     'Wroclaw',
-    'ad6@m.in',
     'ad6@m.in',
     'Karolina',
     'Kozica',
     'Karolina Kozica',
     'password',
     '25.10.2018 20:58:57 +02:00',
-    '25.10.2018 20:58:57 +02:00',
-    '00000000-0000-0000-0000-000000000000'
+    '25.10.2018 20:58:57 +02:00'
 );
 
 INSERT INTO "Socials"."Friend"(

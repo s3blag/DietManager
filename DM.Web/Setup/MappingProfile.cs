@@ -46,6 +46,12 @@ namespace DM.Web
             CreateMap<Achievement, AchievementVM>().ReverseMap();
             CreateMap<User, UserVM>().ReverseMap();
             CreateMap<User, LoggedInUserVM>();
+            CreateMap<UserCreationVM, User>().
+                ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).
+                ForMember(target => target.UserName, config => config.MapFrom(source => source.Username)).
+                ForMember(target => target.FullName, config => config.MapFrom(source => source.Name + " " + source.Surname)).
+                ForMember(target => target.CreationDate, config => config.MapFrom(source => DateTimeOffset.Now)).
+                ForMember(target => target.LastLoginDate, config => config.MapFrom(source => DateTimeOffset.Now));
             CreateMap<UserAchievementCreation, UserAchievement>().
                 ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid()));
             CreateMap<User, AwaitingFriendInvitationVM>().

@@ -20,6 +20,16 @@ namespace DM.Repositories
             }
         }
 
+        public async Task<bool> IsUsernameUniqueAsync(string username)
+        {
+            using (var db = new DietManagerDB())
+            {
+                return !await db.Users.
+                    Where(u => u.UserName == username).
+                    AnyAsync();
+            }
+        }
+
         public async Task<User> GetUserByLoginDataAsync(string login, string password)
         {
             using (var db = new DietManagerDB())
@@ -86,7 +96,6 @@ namespace DM.Repositories
                    Where(u => u.Id == model.Id).
                    Set(u => u.ImageId, default(Guid?)).
                    Set(u => u.City, string.Empty).
-                   Set(u => u.Email, string.Empty).
                    Set(u => u.FullName, string.Empty).
                    Set(u => u.Name, string.Empty).
                    Set(u => u.Surname, string.Empty).

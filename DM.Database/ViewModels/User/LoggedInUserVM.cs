@@ -2,6 +2,8 @@
 {
     public class LoggedInUserVM: UserVM
     {
+        public LoggedInUserVM() {}
+
         public LoggedInUserVM(UserVM user, AuthToken token)
         {
             Id = user.Id;

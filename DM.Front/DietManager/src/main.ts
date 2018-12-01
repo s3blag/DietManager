@@ -1,8 +1,6 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
-import store from "./store";
-import Axios from "axios";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
@@ -58,10 +56,23 @@ Vue.use(BootstrapVue);
 
 import "@/style/global.less";
 import BaseApiCaller from "./services/api-callers/baseApiCaller";
+import AuthService from "./services/authService";
 
 Vue.config.productionTip = false;
 
 BaseApiCaller.initConfig();
+AuthService.inititalize();
+
+router.beforeEach((to, from, next) => {
+  const publicRoutes = ["/auth/login", "/auth/register"];
+  const authRequired = !publicRoutes.includes(to.path);
+
+  if (authRequired && !AuthService.isLoggedIn()) {
+    return next("/auth/login");
+  }
+
+  next();
+});
 
 new Vue({
   router,

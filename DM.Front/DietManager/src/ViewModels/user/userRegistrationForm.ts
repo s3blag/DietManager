@@ -1,5 +1,5 @@
 export default interface UserRegistrationForm {
-  login: string;
+  username: string;
   password: string;
   passwordRepeated: string;
   name: string;

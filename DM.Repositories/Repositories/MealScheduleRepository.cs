@@ -172,7 +172,7 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<bool> UpdateAsync(MealScheduleEntry model)
+        public override async Task<bool> UpdateAsync(MealScheduleEntry model)
         {
             using (var db = new DietManagerDB())
             {

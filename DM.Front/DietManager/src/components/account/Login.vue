@@ -4,11 +4,11 @@
     <div id="login-container">
       <div class="login-element">
         <div class="label">Username</div>
-        <input type="text" minlength="4" placeholder="username" v-model="loginForm.username">
+        <input type="text" minlength="4" v-model="loginForm.username">
       </div>
       <div class="login-element">
         <div class="label">Password</div>
-        <input type="password" minlength="4" placeholder="****" v-model="loginForm.password">
+        <input type="password" minlength="4" v-model="loginForm.password">
       </div>
       <div
         id="error-message"

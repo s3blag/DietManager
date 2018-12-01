@@ -1,17 +1,7 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using DM.Logic.Interfaces;
-using DM.Models.Config;
-using DM.Models.Models;
 using DM.Models.ViewModels;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace DM.Web.Controllers
 {
@@ -20,12 +10,12 @@ namespace DM.Web.Controllers
     public class AuthController : Controller
     {
         private readonly IUserService _userService;
-        private readonly SecuritySettings _securitySettings;
+        private readonly IAuthService _authService;
 
-        public AuthController(IUserService userService, IOptions<SecuritySettings> options)
+        public AuthController(IUserService userService, IAuthService authService)
         {
             _userService = userService;
-            _securitySettings = options.Value;
+            _authService = authService;
         }
 
         public IActionResult Index()
@@ -36,7 +26,6 @@ namespace DM.Web.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginVM model)
         {
-            var user1 = User;
             if (model == null || !ModelState.IsValid)
             {
                 return BadRequest("Invalid login data.");
@@ -49,34 +38,35 @@ namespace DM.Web.Controllers
                 return BadRequest("Invalid username or password.");
             }
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_securitySettings.Key));
+            var authToken = _authService.GenerateAuthToken(user);
 
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Issuer = _securitySettings.Issuer,
-                Audience = _securitySettings.Audience,
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, user.Id.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = credentials
-            };
-
-            var token = new JwtSecurityTokenHandler().CreateToken(tokenDescriptor);
-
-            var results = new AuthToken
-            {
-                Value = new JwtSecurityTokenHandler().WriteToken(token),
-                Expiration = token.ValidTo
-            };
-
-            var loggedInUser = new LoggedInUserVM(user, results);
+            var loggedInUser = new LoggedInUserVM(user, authToken);
 
             return Ok(loggedInUser);
-            
+
         }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] UserCreationVM model)
+        {
+            if (model == null || !ModelState.IsValid)
+            {
+                return BadRequest("Invalid user creation data.");
+            }
+
+            var user = await _userService.CreateUserAsync(model);
+
+            if (user == null)
+            {
+                return BadRequest("Username is not unique");
+            }
+
+            var authToken = _authService.GenerateAuthToken(user);
+
+            var loggedInUser = new LoggedInUserVM(user, authToken);
+
+            return Ok(loggedInUser);
+        }
+        
     }
 }

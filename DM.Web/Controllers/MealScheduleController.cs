@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
 using DM.Web.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DM.Web.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route("api/meal-schedule")]
     public class MealScheduleController : Controller
@@ -27,7 +29,7 @@ namespace DM.Web.Controllers
                 return NotFound();
             }
 
-            var userId = Guid.Empty;
+            var userId = new Guid(User.Identity.Name);
 
             var mealSchedule = await _mealScheduleService.GetUpcomingMealSchedule(userId, weekStartDate);
 
@@ -47,7 +49,7 @@ namespace DM.Web.Controllers
                 return NotFound();
             }
 
-            var userId = Guid.Empty;
+            var userId = new Guid(User.Identity.Name);
 
             var entryId = await _mealScheduleService.AddMealScheduleEntry(userId, mealScheduleCreation);
 
@@ -67,7 +69,7 @@ namespace DM.Web.Controllers
                 return NotFound();
             }
 
-            var userId = Guid.Empty;
+            var userId = new Guid(User.Identity.Name);
 
             bool deleted = await _mealScheduleService.DeleteMealScheduleEntryAsync(userId, scheduleEntryId);
 
@@ -84,7 +86,7 @@ namespace DM.Web.Controllers
         [HttpPatch("entry")]
         public async Task<IActionResult> UpdateMealScheduleEntry([FromBody] MealScheduleEntryUpdateVM scheduleEntryUpdate)
         {
-            var userId = Guid.Empty;
+            var userId = new Guid(User.Identity.Name);
 
             bool updated = await _mealScheduleService.UpdateMealScheduleEntryAsync(userId, scheduleEntryUpdate);
 

@@ -3,27 +3,47 @@ import Axios from "axios";
 import User from "@/ViewModels/user/user";
 import LoggedInUser from "@/ViewModels/user/loggedInUser";
 import UserRegistrationForm from "@/ViewModels/user/userRegistrationForm";
+import { EventBus } from "@/services/eventBus";
 
 export default class AuthService {
-  private static get signedInUser() {
+  private static getSignedInUser() {
     return JSON.parse(localStorage.getItem(
       "user"
     ) as string) as LoggedInUser | null;
   }
-
-  static get isLoggedIn() {
+  static isLoggedIn() {
     return (
-      this.signedInUser !== null &&
-      this.signedInUser.token &&
-      this.signedInUser.token.expiration > new Date()
+      this.getSignedInUser() !== null &&
+      this.getSignedInUser()!.token &&
+      new Date(this.getSignedInUser()!.token!.expiration) > new Date()
     );
   }
 
-  static get loggedInUser() {
-    if (this.isLoggedIn) {
-      return this.signedInUser;
+  static inititalize() {
+    EventBus.$on("reload-user-data", () =>
+      this.sendGetLoggedUserRequest(
+        user => {
+          this.setUser(user);
+          EventBus.$emit("user-data-changed");
+        },
+        () => null
+      )
+    );
+  }
+
+  static getloggedInUser() {
+    if (this.isLoggedIn()) {
+      return this.getSignedInUser();
     } else {
-      return null;
+      return {
+        token: null,
+        name: "",
+        city: "",
+        id: "",
+        imageId: "",
+        isFriend: null,
+        surname: ""
+      } as LoggedInUser;
     }
   }
 
@@ -36,6 +56,7 @@ export default class AuthService {
       userLogin,
       userLogin => {
         this.setUser(userLogin);
+        EventBus.$emit("user-state-changed");
         onSuccess();
       },
       onError
@@ -51,6 +72,7 @@ export default class AuthService {
       userRegistration,
       user => {
         this.setUser(user);
+        EventBus.$emit("user-state-changed");
         onSuccess(user);
       },
       onError
@@ -63,6 +85,7 @@ export default class AuthService {
   ) {
     this.sendGetLoggedUserRequest(loggedInUser => {
       this.setUser(loggedInUser);
+      EventBus.$emit("user-data-changed");
       onSuccess(loggedInUser);
     }, onError);
   }
@@ -91,10 +114,11 @@ export default class AuthService {
 
   public static logout() {
     localStorage.removeItem("user");
+    EventBus.$emit("user-state-changed");
   }
 
   private static setUser(user: LoggedInUser) {
-    if (user.token) {
+    if (user) {
       localStorage.setItem("user", JSON.stringify(user));
     }
   }
@@ -106,11 +130,7 @@ export default class AuthService {
   ) {
     Axios.post<LoggedInUser>("/api/auth/login", userLogin)
       .then(response => {
-        if (response.status === 400) {
-          errorHandler(response.statusText);
-        } else {
-          successHandler(response.data);
-        }
+        successHandler(response.data);
       })
       .catch(error => {
         if (error.response.status === 400) errorHandler(error.response.data);
@@ -127,7 +147,7 @@ export default class AuthService {
         successHandler(response.data);
       })
       .catch(error => {
-        errorHandler(error);
+        if (error.response.status === 400) errorHandler(error.response.data);
       });
   }
 
@@ -135,7 +155,9 @@ export default class AuthService {
     onSuccess: (user: LoggedInUser) => void,
     onError: (errors: any) => void
   ) {
-    Axios.get<LoggedInUser>("/api/user", this.authHeader)
+    Axios.get<LoggedInUser>("/api/user", {
+      headers: this.authHeader
+    })
       .then(response => {
         onSuccess(response.data);
       })
@@ -145,7 +167,7 @@ export default class AuthService {
   }
 
   private static sendDeleteAccountRequest(
-    onSuccess: () => void,
+    onSuccess: () => void | null,
     onError: (errors: any) => void
   ) {
     Axios.delete("/api/user", this.authHeader)

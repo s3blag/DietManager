@@ -3,11 +3,13 @@ using System.IO;
 using System.Threading.Tasks;
 using DM.Logic.Interfaces;
 using DM.Models.ViewModels.Image;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 
 namespace DM.Web.Controllers
 {
+
     [Route("api/[controller]/")]
     public class ImageController : Controller
     {
@@ -41,6 +43,7 @@ namespace DM.Web.Controllers
             return File(image.Content, contentType);
         }
 
+        [Authorize]
         [HttpPost("add")]
         public async Task<IActionResult> AddImage([FromBody] ImageCreationVM image)
         {

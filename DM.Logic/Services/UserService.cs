@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DM.Database;
 using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
 using DM.Repositories.Interfaces;
@@ -20,6 +21,27 @@ namespace DM.Logic.Services
             _mapper = mapper;
         }
 
+        public async Task<UserVM> CreateUserAsync(UserCreationVM userCreation)
+        {
+            bool isUsernameUnique = await _userRepository.IsUsernameUniqueAsync(userCreation.Username);
+
+            if (!isUsernameUnique)
+            {
+                return null;
+            }
+
+            var dbUser = _mapper.Map<User>(userCreation);
+
+            bool userAdded = await _userRepository.AddAsync(dbUser);
+
+            if (userAdded)
+            {
+                return _mapper.Map<UserVM>(dbUser);
+            }
+
+            return null;  
+        }
+
         public async Task<UserVM> GetUserByLoginDataAsync(LoginVM login)
         {
             return _mapper.Map<UserVM>(
@@ -29,9 +51,6 @@ namespace DM.Logic.Services
 
         public async Task<bool> DeleteAvatarAsync(Guid userId)
         {
-            // get user and take his avatar id
-            // check if avatar is not guid empty
-
             var user = await _userRepository.GetUserByIdAsync(userId);
 
             if (!user.ImageId.HasValue)
@@ -39,31 +58,30 @@ namespace DM.Logic.Services
                 return false;
             }
 
-            bool deleted =  await _imageService.DeleteImageAsync(user.ImageId.Value);
+            await _userRepository.UpdateUserAvatar(userId, null);
 
-            if (deleted)
-            {
-                return await _userRepository.UpdateUserAvatar(userId, null);
-            }
+            await _imageService.DeleteImageAsync(user.ImageId.Value);
 
-            return deleted;
+            return true;
         }
 
         public async Task<bool> UpsertAvatarAsync(Guid userId, Guid newAvatarId)
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
 
-            var currentAvatarId = user.ImageId;
+            var oldAvatarId = user.ImageId;
 
-            if (currentAvatarId != null)
+            await _userRepository.UpdateUserAvatar(userId, newAvatarId);
+
+            if (oldAvatarId != null)
             {
                 bool previousAvatarDeleted = false;
 
-                previousAvatarDeleted =  await _imageService.DeleteImageAsync(currentAvatarId.Value);
+                previousAvatarDeleted =  await _imageService.DeleteImageAsync(oldAvatarId.Value);
 
                 if (!previousAvatarDeleted)
                 {
-                    bool newAvatarDeleted = await _imageService.DeleteImageAsync(currentAvatarId.Value);
+                    bool newAvatarDeleted = await _imageService.DeleteImageAsync(oldAvatarId.Value);
                    
                     if(!newAvatarDeleted)
                     {
@@ -74,12 +92,12 @@ namespace DM.Logic.Services
                 }
             }
 
-            return await _userRepository.UpdateUserAvatar(userId, newAvatarId);
+            return true;
         }
 
-        public async Task<LoggedInUserVM> GetUserInfoAsync(Guid userId)
+        public async Task<UserVM> GetUserInfoAsync(Guid userId)
         {
-            return _mapper.Map<LoggedInUserVM>(await _userRepository.GetUserByIdAsync(userId));
+            return _mapper.Map<UserVM>(await _userRepository.GetUserByIdAsync(userId));
         }
 
         public async Task<bool> DeleteAccountAsync(Guid userId)

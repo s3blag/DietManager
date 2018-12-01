@@ -1,24 +1,31 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
 using DM.Models.Wrappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DM.Web.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route("api/[controller]")]
     public class UserController : Controller
     {
         private readonly ISearchService _searchService;
         private readonly IUserService _userService;
+        private readonly IAuthService _authService;
+        private readonly IMapper _mapper;
 
-        public UserController(ISearchService searchService, IUserService userService)
+        public UserController(ISearchService searchService, IUserService userService, IAuthService authService, IMapper mapper)
         {
             _searchService = searchService;
             _userService = userService;
+            _authService = authService;
+            _mapper = mapper;
         }
 
         [HttpPost("search")]
@@ -29,7 +36,7 @@ namespace DM.Web.Controllers
                 return NotFound("Invalid arguments");
             }
 
-            var loggedUserId = Guid.Empty;
+            var loggedUserId = new Guid(User.Identity.Name);
 
             var result = await _searchService.SearchUsersAsync(loggedUserId, lastReturned);
 
@@ -39,7 +46,7 @@ namespace DM.Web.Controllers
         [HttpDelete("avatar")]
         public async Task<IActionResult> DeleteUserAvatar()
         {
-            var signedInUserId = Guid.Empty;
+            var signedInUserId = new Guid(User.Identity.Name);
 
             bool deleted = await _userService.DeleteAvatarAsync(signedInUserId);
 
@@ -54,12 +61,7 @@ namespace DM.Web.Controllers
         [HttpPatch("avatar")]
         public async Task<IActionResult> UpsertUserAvatar([FromBody] AvatarVM avatar)
         {
-            //if (avatar.ImageId == Guid.Empty)
-            //{
-            //    return BadRequest();
-            //}
-
-            var signedInUserId = Guid.Empty;
+            var signedInUserId = new Guid(User.Identity.Name);
 
             bool upserted = await _userService.UpsertAvatarAsync(signedInUserId, avatar.ImageId);
 
@@ -74,22 +76,26 @@ namespace DM.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUserInfo()
         {
-            var signedInUserId = Guid.Empty;
+            var signedInUserId = new Guid(User.Identity.Name);
 
             var userInfo = await _userService.GetUserInfoAsync(signedInUserId);
 
-            if (userInfo != null)
+            if (userInfo == null)
             {
-                return Ok(userInfo);
+                return BadRequest();
             }
 
-            return NotFound();
+            var newAuthToken = _authService.GenerateAuthToken(userInfo);
+
+            var loggedInUser = new LoggedInUserVM(userInfo, newAuthToken);
+
+            return Ok(loggedInUser);
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteAccount()
         {
-            var signedInUserId = Guid.Empty;
+            var signedInUserId = new Guid(User.Identity.Name);
 
             bool deleted = await _userService.DeleteAccountAsync(signedInUserId);
 

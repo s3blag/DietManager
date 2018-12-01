@@ -1,10 +1,14 @@
 <template>
   <div class="image-wrapper">
-    <img v-if="imageId" :src="'/api/image/' + imageId" alt="image" :class="{'as-wheel': asWheel}">
+    <img
+      v-if="imageId && imageId.length !== 0"
+      :src="'/api/image/' + imageId"
+      alt="image"
+      :class="{'as-wheel': asWheel}"
+    >
     <span v-else id="placeholder">
       <slot name="placeholder"></slot>
     </span>
-
   </div>
 </template>
 <script lang="ts">

@@ -31,7 +31,6 @@ namespace DM.Database
 		public ITable<MealMealIngredient>           MealMealIngredients           { get { return this.GetTable<MealMealIngredient>(); } }
 		public ITable<MealScheduleEntry>            MealScheduleEntries           { get { return this.GetTable<MealScheduleEntry>(); } }
 		public ITable<Nutrition>                    Nutritions                    { get { return this.GetTable<Nutrition>(); } }
-		public ITable<Role>                         Roles                         { get { return this.GetTable<Role>(); } }
 		public ITable<User>                         Users                         { get { return this.GetTable<User>(); } }
 		public ITable<UserAchievement>              UserAchievements              { get { return this.GetTable<UserAchievement>(); } }
 		public ITable<UserActivity>                 UserActivities                { get { return this.GetTable<UserActivity>(); } }
@@ -367,28 +366,10 @@ namespace DM.Database
 		#endregion
 	}
 
-	[Table(Schema="Users", Name="Role")]
-	public partial class Role
-	{
-		[PrimaryKey, NotNull] public Guid   Id       { get; set; } // uuid
-		[Column,     NotNull] public string RoleName { get; set; } // text
-
-		#region Associations
-
-		/// <summary>
-		/// fk_user_role_BackReference
-		/// </summary>
-		[Association(ThisKey="Id", OtherKey="RoleId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
-		public IEnumerable<User> fkuserroles { get; set; }
-
-		#endregion
-	}
-
 	[Table(Schema="Users", Name="User")]
 	public partial class User
 	{
 		[PrimaryKey, NotNull    ] public Guid           Id                          { get; set; } // uuid
-		[Column,        Nullable] public string         Email                       { get; set; } // character varying(254)
 		[Column,        Nullable] public string         UserName                    { get; set; } // character varying(20)
 		[Column,     NotNull    ] public string         Name                        { get; set; } // character varying(20)
 		[Column,     NotNull    ] public string         Surname                     { get; set; } // character varying(35)
@@ -400,7 +381,6 @@ namespace DM.Database
 		[Column,     NotNull    ] public DateTimeOffset CreationDate                { get; set; } // timestamp (6) with time zone
 		[Column,     NotNull    ] public DateTimeOffset LastLoginDate               { get; set; } // timestamp (6) with time zone
 		[Column,        Nullable] public Guid?          ImageId                     { get; set; } // uuid
-		[Column,     NotNull    ] public Guid           RoleId                      { get; set; } // uuid
 		[Column,     NotNull    ] public bool           Deleted                     { get; set; } // boolean
 
 		#region Associations
@@ -464,12 +444,6 @@ namespace DM.Database
 		/// </summary>
 		[Association(ThisKey="Id", OtherKey="CreatorId", CanBeNull=true, Relationship=Relationship.OneToMany, IsBackReference=true)]
 		public IEnumerable<Meal> Meals { get; set; }
-
-		/// <summary>
-		/// fk_user_role
-		/// </summary>
-		[Association(ThisKey="RoleId", OtherKey="Id", CanBeNull=false, Relationship=Relationship.ManyToOne, KeyName="fk_user_role", BackReferenceName="fkuserroles")]
-		public Role Role { get; set; }
 
 		#endregion
 	}
@@ -603,12 +577,6 @@ namespace DM.Database
 		}
 
 		public static Nutrition Find(this ITable<Nutrition> table, Guid Id)
-		{
-			return table.FirstOrDefault(t =>
-				t.Id == Id);
-		}
-
-		public static Role Find(this ITable<Role> table, Guid Id)
 		{
 			return table.FirstOrDefault(t =>
 				t.Id == Id);

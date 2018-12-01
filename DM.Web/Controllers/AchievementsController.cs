@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DM.Web.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route("api/[controller]")]
     public class AchievementsController : Controller
@@ -35,11 +36,10 @@ namespace DM.Web.Controllers
             }
         }
 
-        [Authorize]
         [HttpGet("my-achievements")]
         public async Task<GroupedUserAchievementsVM> GetUserAchievements()
         {
-            var userId = Guid.Empty;
+            var userId = new Guid(User.Identity.Name);
 
             var result = await _achievementService.GetUserAchievementsAsync(userId);
 
@@ -54,7 +54,7 @@ namespace DM.Web.Controllers
                 return NotFound();
             }
 
-            var userId = Guid.Empty;
+            var userId = new Guid(User.Identity.Name);;
 
             var result = await _achievementService.MarkAchievementsAsReadAsync(achievements.AchievementIds, userId);
 

@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
 using DM.Models.Wrappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DM.Web.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route("api/meal-ingredient")]
     public class MealIngredientController : Controller
@@ -42,7 +44,7 @@ namespace DM.Web.Controllers
                 return NotFound();
             }
 
-            var userId = Guid.Empty;
+            var userId = new Guid(User.Identity.Name);
 
             var mealIngredient = await _mealIngredientService.AddMealIngredientAsync(userId, mealIngredientCreationVM);
 

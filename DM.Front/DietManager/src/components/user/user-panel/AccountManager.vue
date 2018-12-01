@@ -1,7 +1,9 @@
 <template>
   <div id="account-manager">
     <modal v-if="showDeleteAccountModal">
-      <span class="modal-text">Are you sure you want to delete your account?<br> All the created meals and meal ingredients will remain.</span>
+      <span class="modal-text">Are you sure you want to delete your account?
+        <br>All the created meals and meal ingredients will remain.
+      </span>
       <div class="modal-buttons-container">
         <button class="button" @click="deleteAccount">Delete</button>
         <button class="button" @click="showDeleteAccountModal = false">Cancel</button>
@@ -9,9 +11,17 @@
     </modal>
     <div id="image">
       <div id="user-image">
-        <image-uploader :predefinedImageId="user.imageId" @addImage="upsertAvatar" @deleteImage="deleteAvatar">
+        <image-uploader
+          :predefinedImageId="user.imageId"
+          @addImage="upsertAvatar"
+          @deleteImage="deleteAvatar"
+        >
           <template slot="placeholder">
-            <font-awesome-icon id="placeholder-icon" class="user-avatar main-color" icon="user-circle" />
+            <font-awesome-icon
+              id="placeholder-icon"
+              class="user-avatar main-color"
+              icon="user-circle"
+            />
           </template>
         </image-uploader>
       </div>
@@ -35,6 +45,8 @@ import UserUpdate from "@/ViewModels/user/userUpdate";
 import ImageApiCaller from "@/services/api-callers/imageApi";
 import ImageUploader from "@/components/image/ImageUploader.vue";
 import Modal from "@/components/common/Modal.vue";
+import { EventBus } from "@/services/eventBus";
+
 Component.registerHooks(["beforeRouteEnter"]);
 
 @Component({
@@ -118,16 +130,19 @@ export default class AccountManager extends Vue {
   onDeleteAccountError(errors: string[]) {}
 
   deleteAvatar() {
-    UserApiCaller.deleteUserAvatar(
-      () => (this.user.imageId = null),
-      this.onDeleteAvatarError
-    );
+    UserApiCaller.deleteUserAvatar(() => {
+      this.user.imageId = null;
+      EventBus.$emit("reload-user-data");
+    }, this.onDeleteAvatarError);
   }
 
   upsertAvatar(id: string) {
     UserApiCaller.upsertUserAvatar(
       id,
-      id => (this.user.imageId = id),
+      id => {
+        this.$set(this.user, "imageId", id);
+        EventBus.$emit("reload-user-data");
+      },
       this.onDeleteAvatarError
     );
   }
@@ -139,10 +154,9 @@ export default class AccountManager extends Vue {
   }
 
   reloadLoggedInUser() {
-    AuthService.reloadLoggedInUser(
-      user => this.assignNewUser(user),
-      this.onReloadLoggedInUserError
-    );
+    AuthService.reloadLoggedInUser(user => {
+      this.assignNewUser(user);
+    }, this.onReloadLoggedInUserError);
   }
 
   onReloadLoggedInUserError() {}

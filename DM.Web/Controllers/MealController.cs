@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
 using DM.Models.Wrappers;
-using DM.Web.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DM.Web.Controllers
 {
-    //TODO Model State Validator
-
+    [Authorize]
     [Produces("application/json")]
     [Route("api/[controller]")]
     public class MealController : Controller
@@ -37,7 +34,7 @@ namespace DM.Web.Controllers
                 return NotFound();
             }
 
-            var userId = Guid.Empty;
+            var userId = new Guid(User.Identity.Name);
 
             var meal = await _mealService.GetMealByIdAsync(userId, mealId);
 
@@ -57,7 +54,7 @@ namespace DM.Web.Controllers
                 return NotFound("ViewModelIsInvalid");
             }
 
-            var userId = Guid.Empty;
+            var userId = new Guid(User.Identity.Name);
 
             var mealId = await _mealService.AddMealAsync(mealCreationVM, userId);
 
@@ -90,7 +87,7 @@ namespace DM.Web.Controllers
                 return NotFound("Invalid arguments");
             }
 
-            var userId = Guid.Empty;
+            var userId = new Guid(User.Identity.Name);
 
             var result = await _mealService.GetUsersMealsPreviewsAsync(userId, lastReturned);
 
@@ -106,7 +103,7 @@ namespace DM.Web.Controllers
                 return NotFound("Invalid arguments");
             }
 
-            var userId = Guid.Empty;
+            var userId = new Guid(User.Identity.Name);
 
             var result = await _searchService.SearchMealsAsync(userId, lastReturned);
 

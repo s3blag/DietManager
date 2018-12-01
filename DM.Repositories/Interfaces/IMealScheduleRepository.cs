@@ -12,6 +12,6 @@ namespace DM.Repositories.Interfaces
         Task<MealScheduleEntry> GetByIdAsync(Guid userId, Guid mealScheduleEntryId, bool deepLoading = false);
         Task<int> GetMealScheduleUpdatesStreakInDaysAsync(Guid userId);
         Task<bool> DeleteAsync(Guid userId, Guid mealScheduleEntryId);
-        Task<bool> UpdateAsync(MealScheduleEntry model);
+        new Task<bool> UpdateAsync(MealScheduleEntry model);
     }
 }

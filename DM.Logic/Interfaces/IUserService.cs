@@ -6,10 +6,11 @@ namespace DM.Logic.Interfaces
 {
     public interface IUserService
     {
+        Task<UserVM> CreateUserAsync(UserCreationVM userCreation);
         Task<UserVM> GetUserByLoginDataAsync(LoginVM login);
         Task<bool> DeleteAvatarAsync(Guid userId);
         Task<bool> UpsertAvatarAsync(Guid userId, Guid newAvatarId);
-        Task<LoggedInUserVM> GetUserInfoAsync(Guid userId);
+        Task<UserVM> GetUserInfoAsync(Guid userId);
         Task<bool> DeleteAccountAsync(Guid userId);
     }
 }
