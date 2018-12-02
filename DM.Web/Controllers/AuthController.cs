@@ -10,12 +10,12 @@ namespace DM.Web.Controllers
     public class AuthController : Controller
     {
         private readonly IUserService _userService;
-        private readonly IAuthService _authService;
+        private readonly ISecurityService _securityService;
 
-        public AuthController(IUserService userService, IAuthService authService)
+        public AuthController(IUserService userService, ISecurityService securityService)
         {
             _userService = userService;
-            _authService = authService;
+            _securityService = securityService;
         }
 
         public IActionResult Index()
@@ -38,7 +38,14 @@ namespace DM.Web.Controllers
                 return BadRequest("Invalid username or password.");
             }
 
-            var authToken = _authService.GenerateAuthToken(user);
+            bool passwordCorrect = _securityService.VerifyPassword(model.Password, user.Password);
+
+            if (!passwordCorrect)
+            {
+                return BadRequest("Invalid username or password.");
+            }
+
+            var authToken = _securityService.GenerateAuthToken(user);
 
             var loggedInUser = new LoggedInUserVM(user, authToken);
 
@@ -54,6 +61,8 @@ namespace DM.Web.Controllers
                 return BadRequest("Invalid user creation data.");
             }
 
+            model.Password = _securityService.EncryptPassword(model.Password);
+
             var user = await _userService.CreateUserAsync(model);
 
             if (user == null)
@@ -61,7 +70,7 @@ namespace DM.Web.Controllers
                 return BadRequest("Username is not unique");
             }
 
-            var authToken = _authService.GenerateAuthToken(user);
+            var authToken = _securityService.GenerateAuthToken(user);
 
             var loggedInUser = new LoggedInUserVM(user, authToken);
 

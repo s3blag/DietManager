@@ -8,7 +8,7 @@ namespace DM.Repositories.Interfaces
     public interface IUserRepository : IBaseRepository<User>
     {
         Task<bool> IsUsernameUniqueAsync(string username);
-        Task<User> GetUserByLoginDataAsync(string login, string password);
+        Task<User> GetUserByLoginDataAsync(string login);
         Task<User> GetUserByIdAsync(Guid id);
         Task<ICollection<User>> GetUsersByQueryAsync(string query, int index, int takeAmount);
         Task IncrementCreatedMealsCountAsync(Guid userId);

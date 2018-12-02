@@ -17,14 +17,14 @@ namespace DM.Web.Controllers
     {
         private readonly ISearchService _searchService;
         private readonly IUserService _userService;
-        private readonly IAuthService _authService;
+        private readonly ISecurityService _securityService;
         private readonly IMapper _mapper;
 
-        public UserController(ISearchService searchService, IUserService userService, IAuthService authService, IMapper mapper)
+        public UserController(ISearchService searchService, IUserService userService, ISecurityService securityService, IMapper mapper)
         {
             _searchService = searchService;
             _userService = userService;
-            _authService = authService;
+            _securityService = securityService;
             _mapper = mapper;
         }
 
@@ -85,7 +85,7 @@ namespace DM.Web.Controllers
                 return BadRequest();
             }
 
-            var newAuthToken = _authService.GenerateAuthToken(userInfo);
+            var newAuthToken = _securityService.GenerateAuthToken(userInfo);
 
             var loggedInUser = new LoggedInUserVM(userInfo, newAuthToken);
 

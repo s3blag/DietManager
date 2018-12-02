@@ -43,8 +43,6 @@ namespace Diet_Manager
             
             DataConnection.DefaultSettings = new DBConnectionSettings(Configuration["ConnectionStrings:PostgreSQLBaseConnection"]);
 
-            services.AddLinq2Identity<Guid>();
-
             services.AddAuthentication(cfg =>
             {
                 cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -78,7 +76,7 @@ namespace Diet_Manager
             services.AddScoped<IFriendRepository, FriendRepository>();
             services.AddScoped<IMealScheduleRepository, MealScheduleRepository>();
             services.AddScoped<IActivityRepository, ActivityRepository>();
-            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ISecurityService, SecurityService>();
 
             services.AddScoped<IMealService, MealService>();
             services.AddScoped<IMealIngredientService, MealIngredientService>();

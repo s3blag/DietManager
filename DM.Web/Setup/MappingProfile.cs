@@ -45,6 +45,7 @@ namespace DM.Web
                 ReverseMap();
             CreateMap<Achievement, AchievementVM>().ReverseMap();
             CreateMap<User, UserVM>().ReverseMap();
+            CreateMap<User, UserWithPasswordVM>();
             CreateMap<User, LoggedInUserVM>();
             CreateMap<UserCreationVM, User>().
                 ForMember(target => target.Id, config => config.MapFrom(src => Guid.NewGuid())).

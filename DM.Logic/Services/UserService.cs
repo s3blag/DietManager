@@ -42,10 +42,10 @@ namespace DM.Logic.Services
             return null;  
         }
 
-        public async Task<UserVM> GetUserByLoginDataAsync(LoginVM login)
+        public async Task<UserWithPasswordVM> GetUserByLoginDataAsync(LoginVM login)
         {
-            return _mapper.Map<UserVM>(
-                await _userRepository.GetUserByLoginDataAsync(login.Username, login.Password)
+            return _mapper.Map<UserWithPasswordVM>(
+                await _userRepository.GetUserByLoginDataAsync(login.Username)
                 );
         }
 
