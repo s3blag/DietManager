@@ -102,15 +102,8 @@ export default class MealSchedule extends Vue {
 
   get currentDayOfWeek() {
     const currentDate = new Date();
-
-    if (
-      currentDate > this.selectedWeekEndDate ||
-      currentDate < this.selectedWeekStartDate
-    ) {
-      return 8;
-    }
-
-    return currentDate.getDay();
+    
+    return currentDate.getDay() == 0 ? 7 : currentDate.getDay();
   }
 
   getFullDateFromDayOfWeek(dayOfWeek: number) {
@@ -161,7 +154,7 @@ export default class MealSchedule extends Vue {
   getCurrentWeekStartDate() {
     let currentWeekStartDate = new Date();
 
-    const currentDay = currentWeekStartDate.getDay();
+    const currentDay = currentWeekStartDate.getDay() == 0 ? 7 : currentWeekStartDate.getDay();
 
     currentWeekStartDate.setDate(
       currentWeekStartDate.getDate() - (currentDay - 1)
