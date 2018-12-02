@@ -3,13 +3,13 @@ using System.IO;
 using System.Threading.Tasks;
 using DM.Logic.Interfaces;
 using DM.Models.ViewModels.Image;
+using DM.Web.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 
 namespace DM.Web.Controllers
 {
-
     [Route("api/[controller]/")]
     public class ImageController : Controller
     {
@@ -45,6 +45,7 @@ namespace DM.Web.Controllers
 
         [Authorize]
         [HttpPost("add")]
+        [ModelStateValidator]
         public async Task<IActionResult> AddImage([FromBody] ImageCreationVM image)
         {
             if (String.IsNullOrEmpty(image.Image))

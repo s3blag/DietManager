@@ -5,7 +5,6 @@ namespace DM.Models.ViewModels
 {
     public class UserActivityVM
     {
-        [Required]
         public UserVM User { get; set; }
 
         #region Activities
@@ -22,7 +21,6 @@ namespace DM.Models.ViewModels
 
         #endregion
 
-        [Required]
         public DateTimeOffset? ActivityDate { get; set; }
     }
 }

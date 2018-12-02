@@ -115,8 +115,8 @@ namespace DM.Logic.Services
             }
 
             await _userRepository.DeleteUserRelatedDataAsync(user);
-
-            return true;
+            
+            return await _userRepository.DeleteAsync(user);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
 using DM.Models.Wrappers;
+using DM.Web.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,6 +42,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost("invite")]
+        [ModelStateValidator]
         public async Task<IActionResult> Invite([FromBody] FriendInvitationCreationVM invitation)
         {
             var userId = new Guid(User.Identity.Name);
@@ -53,6 +55,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpGet("{friendId}")]
+        [ModelStateValidator]
         public async Task<IActionResult> GetFriend(Guid friendId)
         {
             var userId = new Guid(User.Identity.Name);
@@ -90,6 +93,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost("invitations/accept")]
+        [ModelStateValidator]
         public async Task<IActionResult> AcceptInvitation([FromBody]InvitationAction invitationData)
         {
             var userId = new Guid(User.Identity.Name);
@@ -100,6 +104,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost("invitations/ignore")]
+        [ModelStateValidator]
         public async Task<IActionResult> IgnoreInvitation([FromBody]InvitationAction invitationData)
         {
             var userId = new Guid(User.Identity.Name);

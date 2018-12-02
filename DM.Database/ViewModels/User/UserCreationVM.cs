@@ -5,7 +5,7 @@ namespace DM.Models.ViewModels
     public class UserCreationVM
     {
         [Required]
-        [MinLength(4)]
+        [MinLength(2)]
         public string Password { get; set; }
 
         [Required]
@@ -13,7 +13,7 @@ namespace DM.Models.ViewModels
         public string PasswordRepeated { get; set; }
 
         [Required]
-        [MinLength(4)]
+        [MinLength(2)]
         public string Username { get; set; }
 
         [Required]

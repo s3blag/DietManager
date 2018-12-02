@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
 using DM.Models.Wrappers;
+using DM.Web.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,6 +38,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost("add")]
+        [ModelStateValidator]
         public async Task<IActionResult> AddMealIngredient([FromBody]MealIngredientCreationVM mealIngredientCreationVM)
         {
             if (!ModelState.IsValid)

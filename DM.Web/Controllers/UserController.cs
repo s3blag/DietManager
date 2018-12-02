@@ -5,6 +5,7 @@ using AutoMapper;
 using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
 using DM.Models.Wrappers;
+using DM.Web.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,6 +30,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost("search")]
+        [ModelStateValidator]
         public async Task<IActionResult> SearchUsers([FromBody] IndexedResult<UserSearchVM> lastReturned)
         {
             if (lastReturned != null && lastReturned.IsLast)
@@ -59,6 +61,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpPatch("avatar")]
+        [ModelStateValidator]
         public async Task<IActionResult> UpsertUserAvatar([FromBody] AvatarVM avatar)
         {
             var signedInUserId = new Guid(User.Identity.Name);

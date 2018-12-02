@@ -4,12 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
+using DM.Web.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DM.Web.Controllers
 {
     [Authorize]
+    [ModelStateValidator]
     [Produces("application/json")]
     [Route("api/[controller]")]
     public class AchievementsController : Controller

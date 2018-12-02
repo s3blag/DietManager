@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
+using DM.Web.Attributes;
 using DM.Web.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpGet("week/{weekStartDate}")]
+            [ModelStateValidator]
         public async Task<IActionResult> GetMealScheduleEntries(DateTimeOffset weekStartDate)
         {
             if (weekStartDate == default)
@@ -42,6 +44,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost("entry")]
+        [ModelStateValidator]
         public async Task<IActionResult> AddMealScheduleEntry([FromBody]MealScheduleEntryCreationVM mealScheduleCreation)
         {
             if (!ModelState.IsValid)
@@ -62,7 +65,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpDelete("entry/{scheduleEntryId}")]
-        public async Task<IActionResult> DeleteMealScheduleEntry (Guid scheduleEntryId)
+        public async Task<IActionResult> DeleteMealScheduleEntry(Guid scheduleEntryId)
         {
             if (scheduleEntryId == Guid.Empty)
             {
@@ -84,6 +87,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpPatch("entry")]
+        [ModelStateValidator]
         public async Task<IActionResult> UpdateMealScheduleEntry([FromBody] MealScheduleEntryUpdateVM scheduleEntryUpdate)
         {
             var userId = new Guid(User.Identity.Name);

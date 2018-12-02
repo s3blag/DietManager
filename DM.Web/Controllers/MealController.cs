@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
 using DM.Models.Wrappers;
+using DM.Web.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,6 +28,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpGet("{mealId}")]
+        [ModelStateValidator]
         public async Task<IActionResult> GetMeal(Guid mealId)
         {
             if (mealId == Guid.Empty)
@@ -47,6 +49,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost("add")]
+        [ModelStateValidator]
         public async Task<IActionResult> AddMeal([FromBody] MealCreationVM mealCreationVM)
         {
             if (!ModelState.IsValid)

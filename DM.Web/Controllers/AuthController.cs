@@ -1,10 +1,12 @@
 ﻿using System.Threading.Tasks;
 using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
+using DM.Web.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DM.Web.Controllers
 {
+    [ModelStateValidator]
     [Produces("application/json")]
     [Route("api/[controller]")]
     public class AuthController : Controller

@@ -8,10 +8,8 @@ namespace DM.Models.ViewModels
         [Required]
         public Guid? Id { get; set; }
 
-        [Required]
         public MealVM Meal { get; set; }
 
-        [Required]
         public DateTimeOffset? Date { get; set; }
     }
 }

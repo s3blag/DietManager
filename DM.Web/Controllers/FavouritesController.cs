@@ -1,6 +1,7 @@
 ﻿using DM.Logic.Interfaces;
 using DM.Models.ViewModels;
 using DM.Models.Wrappers;
+using DM.Web.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -41,6 +42,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost]
+        [ModelStateValidator]
         public async Task<IActionResult> AddToFavourites([FromBody]FavouriteCreationVM favouriteCreation)
         {
             if (favouriteCreation.MealId == null || favouriteCreation.MealId == Guid.Empty)

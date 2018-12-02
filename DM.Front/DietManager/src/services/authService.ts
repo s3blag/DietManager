@@ -170,7 +170,7 @@ export default class AuthService {
     onSuccess: () => void | null,
     onError: (errors: any) => void
   ) {
-    Axios.delete("/api/user", this.authHeader)
+    Axios.delete("/api/user", { headers: this.authHeader })
       .then(() => {
         onSuccess();
       })
