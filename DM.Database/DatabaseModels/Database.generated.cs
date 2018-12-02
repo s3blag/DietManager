@@ -31,7 +31,7 @@ namespace DM.Database
 		public ITable<Friend>                       Friends                       { get { return this.GetTable<Friend>(); } }
 		public ITable<Image>                        Images                        { get { return this.GetTable<Image>(); } }
 		public ITable<Meal>                         Meals                         { get { return this.GetTable<Meal>(); } }
-		public ITable<MealFullMealIngredient>       MealFullMealIngredients       { get { return this.GetTable<MealFullMealIngredient>(); } }
+		public ITable<MealCompleteMealIngredient>   MealCompleteMealIngredients   { get { return this.GetTable<MealCompleteMealIngredient>(); } }
 		public ITable<MealIngredient>               MealIngredients               { get { return this.GetTable<MealIngredient>(); } }
 		public ITable<MealIngredientsWithNutrition> MealIngredientsWithNutritions { get { return this.GetTable<MealIngredientsWithNutrition>(); } }
 		public ITable<MealMealIngredient>           MealMealIngredients           { get { return this.GetTable<MealMealIngredient>(); } }
@@ -166,9 +166,9 @@ namespace DM.Database
 		[Column,     NotNull    ] public DateTimeOffset CreationDate           { get; set; } // timestamp (6) with time zone
 		[Column,     NotNull    ] public Guid           CreatorId              { get; set; } // uuid
 		[Column,        Nullable] public Guid?          ImageId                { get; set; } // uuid
-		[Column,     NotNull    ] public string         Name                   { get; set; } // text
-		[Column,        Nullable] public string         Description            { get; set; } // text
-		[Column,     NotNull    ] public float          Calories               { get; set; } // real
+		[Column,     NotNull    ] public string         Name                   { get; set; } // character varying(50)
+		[Column,     NotNull    ] public string         Description            { get; set; } // text
+		[Column,     NotNull    ] public int            Calories               { get; set; } // integer
 		[Column,     NotNull    ] public int            NumberOfFavouriteMarks { get; set; } // integer
 		[Column,     NotNull    ] public int            NumberOfUses           { get; set; } // integer
 
@@ -219,13 +219,13 @@ namespace DM.Database
 		#endregion
 	}
 
-	[Table(Schema="Meals", Name="Meal-FullMealIngredient", IsView=true)]
-	public partial class MealFullMealIngredient
+	[Table(Schema="Meals", Name="Meal-CompleteMealIngredient", IsView=true)]
+	public partial class MealCompleteMealIngredient
 	{
 		[Column(SkipOnUpdate=true), Nullable] public Guid?   MealId                 { get; set; } // uuid
 		[Column(SkipOnUpdate=true), Nullable] public double? Quantity               { get; set; } // double precision
 		[Column(SkipOnUpdate=true), Nullable] public Guid?   MealIngredientId       { get; set; } // uuid
-		[Column(SkipOnUpdate=true), Nullable] public string  MealIngredientName     { get; set; } // text
+		[Column(SkipOnUpdate=true), Nullable] public string  MealIngredientName     { get; set; } // character varying(30)
 		[Column(SkipOnUpdate=true), Nullable] public Guid?   MealIngredientImageId  { get; set; } // uuid
 		[Column(SkipOnUpdate=true), Nullable] public int?    MealIngredientCalories { get; set; } // integer
 		[Column(SkipOnUpdate=true), Nullable] public double? Protein                { get; set; } // double precision
@@ -243,7 +243,7 @@ namespace DM.Database
 		[PrimaryKey, NotNull    ] public Guid   Id           { get; set; } // uuid
 		[Column,        Nullable] public Guid?  CreatorId    { get; set; } // uuid
 		[Column,        Nullable] public Guid?  ImageId      { get; set; } // uuid
-		[Column,        Nullable] public string Name         { get; set; } // text
+		[Column,        Nullable] public string Name         { get; set; } // character varying(30)
 		[Column,     NotNull    ] public int    Calories     { get; set; } // integer
 		[Column,     NotNull    ] public Guid   NutritionsId { get; set; } // uuid
 		[Column,     NotNull    ] public int    NumberOfUses { get; set; } // integer
@@ -287,9 +287,11 @@ namespace DM.Database
 	public partial class MealIngredientsWithNutrition
 	{
 		[Column(SkipOnUpdate=true), Nullable] public Guid?   Id            { get; set; } // uuid
-		[Column(SkipOnUpdate=true), Nullable] public string  Name          { get; set; } // text
+		[Column(SkipOnUpdate=true), Nullable] public string  Name          { get; set; } // character varying(30)
 		[Column(SkipOnUpdate=true), Nullable] public Guid?   ImageId       { get; set; } // uuid
 		[Column(SkipOnUpdate=true), Nullable] public int?    Calories      { get; set; } // integer
+		[Column(SkipOnUpdate=true), Nullable] public Guid?   CreatorId     { get; set; } // uuid
+		[Column(SkipOnUpdate=true), Nullable] public int?    NumberOfUses  { get; set; } // integer
 		[Column(SkipOnUpdate=true), Nullable] public double? Protein       { get; set; } // double precision
 		[Column(SkipOnUpdate=true), Nullable] public double? Carbohydrates { get; set; } // double precision
 		[Column(SkipOnUpdate=true), Nullable] public double? Fats          { get; set; } // double precision
@@ -302,10 +304,9 @@ namespace DM.Database
 	[Table(Schema="Meals", Name="Meal-MealIngredient")]
 	public partial class MealMealIngredient
 	{
-		[PrimaryKey, NotNull] public Guid   Id               { get; set; } // uuid
-		[Column,     NotNull] public Guid   MealIngredientId { get; set; } // uuid
-		[Column,     NotNull] public Guid   MealId           { get; set; } // uuid
-		[Column,     NotNull] public double Quantity         { get; set; } // double precision
+		[PrimaryKey(1), NotNull] public Guid   MealIngredientId { get; set; } // uuid
+		[PrimaryKey(2), NotNull] public Guid   MealId           { get; set; } // uuid
+		[Column,        NotNull] public double Quantity         { get; set; } // double precision
 
 		#region Associations
 
@@ -454,7 +455,7 @@ namespace DM.Database
 		#endregion
 	}
 
-	[Table(Schema="Socials", Name="UserAchievement")]
+	[Table(Schema="Socials", Name="User-Achievement")]
 	public partial class UserAchievement
 	{
 		[PrimaryKey(1), NotNull] public Guid AchievementId { get; set; } // uuid
@@ -569,10 +570,11 @@ namespace DM.Database
 				t.Id == Id);
 		}
 
-		public static MealMealIngredient Find(this ITable<MealMealIngredient> table, Guid Id)
+		public static MealMealIngredient Find(this ITable<MealMealIngredient> table, Guid MealIngredientId, Guid MealId)
 		{
 			return table.FirstOrDefault(t =>
-				t.Id == Id);
+				t.MealIngredientId == MealIngredientId &&
+				t.MealId           == MealId);
 		}
 
 		public static MealScheduleEntry Find(this ITable<MealScheduleEntry> table, Guid Id)

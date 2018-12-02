@@ -64,7 +64,7 @@ namespace DM.Repositories
         {
             using (var db = new DietManagerDB())
             {
-                var mealIngredients = await db.MealFullMealIngredients.
+                var mealIngredients = await db.MealCompleteMealIngredients.
                     Where(m => m.MealId == mealId).
                     Select(m => new MealIngredientWithQuantity()
                     {   Quantity = m.Quantity.Value,
@@ -96,7 +96,7 @@ namespace DM.Repositories
         {
             using (var db = new DietManagerDB())
             {
-                var mealIngredients = await db.MealFullMealIngredients.
+                var mealIngredients = await db.MealCompleteMealIngredients.
                     Where(m => mealIds.Contains(m.MealId.Value)).
                     GroupBy(m => m.MealId.Value).
                     ToDictionaryAsync(kv => kv.Key, kv => kv.Select(m => 

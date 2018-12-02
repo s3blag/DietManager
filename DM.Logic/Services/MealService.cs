@@ -150,8 +150,7 @@ namespace DM.Logic.Services
             return mealIngredientsIDs.
                  Select(m =>
                      new MealMealIngredient()
-                     {
-                         Id = Guid.NewGuid(),
+                     { 
                          MealId = mealId,
                          MealIngredientId = m.Id.Value,
                          Quantity = m.Quantity.Value

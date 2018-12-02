@@ -51,13 +51,13 @@ CREATE TABLE "Socials"."Achievement" (
     "Value"             INTEGER     NOT NULL
 );
 
-CREATE TABLE "Socials"."UserAchievement" (
+CREATE TABLE "Socials"."User-Achievement" (
     PRIMARY KEY ("AchievementId", "UserId"),
     "AchievementId"     UUID    NOT NULL,
     "UserId"            UUID    NOT NULL,
     "Seen"              BOOL    NOT NULL DEFAULT FALSE
 );
-ALTER TABLE "Socials"."UserAchievement" 
+ALTER TABLE "Socials"."User-Achievement" 
 ADD CONSTRAINT FK_UserAchievement_User FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id"),
 ADD CONSTRAINT FK_UserAchievement_Achievement FOREIGN KEY ("AchievementId") REFERENCES "Socials"."Achievement"("Id");
 
@@ -74,7 +74,7 @@ CREATE TABLE "Meals"."Meal" (
 );
 ALTER TABLE "Meals"."Meal" 
 ADD CONSTRAINT "FK_Meal_Image" FOREIGN KEY ("ImageId") REFERENCES  "Images"."Image"("Id"),
-ADD CONSTRAINT "FK_Meal_User" FOREIGN KEY ("CreatorId") REFERENCES  "Users"."User"("Id");
+ADD CONSTRAINT "FK_Meal_User" FOREIGN KEY ("CreatorId") REFERENCES  "Users"."User"("Id"),
 ADD CONSTRAINT "Description_Length" CHECK (char_length("Description") <= 1000);
 
 CREATE TABLE "Meals"."Favourite" (
@@ -113,7 +113,7 @@ CREATE TABLE "Meals"."MealIngredient" (
     "Id"            UUID        PRIMARY KEY,
     "CreatorId"     UUID        NULL,
     "ImageId"       UUID        NULL,
-    "Name"          TEXT        UNIQUE,
+    "Name"          VARCHAR(30) UNIQUE,
     "Calories"      INTEGER     NOT NULL,
     "NutritionsId"  UUID        UNIQUE NOT NULL,
     "NumberOfUses"  INTEGER     NOT NULL
@@ -124,7 +124,7 @@ ADD CONSTRAINT "FK_MealIngredient_Nutritions" FOREIGN KEY ("NutritionsId") REFER
 ADD CONSTRAINT "FK_MealIngredient_Creator" FOREIGN KEY ("CreatorId") REFERENCES  "Users"."User"("Id");
 
 CREATE TABLE "Meals"."Meal-MealIngredient" (
-    "Id"                UUID                PRIMARY KEY,
+    PRIMARY KEY ("MealIngredientId", "MealId"),
     "MealIngredientId"  UUID                NOT NULL,
     "MealId"            UUID                NOT NULL,
     "Quantity"          DOUBLE PRECISION    NOT NULL
@@ -163,6 +163,8 @@ SELECT
     m."Name",
     m."ImageId",
     m."Calories",
+    m."CreatorId",
+    m."NumberOfUses",
     n."Protein",
     n."Carbohydrates",
     n."Fats",
@@ -173,7 +175,7 @@ SELECT
 FROM "Meals"."MealIngredient" m
 JOIN "Meals"."Nutritions" n ON n."Id" = m."NutritionsId";
 
-CREATE VIEW "Meals"."Meal-FullMealIngredient" AS
+CREATE VIEW "Meals"."Meal-CompleteMealIngredient" AS
 SELECT 
  	mmi."MealId",
     mmi."Quantity" as "Quantity",
