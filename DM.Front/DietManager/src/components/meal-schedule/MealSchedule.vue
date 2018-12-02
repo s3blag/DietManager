@@ -17,7 +17,7 @@
         <meal-schedule-container
           class="daily-schedule"
           v-for="(day, index) in daysOfWeek"
-          :key="index"
+          :key="index + 1"
           :mealSchedule="mealSchedule[firstLetterToLower(day)]"
           :label="day"
           :class="{'current-day': index+1 === currentDayOfWeek}"
