@@ -122,8 +122,8 @@ export default class AddMeal extends Vue {
     return _.sum(
       this.addedMealIngredients.map(
         ingredientWithQuantity =>
-          ingredientWithQuantity.mealIngredient.calories *
-          ingredientWithQuantity.quantity
+          +(ingredientWithQuantity.mealIngredient.calories *
+      (ingredientWithQuantity.quantity / 100)).toFixed(2)
       )
     );
   }
@@ -142,7 +142,7 @@ export default class AddMeal extends Vue {
     }
     const { name, description, imageId } = this.mealFormData;
     const completeMealCreation = {
-      calories: this.mealCalories,
+      calories: Math.round(this.mealCalories),
       name: name,
       description: description,
       imageId: imageId,

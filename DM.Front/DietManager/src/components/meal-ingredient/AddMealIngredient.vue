@@ -11,7 +11,7 @@
         >
       </div>
       <div class="form-input">
-        <div class="label">Quantity</div>
+        <div class="label">Quantity [g]</div>
         <input
           type="number"
           class="form-control"
@@ -25,6 +25,7 @@
           type="number"
           class="form-control"
           placeholder="Enter amount of calories..."
+          min="0"
           v-model="mealIngredientFormData.mealIngredient.calories"
         >
       </div>
@@ -34,6 +35,7 @@
           type="number"
           class="form-control"
           placeholder="Enter amount of proteins..."
+          min="0"
           v-model="mealIngredientFormData.mealIngredient.nutrition.protein"
         >
       </div>
@@ -43,6 +45,7 @@
           type="number"
           class="form-control"
           placeholder="Enter amount of carbohydrates..."
+          min="0"
           v-model="mealIngredientFormData.mealIngredient.nutrition.carbohydrates"
         >
       </div>
@@ -52,6 +55,7 @@
           type="number"
           class="form-control"
           placeholder="Enter amount of fats..."
+          min="0"
           v-model="mealIngredientFormData.mealIngredient.nutrition.fats"
         >
       </div>
@@ -129,6 +133,13 @@ export default class AddMealIngredient extends Vue {
   }
 
   addMealIngredientSuccessHandler(guid: string) {
+    if (
+      !this.mealIngredientFormData.mealIngredient.name ||
+      this.mealIngredientFormData.mealIngredient.name.length < 1
+    ) {
+      return;
+    }
+
     const mealIngredientCreation = this.mealIngredientFormData;
     const addedMealIngredientWithQuantity = {
       mealIngredient: {

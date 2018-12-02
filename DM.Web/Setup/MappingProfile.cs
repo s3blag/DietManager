@@ -52,8 +52,7 @@ namespace DM.Web
                 ForMember(target => target.FullName, config => config.MapFrom(source => source.Name + " " + source.Surname)).
                 ForMember(target => target.CreationDate, config => config.MapFrom(source => DateTimeOffset.Now)).
                 ForMember(target => target.LastLoginDate, config => config.MapFrom(source => DateTimeOffset.Now));
-            CreateMap<UserAchievementCreation, UserAchievement>().
-                ForMember(target => target.Id, config => config.MapFrom(source => Guid.NewGuid()));
+            CreateMap<UserAchievementCreation, UserAchievement>();
             CreateMap<User, AwaitingFriendInvitationVM>().
                 ForMember(target => target.UserId, config => config.MapFrom(src => src.Id)).
                 ForMember(target => target.Name, config => config.MapFrom(src => src.Name)).

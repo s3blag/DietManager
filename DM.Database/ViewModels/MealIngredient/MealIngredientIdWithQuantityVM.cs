@@ -9,6 +9,6 @@ namespace DM.Models.ViewModels
         public Guid? Id { get; set; }
 
         [Required]
-        public int? Quantity { get; set; }
+        public double? Quantity { get; set; }
     }
 }

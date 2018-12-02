@@ -23,7 +23,7 @@ CREATE TABLE "Users"."User" (
     "City"                          VARCHAR(35)     NOT NULL,
     "CreatedMealsCount"             INTEGER         NOT NULL DEFAULT 0,
     "CreatedMealIngredientsCount"   INTEGER         NOT NULL DEFAULT 0,
-    "Password"                      TEXT            NOT NULL,
+    "Password"                      VARCHAR(100)    NOT NULL,
     "CreationDate"                  TIMESTAMPTZ     NOT NULL,
     "LastLoginDate"                 TIMESTAMPTZ     NOT NULL,
     "ImageId"                       UUID            NULL,
@@ -36,7 +36,7 @@ CREATE TABLE "Socials"."Friend" (
     PRIMARY KEY ("InvitingUserId", "InvitedUserId"),
     "InvitingUserId"    UUID            NOT NULL,
     "InvitedUserId"     UUID            NOT NULL,
-    "Status"            TEXT            NOT NULL,
+    "Status"            VARCHAR(50)     NOT NULL,
     "CreationDate"      TIMESTAMPTZ     NOT NULL
 );
 ALTER TABLE "Socials"."Friend" 
@@ -52,30 +52,30 @@ CREATE TABLE "Socials"."Achievement" (
 );
 
 CREATE TABLE "Socials"."UserAchievement" (
-    "Id"                UUID    PRIMARY KEY,
+    PRIMARY KEY ("AchievementId", "UserId"),
     "AchievementId"     UUID    NOT NULL,
     "UserId"            UUID    NOT NULL,
     "Seen"              BOOL    NOT NULL DEFAULT FALSE
 );
 ALTER TABLE "Socials"."UserAchievement" 
 ADD CONSTRAINT FK_UserAchievement_User FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id"),
-ADD CONSTRAINT FK_UserAchievement_Achievement FOREIGN KEY ("AchievementId") REFERENCES "Socials"."Achievement"("Id"),
-ADD CONSTRAINT UQ_User_Achievement UNIQUE("UserId", "AchievementId");
+ADD CONSTRAINT FK_UserAchievement_Achievement FOREIGN KEY ("AchievementId") REFERENCES "Socials"."Achievement"("Id");
 
 CREATE TABLE "Meals"."Meal" (
     "Id"                        UUID            PRIMARY KEY,
     "CreationDate"              TIMESTAMPTZ     NOT NULL,
     "CreatorId"                 UUID            NOT NULL,
     "ImageId"                   UUID            NULL,
-    "Name"                      TEXT            NOT NULL,
-    "Description"               TEXT            NULL,
-    "Calories"                  REAL            NOT NULL,
-    "NumberOfFavouriteMarks"    INTEGER         NOT NULL,
-    "NumberOfUses"              INTEGER         NOT NULL
+    "Name"                      VARCHAR(50)     NOT NULL,
+    "Description"               TEXT            NOT NULL,
+    "Calories"                  INTEGER         NOT NULL,
+    "NumberOfFavouriteMarks"    INTEGER         NOT NULL DEFAULT 0,
+    "NumberOfUses"              INTEGER         NOT NULL DEFAULT 0
 );
 ALTER TABLE "Meals"."Meal" 
 ADD CONSTRAINT "FK_Meal_Image" FOREIGN KEY ("ImageId") REFERENCES  "Images"."Image"("Id"),
 ADD CONSTRAINT "FK_Meal_User" FOREIGN KEY ("CreatorId") REFERENCES  "Users"."User"("Id");
+ADD CONSTRAINT "Description_Length" CHECK (char_length("Description") <= 1000);
 
 CREATE TABLE "Meals"."Favourite" (
     "Id"            UUID            PRIMARY KEY,
@@ -99,14 +99,14 @@ ADD CONSTRAINT FK_UserMeal_MealId FOREIGN KEY ("MealId") REFERENCES "Meals"."Mea
 ADD CONSTRAINT FK_UserMeal_UserId FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id") ON DELETE CASCADE;
 
 CREATE TABLE "Meals"."Nutritions" (
-    "Id"            UUID    PRIMARY KEY,
-    "Protein"       REAL    NOT NULL,
-    "Carbohydrates" REAL    NOT NULL,
-    "Fats"          REAL    NOT NULL,
-    "VitaminA"      REAL    NULL,
-    "VitaminC"      REAL    NULL,
-    "VitaminB6"     REAL    NULL,
-    "VitaminD"      REAL    NULL
+    "Id"            UUID                PRIMARY KEY,
+    "Protein"       DOUBLE PRECISION    NOT NULL,
+    "Carbohydrates" DOUBLE PRECISION    NOT NULL,
+    "Fats"          DOUBLE PRECISION    NOT NULL,
+    "VitaminA"      DOUBLE PRECISION    NULL,
+    "VitaminC"      DOUBLE PRECISION    NULL,
+    "VitaminB6"     DOUBLE PRECISION    NULL,
+    "VitaminD"      DOUBLE PRECISION    NULL
 );
 
 CREATE TABLE "Meals"."MealIngredient" (
@@ -115,7 +115,7 @@ CREATE TABLE "Meals"."MealIngredient" (
     "ImageId"       UUID        NULL,
     "Name"          TEXT        UNIQUE,
     "Calories"      INTEGER     NOT NULL,
-    "NutritionsId"  UUID        NOT NULL,
+    "NutritionsId"  UUID        UNIQUE NOT NULL,
     "NumberOfUses"  INTEGER     NOT NULL
 );
 ALTER TABLE "Meals"."MealIngredient" 
@@ -124,10 +124,10 @@ ADD CONSTRAINT "FK_MealIngredient_Nutritions" FOREIGN KEY ("NutritionsId") REFER
 ADD CONSTRAINT "FK_MealIngredient_Creator" FOREIGN KEY ("CreatorId") REFERENCES  "Users"."User"("Id");
 
 CREATE TABLE "Meals"."Meal-MealIngredient" (
-    "Id"                UUID        PRIMARY KEY,
-    "MealIngredientId"  UUID        NOT NULL,
-    "MealId"            UUID        NOT NULL,
-    "Quantity"          INTEGER     NOT NULL
+    "Id"                UUID                PRIMARY KEY,
+    "MealIngredientId"  UUID                NOT NULL,
+    "MealId"            UUID                NOT NULL,
+    "Quantity"          DOUBLE PRECISION    NOT NULL
 );
 ALTER TABLE "Meals"."Meal-MealIngredient" 
 ADD CONSTRAINT "FK_MealMealIngredient_MealIngredient-" FOREIGN KEY ("MealIngredientId") REFERENCES  "Meals"."MealIngredient"("Id") ON DELETE CASCADE,

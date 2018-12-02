@@ -15,7 +15,7 @@ namespace DM.Repositories
             using (var db = new DietManagerDB())
             {
                 var rowsAffectedCount = await db.UserAchievements.
-                    Where(ua => achievementIds.Contains(ua.Id)).
+                    Where(ua => achievementIds.Contains(ua.AchievementId)).
                     Where(ua => ua.UserId == userId).
                     Set(ua => ua.Seen, true).
                     UpdateAsync();
