@@ -115,6 +115,7 @@ export default class AuthService {
   public static logout() {
     localStorage.removeItem("user");
     EventBus.$emit("user-state-changed");
+    location.reload(true);
   }
 
   private static setUser(user: LoggedInUser) {

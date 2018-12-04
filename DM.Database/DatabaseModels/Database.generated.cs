@@ -22,7 +22,7 @@ namespace DM.Database
 	/// <summary>
 	/// Database       : DietManager
 	/// Data Source    : tcp://localhost:5432
-	/// Server Version : 10.4
+	/// Server Version : 9.5.14
 	/// </summary>
 	public partial class DietManagerDB : LinqToDB.Data.DataConnection
 	{
@@ -388,6 +388,7 @@ namespace DM.Database
 		[Column,     NotNull    ] public DateTimeOffset CreationDate                { get; set; } // timestamp (6) with time zone
 		[Column,     NotNull    ] public DateTimeOffset LastLoginDate               { get; set; } // timestamp (6) with time zone
 		[Column,        Nullable] public Guid?          ImageId                     { get; set; } // uuid
+		[Column,     NotNull    ] public bool           IsAdmin                     { get; set; } // boolean
 		[Column,     NotNull    ] public bool           Deleted                     { get; set; } // boolean
 
 		#region Associations
@@ -489,6 +490,7 @@ namespace DM.Database
 		[Column,        Nullable] public Guid? FavouriteId      { get; set; } // uuid
 		[Column,        Nullable] public Guid? FriendId         { get; set; } // uuid
 		[Column,        Nullable] public Guid? AchievementId    { get; set; } // uuid
+		[Column,        Nullable] public bool? SeenByAdmin      { get; set; } // boolean
 
 		#region Associations
 

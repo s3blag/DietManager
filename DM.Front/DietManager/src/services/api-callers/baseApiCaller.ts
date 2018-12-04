@@ -23,7 +23,6 @@ export default class BaseApiCaller {
       error => {
         if (error.response && error.response.status === 401) {
           AuthService.logout();
-          //location.reload(true);
         }
         return Promise.reject(error);
       }

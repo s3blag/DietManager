@@ -75,8 +75,6 @@ export default class AccountManager extends Vue {
     next: (onBeforeRouteEnter: (instance: AccountManager) => void) => void
   ) {
     next(instance => {
-      //TODO:
-      //instance.getLoggedInUser();
       instance.reloadLoggedInUser();
     });
   }

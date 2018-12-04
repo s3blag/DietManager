@@ -1,17 +1,15 @@
 <template>
-  <router-link :to="'/meals/' + meal.id" tag="div" class="link">
+  <router-link :to="'/meal/' + meal.id" tag="div" class="link">
     <layout>
       <template slot="picture">
         <image-wrapper :imageId="meal.imageId" :asWheel="false">
           <template slot="placeholder">
-            <font-awesome-icon class="main-color" icon="utensils" size="2x" />
+            <font-awesome-icon class="main-color" icon="utensils" size="2x"/>
           </template>
         </image-wrapper>
       </template>
       <template slot="details">
-        <div>
-          {{meal.name}}
-        </div>
+        <div>{{meal.name}}</div>
       </template>
     </layout>
   </router-link>
@@ -35,13 +33,6 @@ import ImageWrapper from "@/components/image/ImageWrapper.vue";
 export default class MealActivityContent extends Vue {
   @Prop({ required: true })
   private meal!: Meal;
-  // = {
-  //   id: "lss",
-  //   name: "meal name",
-  //   imageId: null,
-  //   Calories: 1,
-  //   ingredients: []
-  // };
 }
 </script>
 

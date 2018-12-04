@@ -12,6 +12,7 @@
             Surname = user.Surname;
             City = user.City;
             IsFriend = user.IsFriend;
+            IsAdmin = user.IsAdmin;
             Token = token;
         }
 

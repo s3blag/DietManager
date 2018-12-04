@@ -27,6 +27,7 @@ CREATE TABLE "Users"."User" (
     "CreationDate"                  TIMESTAMPTZ     NOT NULL,
     "LastLoginDate"                 TIMESTAMPTZ     NOT NULL,
     "ImageId"                       UUID            NULL,
+    "IsAdmin"                       BOOL            NOT NULL DEFAULT FALSE,
     "Deleted"                       BOOL            NOT NULL DEFAULT FALSE
 );
 ALTER TABLE "Users"."User" 
@@ -141,7 +142,8 @@ CREATE TABLE "Socials"."UserActivity" (
     "MealIngredientId"  UUID            NULL,
     "FavouriteId"       UUID            NULL,
     "FriendId"          UUID            NULL,
-    "AchievementId"     UUID            NULL
+    "AchievementId"     UUID            NULL,
+    "SeenByAdmin"       BOOL            DEFAULT FALSE
 );
 ALTER TABLE "Socials"."UserActivity" 
 ADD CONSTRAINT FK_UserActivity_User FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id"),
@@ -204,19 +206,21 @@ INSERT INTO "Users"."User"(
     "FullName",
     "Password", 
     "LastLoginDate",
-    "CreationDate"
+    "CreationDate",
+    "IsAdmin"
 )
 VALUES 
 (
     '00000000-0000-0000-0000-000000000000',
-    'Wroclaw',
+    'Admin',
     'ad',
-    'Sebastian',
-    'Łągiewski',
-    'Sebastian Łągiewski',
-    'ad',
+    'Admin',
+    'Admin',
+    'Admin Admin',
+    '$hash$20$W3ojGDwYQkjInL+4r7CRO876Hc2ApD2sLJYGCr2s9gAOyAIR',
     '25.10.2018 20:58:57 +02:00',
-    '25.10.2018 20:58:57 +02:00'
+    '25.10.2018 20:58:57 +02:00',
+    'true'
 ),
 (
     '10000000-0000-0000-0000-000000000000',
@@ -227,7 +231,8 @@ VALUES
     'Marcepan Marcepański',
     'password',
     '25.10.2018 20:58:57 +02:00',
-    '25.10.2018 20:58:57 +02:00'
+    '25.10.2018 20:58:57 +02:00',
+    'false'
 ),
 (
     '20000000-0000-0000-0000-000000000000',
@@ -238,7 +243,8 @@ VALUES
     'Klaudia Łągiewski',
     'password',
     '25.10.2018 20:58:57 +02:00',
-    '25.10.2018 20:58:57 +02:00'
+    '25.10.2018 20:58:57 +02:00',
+    'false'
 ),
 (
     '30000000-0000-0000-0000-000000000000',
@@ -249,7 +255,8 @@ VALUES
     'Dawid Lorek',
     'password',
     '25.10.2018 20:58:57 +02:00',
-    '25.10.2018 20:58:57 +02:00'
+    '25.10.2018 20:58:57 +02:00',
+    'false'
 ),
 (
     '40000000-0000-0000-0000-000000000000',
@@ -260,7 +267,8 @@ VALUES
     'Przemyslaw Salata',
     'password',
     '25.10.2018 20:58:57 +02:00',
-    '25.10.2018 20:58:57 +02:00'
+    '25.10.2018 20:58:57 +02:00',
+    'false'
 ),
 (
     '50000000-0000-0000-0000-000000000000',
@@ -271,7 +279,8 @@ VALUES
     'Karolina Kozica',
     'password',
     '25.10.2018 20:58:57 +02:00',
-    '25.10.2018 20:58:57 +02:00'
+    '25.10.2018 20:58:57 +02:00',
+    'false'
 );
 
 INSERT INTO "Socials"."Friend"(

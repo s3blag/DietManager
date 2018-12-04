@@ -32,7 +32,8 @@ namespace DM.Logic.Services
                 Audience = _securitySettings.Audience,
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.Id.ToString())
+                    new Claim(ClaimTypes.Name, user.Id.ToString()),
+                    new Claim(ClaimTypes.Role, user.IsAdmin.GetValueOrDefault() ? "Admin" : "User")
                 }),
                 Expires = DateTime.UtcNow.AddDays(5),
                 SigningCredentials = credentials

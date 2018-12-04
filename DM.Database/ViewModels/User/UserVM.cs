@@ -16,5 +16,7 @@ namespace DM.Models.ViewModels
         public string City { get; set; }
 
         public bool? IsFriend { get; set; }
+
+        public bool? IsAdmin { get; set; }
     }
 }

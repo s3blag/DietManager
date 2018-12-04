@@ -1,4 +1,3 @@
-// todo: reuse MyMealsComponent
 <template>
   <div class="list-container">
     <h2 class="main-color">Favourite Meals</h2>

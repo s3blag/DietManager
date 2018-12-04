@@ -4,17 +4,13 @@
       <template slot="picture">
         <image-wrapper :imageId="friend.imageId" :asWheel="false">
           <template slot="placeholder">
-            <font-awesome-icon class="user-avatar main-color" icon="user-circle" />
+            <font-awesome-icon class="user-avatar main-color" icon="user-circle"/>
           </template>
         </image-wrapper>
       </template>
       <template slot="details">
-        <div>
-          {{friend.name + ' ' + friend.surname}}
-        </div>
-        <div id="city">
-          {{friend.city}}
-        </div>
+        <div>{{friend.name + ' ' + friend.surname}}</div>
+        <div id="city">{{friend.city}}</div>
       </template>
     </layout>
   </div>
@@ -39,14 +35,6 @@ import User from "@/ViewModels/user/user";
 export default class FriendActivityContent extends Vue {
   @Prop({ required: true })
   private friend!: User;
-  // = {
-  //   id: "lss",
-  //   name: "name",
-  //   surname: "surname",
-  //   imageId: null,
-  //   city: "Wroclaw",
-  //   isFriend: false
-  // };
 }
 </script>
 
