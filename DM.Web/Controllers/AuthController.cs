@@ -28,11 +28,6 @@ namespace DM.Web.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginVM model)
         {
-            if (model == null || !ModelState.IsValid)
-            {
-                return BadRequest("Invalid login data.");
-            }
-
             var user = await _userService.GetUserByLoginDataAsync(model);
 
             if (user == null)
@@ -52,7 +47,6 @@ namespace DM.Web.Controllers
             var loggedInUser = new LoggedInUserVM(user, authToken);
 
             return Ok(loggedInUser);
-
         }
 
         [HttpPost("register")]
@@ -69,7 +63,7 @@ namespace DM.Web.Controllers
 
             if (user == null)
             {
-                return BadRequest("Username is not unique");
+                return BadRequest("Username is not unique.");
             }
 
             var authToken = _securityService.GenerateAuthToken(user);

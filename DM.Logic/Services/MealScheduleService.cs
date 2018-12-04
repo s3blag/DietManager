@@ -28,11 +28,6 @@ namespace DM.Logic.Services
 
         public async Task<Dictionary<DayOfWeek, IEnumerable<MealScheduleEntryVM>>> GetUpcomingMealSchedule(Guid userId, DateTimeOffset dateOffset)
         {
-            ValidateArgument(
-                (userId, nameof(userId)), 
-                (dateOffset, nameof(dateOffset))
-                );
-
             var mealScheduleEntries = _mapper.Map<IEnumerable<MealScheduleEntryVM>>(
                         await _mealScheduleRepository.GetMealScheduleEntriesInDateRangeAsync(
                                                         userId,
@@ -47,13 +42,8 @@ namespace DM.Logic.Services
             return groupedMealScheduleEntries;
         }
 
-        public async Task<Guid?> AddMealScheduleEntry(Guid userId, MealScheduleEntryCreationVM newMealScheduleEntry)
+        public async Task<Guid?> AddMealScheduleEntryAsync(Guid userId, MealScheduleEntryCreationVM newMealScheduleEntry)
         {
-            ValidateArgument(
-                (userId, nameof(userId)),
-                (newMealScheduleEntry, nameof(newMealScheduleEntry))
-                );
-
             var dbMealScheduleEntry = _mapper.Map<MealScheduleEntry>(newMealScheduleEntry);
             dbMealScheduleEntry.UserId = userId;
 
@@ -64,7 +54,7 @@ namespace DM.Logic.Services
                 return null;
             }
 
-            var checkNumberOfMealUsesTask = _achievementService.CheckForNumberOfMealUsesAsync(userId, dbMealScheduleEntry.MealId);
+            var checkNumberOfMealUsesTask = _achievementService.CheckForNumberOfMealUsesAsync(dbMealScheduleEntry.MealId);
             var checkConsequentUpdatesTask =  _achievementService.CheckForConsequentScheduleUpdatesAsync(userId);
 
             await Task.WhenAll(checkNumberOfMealUsesTask, checkConsequentUpdatesTask);
@@ -91,16 +81,6 @@ namespace DM.Logic.Services
 
             return await _mealScheduleRepository.UpdateAsync(mealScheduleEntry);
         }
-
-        private void ValidateArgument(params (object value, string name)[] arguments)
-        {
-            foreach (var (value, name) in arguments)
-            {
-                if (value is null)
-                {
-                    throw new ArgumentNullException(name);
-                }
-            }
-        }
+      
     }
 }

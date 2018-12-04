@@ -14,7 +14,7 @@
         id="error-message"
         :class="validationError.length === 0 ? 'hidden' : ''"
       >{{validationError}}</div>
-      <button class="button" @click="submit">Log in</button>
+      <button class="button" :class="!valid ? 'disabled' : ''" @click="submit">Log in</button>
     </div>
   </div>
 </template>
@@ -38,17 +38,30 @@ export default class Login extends Vue {
   private loginForm: UserLogin = { username: "", password: "" };
   private validationError: string = "";
 
-  submit() {
-    AuthService.signIn(
-      this.loginForm,
-      () => this.$router.replace({ name: "Home" }),
-      error => (this.validationError = error)
+  get valid() {
+    return (
+      this.loginForm.username.length > 1 &&
+      this.loginForm.password.length > 1 &&
+      !/\s/.test(this.loginForm.username)
     );
+  }
+
+  submit() {
+    if (this.valid) {
+      AuthService.signIn(
+        this.loginForm,
+        () => this.$router.replace({ name: "Home" }),
+        error => (this.validationError = error)
+      );
+    }
   }
 }
 </script>
 
 <style lang="less" scoped>
+.disabled {
+  background-color: grey !important;
+}
 #user-login {
   margin: 100px auto;
   border-radius: 8px;

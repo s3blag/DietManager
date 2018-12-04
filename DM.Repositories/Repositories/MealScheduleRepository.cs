@@ -14,6 +14,8 @@ namespace DM.Repositories
     {
         private readonly IMealIngredientRepository _mealIngredientRepository;
 
+        private const int STREAK_LIMIT = 366;
+
         public MealScheduleRepository(IMealIngredientRepository mealIngredientRepository)
         {
             _mealIngredientRepository = mealIngredientRepository;
@@ -80,6 +82,7 @@ namespace DM.Repositories
                     GroupBy(m => m.Date.SubtractWithResultInDays(DateTimeOffset.Now)).
                     OrderByDescending(_ => _.Key).
                     Select(_ => _.Key).
+                    Take(STREAK_LIMIT).
                     AsQueryable();
 
                 var differenceBetweenDaysWithUpdatedScheduleAndCurrentDay = await query.ToListAsync();

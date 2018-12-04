@@ -12,7 +12,7 @@
       :enableFavouriteMarkToggling="asEmittingComponent ? false : true"
       @deleted-from-favourites="onDeletedFromFavourites"
       :emitEvents="asEmittingComponent"
-      @selectedMeal="onMealSelected"
+      @mealSelected="onMealSelected"
     />
 
     <button
@@ -57,6 +57,12 @@ export default class MyMeals extends Vue {
     });
   }
 
+  created() {
+    if (this.asEmittingComponent) {
+      this.getMealPreviews();
+    }
+  }
+
   get isMobile() {
     if (window.innerWidth < 860) {
       return true;
@@ -87,6 +93,9 @@ export default class MyMeals extends Vue {
       !indexedMealPreviews.result !== null ||
       indexedMealPreviews.result.length > 0
     ) {
+      indexedMealPreviews.result.forEach(element => {
+        element.isSelected = false;
+      });
       this.mealPreviews.push(...indexedMealPreviews.result);
 
       this.lastReturned = {

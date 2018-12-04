@@ -42,7 +42,7 @@
             >
               <div class="image"></div>
               <span class="name">{{mealIngredientWithQuantity.mealIngredient.name}}</span>
-              <span class="quantity">{{mealIngredientWithQuantity.quantity}}</span>
+              <span class="quantity">{{mealIngredientWithQuantity.quantity + 'g'}}</span>
             </li>
           </ul>
         </div>

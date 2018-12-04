@@ -41,7 +41,7 @@
             :key="item.name"
           >
             <span class="name">{{item.name}}</span>
-            <span class="quantity">{{item.quantity + 'x'}}</span>
+            <span class="quantity">{{item.quantity + 'g'}}</span>
           </div>
         </div>
       </div>
@@ -102,7 +102,7 @@ export default class MealSchedule extends Vue {
 
   get currentDayOfWeek() {
     const currentDate = new Date();
-    
+
     return currentDate.getDay() == 0 ? 7 : currentDate.getDay();
   }
 
@@ -154,7 +154,8 @@ export default class MealSchedule extends Vue {
   getCurrentWeekStartDate() {
     let currentWeekStartDate = new Date();
 
-    const currentDay = currentWeekStartDate.getDay() == 0 ? 7 : currentWeekStartDate.getDay();
+    const currentDay =
+      currentWeekStartDate.getDay() == 0 ? 7 : currentWeekStartDate.getDay();
 
     currentWeekStartDate.setDate(
       currentWeekStartDate.getDate() - (currentDay - 1)

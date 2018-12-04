@@ -112,6 +112,7 @@ export default class UserAchievements extends Vue {
   display: inline-flex;
 }
 .category {
+  margin-top: 20px;
   font-size: 1.05em;
   font-weight: bold;
 }

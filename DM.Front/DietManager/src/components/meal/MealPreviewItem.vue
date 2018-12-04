@@ -21,14 +21,18 @@
         class="value"
       >{{mealPreview.name}}</router-link>
     </div>
+    <div class="meal-info-element meal-name">
+      <div class="label">Created by</div>
+      <div class="value">{{creatorName}}</div>
+    </div>
     <div class="meal-info-element">
       <div class="label">Calories</div>
       <div class="value">{{mealPreview.calories}}</div>
     </div>
     <span v-if="!isMobile" class="details">
       <div class="meal-info-element">
-        <div class="label">Used by</div>
-        <div class="value">{{mealPreview.numberOfUses}} people</div>
+        <div class="label">Used</div>
+        <div class="value">{{mealPreview.numberOfUses}} times</div>
       </div>
       <div class="meal-info-element">
         <div class="label">Favourite by</div>
@@ -41,6 +45,7 @@
         id="add-to-favourites-button"
         @click="toggleFavouriteMark"
       >
+        <div id="favourite-label" class="label">Favourite</div>
         <font-awesome-icon
           v-if="mealPreview.isFavourite === false"
           id="add-icon"
@@ -95,6 +100,19 @@ export default class MealPreviewItem extends Vue {
   })
   private emitEvents!: boolean;
 
+  get creatorName() {
+    if (
+      this.mealPreview.creator.name === "" &&
+      this.mealPreview.creator.surname === ""
+    ) {
+      return "account deleted";
+    } else {
+      return (
+        this.mealPreview.creator.name + " " + this.mealPreview.creator.surname
+      );
+    }
+  }
+
   onMealSelected() {
     this.$emit("mealSelected", this.mealPreview.id);
   }
@@ -139,6 +157,13 @@ export default class MealPreviewItem extends Vue {
 </script>
 
 <style>
+#favourite-label {
+  position: relative;
+  left: -10px;
+  top: 5px;
+  width: fit-content;
+  font-size: 0.9em;
+}
 .meal-info-element {
   flex-grow: 1;
   margin-left: 10px;
@@ -179,7 +204,10 @@ export default class MealPreviewItem extends Vue {
   width: 60px;
 }
 #add-to-favourites-button {
-  padding: 20px;
+  position: relative;
+  top: -8px;
+  padding: 5px;
+  width: 50px;
 }
 
 .meal-link {

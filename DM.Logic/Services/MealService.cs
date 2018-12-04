@@ -67,8 +67,6 @@ namespace DM.Logic.Services
 
         public async Task<Guid> AddMealAsync(MealCreationVM mealVM, Guid userId)
         {
-            //TODO: ValidateArguments((mealVM, nameof(mealVM)));
-
             var dbMeal = _mapper.Map<Meal>(mealVM);
             dbMeal.CreatorId = userId;
 

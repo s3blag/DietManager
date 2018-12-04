@@ -52,11 +52,6 @@ namespace DM.Web.Controllers
         [ModelStateValidator]
         public async Task<IActionResult> AddMeal([FromBody] MealCreationVM mealCreationVM)
         {
-            if (!ModelState.IsValid)
-            {
-                return NotFound("ViewModelIsInvalid");
-            }
-
             var userId = new Guid(User.Identity.Name);
 
             var mealId = await _mealService.AddMealAsync(mealCreationVM, userId);
@@ -100,7 +95,6 @@ namespace DM.Web.Controllers
         [HttpPost("search")]
         public async Task<IActionResult> SearchMeals([FromBody]IndexedResult<MealSearchVM> lastReturned)
         {
-            var usr = User.Identity.IsAuthenticated;
             if (lastReturned != null && lastReturned.IsLast)
             {
                 return NotFound("Invalid arguments");

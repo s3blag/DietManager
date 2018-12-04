@@ -58,8 +58,6 @@ import { Prop } from "vue-property-decorator";
   }
 })
 export default class AddMealSchedule extends Vue {
-  @Prop({ required: true })
-  private date!: Date;
   private favouritesTabSelected = false;
   private selectedMealId: string | null = null;
   private datePicking = false;

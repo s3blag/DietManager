@@ -18,7 +18,6 @@ namespace DM.Repositories
             {
                 var mealIngredient = await db.MealIngredients.
                     LoadWith(mi => mi.Nutrition).
-                    LoadWith(mi => mi.Image).
                     FirstOrDefaultAsync(m => m.Id == id);
 
                 return mealIngredient;

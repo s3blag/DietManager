@@ -17,7 +17,7 @@ namespace DM.Logic.Interfaces
         Task CheckForNumberOfFriendsAsync(Guid userId);
         Task CheckForNumberOfMealAdditionsByUserAsync(User user);
         Task CheckForNumberOfMealIngredientAdditionsByUserAsync(User user);
-        Task CheckForNumberOfMealUsesAsync(Guid userId, Guid mealId);
+        Task CheckForNumberOfMealUsesAsync(Guid mealId);
         Task CheckForUserAnniversaryAsync(User userBeforeLastLoginUpdate);
     }
 }

@@ -62,7 +62,9 @@ export default class Register extends Vue {
       form.passwordRepeated == form.password &&
       form.name.length > 1 &&
       form.surname.length > 1 &&
-      form.city.length > 1
+      form.city.length > 1 &&
+      !/\s/.test(form.username) &&
+      !/\s/.test(form.name)
     );
   }
 

@@ -36,8 +36,6 @@ namespace DM.Logic.Services
 
         public async Task<ImageVM> GetImageByIdAsync(Guid imageId)
         {
-            ValidateArgument((imageId, nameof(imageId)));
-
             var imageMetaData = await _imageRepository.GetImageByIdAsync(imageId);
 
             if (imageMetaData == null)
@@ -52,13 +50,13 @@ namespace DM.Logic.Services
 
         public async Task<Guid> AddImageAsync(string base64Image)
         {
-            ValidateArgument((base64Image, nameof(base64Image)));
+            var imageGuid = Guid.NewGuid();
 
-            var imageCreation = await CreateFullImagePathAsync(_config.ImagesRootDirectoryPath, GetExtension(base64Image));
+            var imagePath = await CreateFullImagePathAsync(imageGuid, _config.ImagesRootDirectoryPath, GetExtension(base64Image));
 
-            await WriteImageAsync(imageCreation, GetBase64Image(base64Image));
+            await WriteImageAsync(imagePath, GetBase64Image(base64Image));
 
-            var dbImage = _mapper.Map<Image>(imageCreation);
+            var dbImage = new Image() { Id = imageGuid, Path = imagePath };
 
             bool imagePathSaved = await _imageRepository.AddAsync(dbImage);
 
@@ -102,8 +100,8 @@ namespace DM.Logic.Services
         private async Task<Byte[]> ReadImageAsync(string imagePath) => await File.ReadAllBytesAsync(imagePath);
 
 
-        private async Task WriteImageAsync(ImageCreation imageCreation, string base64Image) => 
-            await File.WriteAllBytesAsync(imageCreation.Path, Convert.FromBase64String(base64Image));
+        private async Task WriteImageAsync(string path, string base64Image) => 
+            await File.WriteAllBytesAsync(path, Convert.FromBase64String(base64Image));
 
         private async Task<bool> DeleteImageAsync(Image image)
         {
@@ -119,36 +117,10 @@ namespace DM.Logic.Services
             }
         }
 
-        private async Task<ImageCreation> CreateFullImagePathAsync(string basePath, string extension)
+        private async Task<string> CreateFullImagePathAsync(Guid guid, string basePath, string extension)
         {
-            int count = await _imageRepository.CountAsync();
-
-            int imageInternalIndex = count % (_config.AmountOfImagesInSubDirectory - 1);
-
-            bool createDirectory = imageInternalIndex == 0;
-
-            string newImageDirectoryPath = Path.Combine(basePath, (count / (_config.AmountOfImagesInSubDirectory - 1)).ToString());
-
-            if (createDirectory)
-            {
-                await Task.Run(() =>
-                {
-                    Directory.CreateDirectory(newImageDirectoryPath);
-                });  
-            }
-
-            return new ImageCreation(Path.Combine(newImageDirectoryPath, imageInternalIndex.ToString() + extension));
+            return Path.Combine(basePath, guid.ToString() + extension);
         }
-        
-        private void ValidateArgument(params (Object value, string name)[] arguments)
-        {
-            foreach (var (value, name) in arguments)
-            {
-                if (value is null)
-                {
-                    throw new ArgumentNullException(name);
-                }
-            }
-        }
+       
     }
 }

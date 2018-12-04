@@ -54,7 +54,7 @@ namespace DM.Web.Controllers
 
             var userId = new Guid(User.Identity.Name);
 
-            var entryId = await _mealScheduleService.AddMealScheduleEntry(userId, mealScheduleCreation);
+            var entryId = await _mealScheduleService.AddMealScheduleEntryAsync(userId, mealScheduleCreation);
 
             if (entryId == null)
             {

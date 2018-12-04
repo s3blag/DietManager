@@ -17,7 +17,6 @@ namespace DM.Logic.Services
         private readonly IAchievementService _achievementService;
         private readonly IMapper _mapper;
         private readonly IActivityService _activityService;
-        private readonly IMealRepository _mealRepository;
 
         public FavouritesService(IFavouriteRepository favouriteRepository, IAchievementService achievementService,
             IMapper mapper, IActivityService activityService, IMealRepository mealRepository)
@@ -26,7 +25,6 @@ namespace DM.Logic.Services
             _achievementService = achievementService;
             _mapper = mapper;
             _activityService = activityService;
-            _mealRepository = mealRepository;
         }
 
         public async Task<IndexedResult<IEnumerable<MealPreviewVM>>> GetFavouriteMealsAsync(

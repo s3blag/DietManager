@@ -77,22 +77,20 @@ namespace DM.Logic.Services
 
         #region Meal Achievements
 
-        public async Task CheckForNumberOfMealUsesAsync(Guid userId, Guid mealId)
+        public async Task CheckForNumberOfMealUsesAsync(Guid mealId)
         {
-            var getMealTask = _mealRepository.GetMealByIdAsync(mealId);
+            var meal = await _mealRepository.GetMealByIdAsync(mealId);
 
-            var currentlyBestValueTask = _userAchievementRepository.GetUserAchievementMaxValueAsync(userId, Achievements.MealAchievement.NumberOfUses);
+            var currentlyBestValue = await _userAchievementRepository.GetUserAchievementMaxValueAsync(meal.CreatorId, Achievements.MealAchievement.NumberOfUses);
 
-            await Task.WhenAll(getMealTask, currentlyBestValueTask);
-
-            if (getMealTask.Result.NumberOfUses <= currentlyBestValueTask.Result)
+            if (meal.NumberOfUses <= currentlyBestValue)
             {
                 return;
             }
 
             int[] achievementStages = achievementsConfig.MealAchievements[Achievements.MealAchievement.NumberOfUses];
 
-            await AddAchievementIfNextStageReachedAsync(userId, achievementStages, getMealTask.Result.NumberOfUses, Achievements.MealAchievement.NumberOfUses);
+            await AddAchievementIfNextStageReachedAsync(meal.CreatorId, achievementStages, meal.NumberOfUses, Achievements.MealAchievement.NumberOfUses);
         }
 
         public async Task CheckForNumberOfMealAdditionsByUserAsync(User user)

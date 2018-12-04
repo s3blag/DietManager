@@ -19,17 +19,16 @@ namespace DM.Web.Controllers
         private readonly ISearchService _searchService;
         private readonly IUserService _userService;
         private readonly ISecurityService _securityService;
-        private readonly IMapper _mapper;
 
         public UserController(ISearchService searchService, IUserService userService, ISecurityService securityService, IMapper mapper)
         {
             _searchService = searchService;
             _userService = userService;
             _securityService = securityService;
-            _mapper = mapper;
         }
 
         [HttpPost("search")]
+        [Authorize]
         [ModelStateValidator]
         public async Task<IActionResult> SearchUsers([FromBody] IndexedResult<UserSearchVM> lastReturned)
         {

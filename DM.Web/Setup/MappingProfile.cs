@@ -79,6 +79,8 @@ namespace DM.Web
                 ForMember(target => target.Calories, config => config.MapFrom(src => src.Meal.Calories)).
                 ForMember(target => target.CreationDate, config => config.MapFrom(src => src.CreationDate)).
                 ForMember(target => target.Creator, config => config.MapFrom(src => src.Meal.Creator)).
+                ForMember(target => target.NumberOfFavouriteMarks, config => config.MapFrom(src => src.Meal.NumberOfFavouriteMarks)).
+                ForMember(target => target.NumberOfUses, config => config.MapFrom(src => src.Meal.NumberOfUses)).
                 ForMember(target => target.IsFavourite, config => config.MapFrom(_ => true));
             CreateMap<ActivityCreation, UserActivity>();
             CreateMap<MealScheduleEntryUpdateVM, MealScheduleEntry>().

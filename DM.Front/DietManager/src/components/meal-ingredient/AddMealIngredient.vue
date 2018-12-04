@@ -20,7 +20,7 @@
         >
       </div>
       <div class="form-input">
-        <div class="label">Calories [100g]</div>
+        <div class="label">Calories per 100g [g]</div>
         <input
           type="number"
           class="form-control"
@@ -30,7 +30,7 @@
         >
       </div>
       <div class="form-input">
-        <div class="label">Proteins [100g]</div>
+        <div class="label">Proteins per 100g [g]</div>
         <input
           type="number"
           class="form-control"
@@ -40,7 +40,7 @@
         >
       </div>
       <div class="form-input">
-        <div class="label">Carbohydrates [100g]</div>
+        <div class="label">Carbohydrates per 100g [g]</div>
         <input
           type="number"
           class="form-control"
@@ -50,7 +50,7 @@
         >
       </div>
       <div class="form-input">
-        <div class="label">Fats [100g]</div>
+        <div class="label">Fats per 100g [g]</div>
         <input
           type="number"
           class="form-control"
@@ -60,7 +60,7 @@
         >
       </div>
       <div class="form-input">
-        <div class="label">Vitamin A (optional) [100g]</div>
+        <div class="label">Vitamin A per 100g (optional) [mg]</div>
         <input
           type="number"
           class="form-control"
@@ -69,7 +69,7 @@
         >
       </div>
       <div class="form-input">
-        <div class="label">Vitamin C (optional) [100g]</div>
+        <div class="label">Vitamin C per 100g (optional) [mg]</div>
         <input
           type="number"
           class="form-control"
@@ -78,7 +78,7 @@
         >
       </div>
       <div class="form-input">
-        <div class="label">Vitamin B6 (optional) [100g]</div>
+        <div class="label">Vitamin B6 per 100g (optional) [mg]</div>
         <input
           type="number"
           class="form-control"
@@ -87,7 +87,7 @@
         >
       </div>
       <div class="form-input">
-        <div class="label">Vitamin D (optional) [100g]</div>
+        <div class="label">Vitamin D per 100g (optional) [mg]</div>
         <input
           type="number"
           class="form-control"
@@ -163,9 +163,9 @@ export default class AddMealIngredient extends Vue {
 </script>
 <style lang="less" scoped>
 #add-meal-ingredient-form {
-  max-height: 97%;
+  max-height: 1000px;
   flex-wrap: wrap;
-  width: 90%;
+  width: 400px;
   margin: 0 auto;
 }
 #buttons-container {

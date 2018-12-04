@@ -16,6 +16,7 @@ namespace DM.Repositories
             {
                 return await db.Users.
                     Where(u => u.Id == id).
+                    Where(u => !u.Deleted).
                     FirstOrDefaultAsync();
             }
         }
@@ -45,7 +46,8 @@ namespace DM.Repositories
             using (var db = new DietManagerDB())
             {
                 var mealPreviewsQuery = db.Users.
-                    Where(u => u.FullName.ToLower().Contains(query)).
+                    Where(u => u.FullName.ToLower().Contains(query.ToLower())).
+                    Where(u => !u.Deleted).
                     OrderBy(u => u.FullName).
                     ThenBy(u => u.CreationDate).
                     Skip(index).
@@ -98,7 +100,7 @@ namespace DM.Repositories
                    Set(u => u.FullName, string.Empty).
                    Set(u => u.Name, string.Empty).
                    Set(u => u.Surname, string.Empty).
-                   Set(u => u.UserName, string.Empty).
+                   Set(u => u.UserName, Guid.NewGuid().ToString().Substring(0, 20)).
                    Set(u => u.Password, string.Empty).
                    Set(u => u.CreationDate, DateTimeOffset.MinValue).
                    Set(u => u.LastLoginDate, DateTimeOffset.MinValue).
