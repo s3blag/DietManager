@@ -34,7 +34,7 @@ namespace DM.Web.Controllers
         {
             if (lastReturned != null && lastReturned.IsLast)
             {
-                return NotFound("Invalid arguments");
+                return BadRequest("Invalid arguments");
             }
 
             var loggedUserId = new Guid(User.Identity.Name);

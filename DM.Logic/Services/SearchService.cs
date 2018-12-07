@@ -94,31 +94,31 @@ namespace DM.Logic.Services
             };
         }
 
-        public async Task<IndexedResult<IEnumerable<UserVM>>> SearchUsersAsync(
-            Guid userId,
-            IndexedResult<UserSearchVM> searchArgumentsVM,
-            int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE)
+    public async Task<IndexedResult<IEnumerable<UserVM>>> SearchUsersAsync(
+        Guid userId,
+        IndexedResult<UserSearchVM> searchArgumentsVM,
+        int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE)
+    {
+        var searchResultTask = _userRepository.GetUsersByQueryAsync(
+                searchArgumentsVM.Result.Query,
+                searchArgumentsVM.Index,
+                takeAmount);
+
+        var friendsIdsTask = _friendRepository.GetFriendsIdsAsync(userId);
+
+        await Task.WhenAll(searchResultTask, friendsIdsTask);
+
+        var searchResultVM = _mapper.Map<ICollection<UserVM>>(searchResultTask.Result);
+
+        SetIsFriendField(friendsIdsTask.Result, searchResultVM);
+
+        return new IndexedResult<IEnumerable<UserVM>>
         {
-            var searchResultTask = _userRepository.GetUsersByQueryAsync(
-                    searchArgumentsVM.Result.Query,
-                    searchArgumentsVM.Index,
-                    takeAmount);
-
-            var friendsIdsTask = _friendRepository.GetFriendsIdsAsync(userId);
-
-            await Task.WhenAll(searchResultTask, friendsIdsTask);
-
-            var searchResultVM = _mapper.Map<ICollection<UserVM>>(searchResultTask.Result);
-
-            SetIsFriendField(friendsIdsTask.Result, searchResultVM);
-
-            return new IndexedResult<IEnumerable<UserVM>>
-            {
-                Result = searchResultVM,
-                Index = searchArgumentsVM.Index + searchResultVM.Count,
-                IsLast = searchResultVM.Count != takeAmount
-            };
-        }
+            Result = searchResultVM,
+            Index = searchArgumentsVM.Index + searchResultVM.Count,
+            IsLast = searchResultVM.Count != takeAmount
+        };
+    }
 
         private void SetIsFriendField(
             ICollection<Guid> friendIds,

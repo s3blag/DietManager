@@ -45,7 +45,7 @@ namespace DM.Repositories
         {
             using (var db = new DietManagerDB())
             {
-                var mealPreviewsQuery = db.Users.
+                var userSearchQuery = db.Users.
                     Where(u => u.FullName.ToLower().Contains(query.ToLower())).
                     Where(u => !u.Deleted).
                     OrderBy(u => u.FullName).

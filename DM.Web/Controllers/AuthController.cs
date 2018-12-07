@@ -26,6 +26,7 @@ namespace DM.Web.Controllers
         }
 
         [HttpPost("login")]
+        [ModelStateValidator]
         public async Task<IActionResult> Login([FromBody] LoginVM model)
         {
             var user = await _userService.GetUserByLoginDataAsync(model);
