@@ -6,6 +6,11 @@
     <router-link class="header-element hover" to="/friend-manager">Friends</router-link>
     <router-link class="header-element hover" to="/my-schedule">Schedule</router-link>
     <router-link class="header-element hover" to="/meal-manager">Meals</router-link>
+    <router-link
+      v-if="user && user.isAdmin === true"
+      class="header-element hover"
+      to="/admin-panel"
+    >Admin panel</router-link>
     <div
       id="user-elements"
       class="float-right"

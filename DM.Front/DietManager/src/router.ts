@@ -19,6 +19,7 @@ import Friend from "@/components/user/friends/Friend.vue";
 import Meal from "@/components/meal/Meal.vue";
 import Login from "@/components/account/Login.vue";
 import Registration from "@/components/account/Register.vue";
+import AdminPanel from "@/components/admin/AdminManager.vue";
 Vue.use(Router);
 
 export default new Router({
@@ -40,7 +41,6 @@ export default new Router({
       name: "Meal",
       component: Meal
     },
-
     {
       path: "/auth/register",
       name: "Register",
@@ -51,7 +51,32 @@ export default new Router({
       name: "Login",
       component: Login
     },
-
+    {
+      path: "/admin-panel",
+      name: "AdminPanel",
+      component: AdminPanel,
+      redirect: { name: "AdminActivities" },
+      children: [
+        {
+          path: "activities",
+          name: "AdminActivities",
+          component: NewsFeed
+        },
+        {
+          path: "meals",
+          name: "AdminMeals",
+          component: SearchMeals
+        },
+        {
+          path: "meal-ingredients",
+          name: "AdminMealIngredients"
+        },
+        {
+          path: "users",
+          name: "AdminUsers"
+        }
+      ]
+    },
     {
       path: "/user-panel",
       name: "UserPanel",

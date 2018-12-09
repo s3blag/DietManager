@@ -11,12 +11,19 @@ export default class AuthService {
       "user"
     ) as string) as LoggedInUser | null;
   }
+
   static isLoggedIn() {
+    const user = this.getSignedInUser();
     return (
-      this.getSignedInUser() !== null &&
-      this.getSignedInUser()!.token &&
-      new Date(this.getSignedInUser()!.token!.expiration) > new Date()
+      user !== null &&
+      user!.token &&
+      new Date(user!.token!.expiration) > new Date()
     );
+  }
+
+  static isAdmin() {
+    const user = this.getSignedInUser();
+    return user !== null && user.isAdmin;
   }
 
   static inititalize() {

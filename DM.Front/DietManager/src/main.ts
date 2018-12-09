@@ -65,10 +65,24 @@ AuthService.inititalize();
 
 router.beforeEach((to, from, next) => {
   const publicRoutes = ["/auth/login", "/auth/register"];
-  const authRequired = !publicRoutes.includes(to.path);
+  const adminRoutes = [
+    "admin-panel/activities",
+    "admin-panel/meals",
+    "admin-panel/meal-ingredients",
+    "admin-panel/users"
+  ];
 
-  if (authRequired && !AuthService.isLoggedIn()) {
-    return next("/auth/login");
+  const authRequired = !publicRoutes.includes(to.path);
+  const adminAuthRequired = !adminRoutes.includes(to.path);
+
+  if (!AuthService.isLoggedIn()) {
+    if (authRequired) {
+      return next("/auth/login");
+    }
+  } else {
+    if (adminAuthRequired && !AuthService.isAdmin) {
+      return next("/");
+    }
   }
 
   next();
