@@ -71,7 +71,8 @@ CREATE TABLE "Meals"."Meal" (
     "Description"               TEXT            NOT NULL,
     "Calories"                  INTEGER         NOT NULL,
     "NumberOfFavouriteMarks"    INTEGER         NOT NULL DEFAULT 0,
-    "NumberOfUses"              INTEGER         NOT NULL DEFAULT 0
+    "NumberOfUses"              INTEGER         NOT NULL DEFAULT 0,
+    "Deleted"                   BOOL            NOT NULL DEFAULT FALSE
 );
 ALTER TABLE "Meals"."Meal" 
 ADD CONSTRAINT "FK_Meal_Image" FOREIGN KEY ("ImageId") REFERENCES  "Images"."Image"("Id"),
@@ -86,7 +87,7 @@ CREATE TABLE "Meals"."Favourite" (
 );
 ALTER TABLE "Meals"."Favourite"
 ADD CONSTRAINT FK_Favourites_MealId FOREIGN KEY ("MealId") REFERENCES "Meals"."Meal"("Id") ON DELETE CASCADE,
-ADD CONSTRAINT FK_Favourites_UserId FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id") ON DELETE CASCADE,
+ADD CONSTRAINT FK_Favourites_UserId FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id"),
 ADD CONSTRAINT UQ_User_Meal UNIQUE("UserId", "MealId");
 
 CREATE TABLE "Meals"."MealScheduleEntry" (
@@ -97,7 +98,7 @@ CREATE TABLE "Meals"."MealScheduleEntry" (
 );
 ALTER TABLE "Meals"."MealScheduleEntry"
 ADD CONSTRAINT FK_UserMeal_MealId FOREIGN KEY ("MealId") REFERENCES "Meals"."Meal"("Id") ON DELETE CASCADE,
-ADD CONSTRAINT FK_UserMeal_UserId FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id") ON DELETE CASCADE;
+ADD CONSTRAINT FK_UserMeal_UserId FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id");
 
 CREATE TABLE "Meals"."Nutritions" (
     "Id"            UUID                PRIMARY KEY,
@@ -117,12 +118,13 @@ CREATE TABLE "Meals"."MealIngredient" (
     "Name"          VARCHAR(30) UNIQUE,
     "Calories"      INTEGER     NOT NULL,
     "NutritionsId"  UUID        UNIQUE NOT NULL,
-    "NumberOfUses"  INTEGER     NOT NULL
+    "NumberOfUses"  INTEGER     NOT NULL,
+    "Deleted"       BOOL        NOT NULL DEFAULT FALSE
 );
 ALTER TABLE "Meals"."MealIngredient" 
-ADD CONSTRAINT "FK_MealIngredient_Image" FOREIGN KEY ("ImageId") REFERENCES  "Images"."Image"("Id"),
-ADD CONSTRAINT "FK_MealIngredient_Nutritions" FOREIGN KEY ("NutritionsId") REFERENCES  "Meals"."Nutritions"("Id"),
-ADD CONSTRAINT "FK_MealIngredient_Creator" FOREIGN KEY ("CreatorId") REFERENCES  "Users"."User"("Id");
+ADD CONSTRAINT "FK_MealIngredient_Image" FOREIGN KEY ("ImageId") REFERENCES "Images"."Image"("Id"),
+ADD CONSTRAINT "FK_MealIngredient_Nutritions" FOREIGN KEY ("NutritionsId") REFERENCES "Meals"."Nutritions"("Id"),
+ADD CONSTRAINT "FK_MealIngredient_Creator" FOREIGN KEY ("CreatorId") REFERENCES "Users"."User"("Id");
 
 CREATE TABLE "Meals"."Meal-MealIngredient" (
     PRIMARY KEY ("MealIngredientId", "MealId"),
@@ -131,8 +133,8 @@ CREATE TABLE "Meals"."Meal-MealIngredient" (
     "Quantity"          DOUBLE PRECISION    NOT NULL
 );
 ALTER TABLE "Meals"."Meal-MealIngredient" 
-ADD CONSTRAINT "FK_MealMealIngredient_MealIngredient-" FOREIGN KEY ("MealIngredientId") REFERENCES  "Meals"."MealIngredient"("Id") ON DELETE CASCADE,
-ADD CONSTRAINT "FK_MealMealIngredient_Meal" FOREIGN KEY ("MealId") REFERENCES  "Meals"."Meal"("Id") ON DELETE CASCADE,
+ADD CONSTRAINT "FK_MealMealIngredient_MealIngredient-" FOREIGN KEY ("MealIngredientId") REFERENCES "Meals"."MealIngredient"("Id") ON DELETE CASCADE,
+ADD CONSTRAINT "FK_MealMealIngredient_Meal" FOREIGN KEY ("MealId") REFERENCES "Meals"."Meal"("Id") ON DELETE CASCADE,
 ADD CONSTRAINT "Quantity_MustBeGreaterThan0" CHECK ("Quantity" > 0);
 
 CREATE TABLE "Socials"."UserActivity" (
@@ -143,12 +145,12 @@ CREATE TABLE "Socials"."UserActivity" (
     "FavouriteId"       UUID            NULL,
     "FriendId"          UUID            NULL,
     "AchievementId"     UUID            NULL,
-    "SeenByAdmin"       BOOL            DEFAULT FALSE
+    "SeenByAdmin"       BOOL            NOT NULL DEFAULT FALSE
 );
 ALTER TABLE "Socials"."UserActivity" 
 ADD CONSTRAINT FK_UserActivity_User FOREIGN KEY ("UserId") REFERENCES "Users"."User"("Id"),
-ADD CONSTRAINT FK_UserActivity_Meal FOREIGN KEY ("MealId") REFERENCES "Meals"."Meal"("Id"),
-ADD CONSTRAINT FK_UserActivity_MealIngredient FOREIGN KEY ("MealIngredientId") REFERENCES "Meals"."MealIngredient"("Id"),
+ADD CONSTRAINT FK_UserActivity_Meal FOREIGN KEY ("MealId") REFERENCES "Meals"."Meal"("Id") ON DELETE CASCADE,
+ADD CONSTRAINT FK_UserActivity_MealIngredient FOREIGN KEY ("MealIngredientId") REFERENCES "Meals"."MealIngredient"("Id") ON DELETE CASCADE,
 ADD CONSTRAINT FK_UserActivity_Favourite FOREIGN KEY ("FavouriteId") REFERENCES "Meals"."Meal"("Id"),
 ADD CONSTRAINT FK_UserActivity_Friend FOREIGN KEY ("FriendId") REFERENCES "Users"."User"("Id"),
 ADD CONSTRAINT FK_UserActivity_Achievement FOREIGN KEY ("AchievementId") REFERENCES "Socials"."Achievement"("Id"),
@@ -173,7 +175,8 @@ SELECT
     n."VitaminA",
     n."VitaminC",
     n."VitaminB6",
-    n."VitaminD"
+    n."VitaminD",
+    m."Deleted"
 FROM "Meals"."MealIngredient" m
 JOIN "Meals"."Nutritions" n ON n."Id" = m."NutritionsId";
 
@@ -191,7 +194,8 @@ SELECT
     min."VitaminA",
     min."VitaminC",
     min."VitaminB6",
-    min."VitaminD"
+    min."VitaminD",
+    min."Deleted" as "MealIngredientDeleted"
 FROM "Meals"."Meal-MealIngredient" mmi
 JOIN "Meals"."MealIngredientsWithNutritions" min ON mmi."MealIngredientId" = min."Id";
 

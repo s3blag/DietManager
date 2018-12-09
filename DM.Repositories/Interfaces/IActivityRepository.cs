@@ -9,6 +9,7 @@ namespace DM.Repositories.Interfaces
     {
         Task<ICollection<UserActivity>> GetUserActivitiesAsync(Guid userId, int index, int takeAmount);
         Task<ICollection<UserActivity>> GetUsersFriendsActivitiesAsync(Guid userId, int index, int takeAmount);
-
+        Task<ICollection<UserActivity>> GetAllActivitiesAsync(int index, int takeAmount);
+        Task<bool> MarkAsSeenAsync(IEnumerable<int> activityIds);
     }
 }

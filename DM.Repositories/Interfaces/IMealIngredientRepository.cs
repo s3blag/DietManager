@@ -14,5 +14,6 @@ namespace DM.Repositories.Interfaces
         Task<IEnumerable<MealIngredientWithQuantity>> GetMealIngredientsForMealAsync(Guid mealId);
         Task<ICollection<MealIngredient>> GetMealIngredientsByQueryAsync(string query, int index, int takeAmount);
         Task<Dictionary<Guid, List<MealIngredientWithQuantity>>> GetMealIngredientsForMealsAsync(IEnumerable<Guid> mealIds);
+        Task<bool> MarkAsDeletedAsync(Guid mealIngredientId);
     }
 }

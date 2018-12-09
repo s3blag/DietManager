@@ -19,6 +19,7 @@ namespace DM.Repositories
                 var userFriendsQuery = db.Friends.
                     LoadWith(f => f.InvitingUser).
                     LoadWith(f => f.InvitedUser).
+                    Where(f => !f.InvitingUser.Deleted && !f.InvitedUser.Deleted).
                     Where(f => f.Status == status.ToString()).
                     OrderBy(f => f.CreationDate).
                     Skip(index).
@@ -44,6 +45,9 @@ namespace DM.Repositories
             using (var db = new DietManagerDB())
             {
                 var userFriendsQuery = db.Friends.
+                    LoadWith(f => f.InvitingUser).
+                    LoadWith(f => f.InvitedUser).
+                    Where(f => !f.InvitingUser.Deleted && !f.InvitedUser.Deleted).
                     Where(f => f.InvitingUserId == userId || f.InvitedUserId == userId).
                     Where(f => f.Status == status.ToString()).
                     OrderBy(f => f.CreationDate).
@@ -74,6 +78,9 @@ namespace DM.Repositories
             using (var db = new DietManagerDB())
             {
                 return await db.Friends.
+                    LoadWith(f => f.InvitingUser).
+                    LoadWith(f => f.InvitedUser).
+                    Where(f => !f.InvitingUser.Deleted && !f.InvitedUser.Deleted).
                     Where(f => f.InvitingUserId == userId || f.InvitedUserId == userId).
                     Where(f => f.Status == FriendInvitationStatus.Accepted.ToString()).
                     CountAsync();
@@ -87,6 +94,7 @@ namespace DM.Repositories
                 var friend = await db.Friends.
                     LoadWith(f => f.InvitedUser).
                     LoadWith(f => f.InvitingUser).
+                    Where(f => !f.InvitingUser.Deleted && !f.InvitedUser.Deleted).
                     Where(f => f.InvitingUserId == userId && f.InvitedUserId == friendId ||
                                f.InvitingUserId == friendId && f.InvitedUserId == userId).
                     Where(f => f.Status == FriendInvitationStatus.Accepted.ToString()).

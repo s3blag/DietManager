@@ -17,6 +17,7 @@ namespace DM.Repositories
                 var favouritesQuery = db.Favourites.
                     LoadWith(f => f.Meal).
                     LoadWith(f => f.Meal.Creator).
+                    Where(f => !f.Meal.Deleted).
                     Where(f => f.UserId == userId).
                     AsQueryable();
 

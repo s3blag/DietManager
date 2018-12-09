@@ -18,6 +18,7 @@ namespace DM.Repositories
             {
                 var mealIngredient = await db.MealIngredients.
                     LoadWith(mi => mi.Nutrition).
+                    Where(m => !m.Deleted).
                     FirstOrDefaultAsync(m => m.Id == id);
 
                 return mealIngredient;
@@ -65,6 +66,7 @@ namespace DM.Repositories
             {
                 var mealIngredients = await db.MealCompleteMealIngredients.
                     Where(m => m.MealId == mealId).
+                    Where(m => !m.MealIngredientDeleted.Value).
                     Select(m => new MealIngredientWithQuantity()
                     {   Quantity = m.Quantity.Value,
                         MealIngredient = new MealIngredient()
@@ -97,6 +99,7 @@ namespace DM.Repositories
             {
                 var mealIngredients = await db.MealCompleteMealIngredients.
                     Where(m => mealIds.Contains(m.MealId.Value)).
+                    Where(m => !m.MealIngredientDeleted.Value).
                     GroupBy(m => m.MealId.Value).
                     ToDictionaryAsync(kv => kv.Key, kv => kv.Select(m => 
                     new MealIngredientWithQuantity()
@@ -131,12 +134,26 @@ namespace DM.Repositories
             {
                 var dbQuery = db.MealIngredients.
                     LoadWith(m => m.Nutrition).
+                    Where(m => !m.Deleted).
                     Where(m => m.Name.ToLower().Contains(query)).
                     OrderBy(m => m.Name).
                     Skip(index).
                     Take(takeAmount);
 
                 return await dbQuery.ToListAsync();
+            }
+        }
+
+        public async Task<bool> MarkAsDeletedAsync(Guid mealIngredientId)
+        {
+            using (var db = new DietManagerDB())
+            {
+                int rowsAffected = await db.MealIngredients.
+                    Where(m => m.Id == mealIngredientId).
+                    Set(m => m.Deleted, true).
+                    UpdateAsync();
+
+                return rowsAffected == 1;
             }
         }
     }

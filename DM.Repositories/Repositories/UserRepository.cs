@@ -53,7 +53,7 @@ namespace DM.Repositories
                     Skip(index).
                     Take(takeAmount);
 
-                return await mealPreviewsQuery.ToListAsync();
+                return await userSearchQuery.ToListAsync();
             }
         }
 
@@ -119,21 +119,32 @@ namespace DM.Repositories
             {
                 db.BeginTransaction();
 
-                await db.UserAchievements.
+                var achievementsTask = db.UserAchievements.
                     Where(ua => ua.UserId == model.Id).
                     DeleteAsync();
 
-                await db.Friends.
-                    Where(ua => ua.InvitedUserId == model.Id || ua.InvitingUserId == model.Id).
+                var friendsTask = db.Friends.
+                    Where(f => f.InvitedUserId == model.Id || f.InvitingUserId == model.Id).
                     DeleteAsync();
 
-                await db.Favourites.
-                    Where(ua => ua.UserId == model.Id).
+                var favouritesTask = db.Favourites.
+                    Where(f => f.UserId == model.Id).
                     DeleteAsync();
 
-                await db.UserActivities.
-                    Where(ua => ua.UserId == model.Id).
+                var activitiesTask = db.UserActivities.
+                    Where(a => a.UserId == model.Id).
                     DeleteAsync();
+
+                var scheduleTask = db.MealScheduleEntries.
+                    Where(s => s.UserId == model.Id).
+                    DeleteAsync();
+
+                await Task.WhenAll(
+                    achievementsTask,
+                    friendsTask,
+                    favouritesTask,
+                    activitiesTask,
+                    scheduleTask);
 
                 db.CommitTransaction();
             }

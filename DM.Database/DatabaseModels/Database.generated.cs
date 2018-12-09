@@ -22,7 +22,7 @@ namespace DM.Database
 	/// <summary>
 	/// Database       : DietManager
 	/// Data Source    : tcp://localhost:5432
-	/// Server Version : 9.5.14
+	/// Server Version : 10.4
 	/// </summary>
 	public partial class DietManagerDB : LinqToDB.Data.DataConnection
 	{
@@ -171,6 +171,7 @@ namespace DM.Database
 		[Column,     NotNull    ] public int            Calories               { get; set; } // integer
 		[Column,     NotNull    ] public int            NumberOfFavouriteMarks { get; set; } // integer
 		[Column,     NotNull    ] public int            NumberOfUses           { get; set; } // integer
+		[Column,     NotNull    ] public bool           Deleted                { get; set; } // boolean
 
 		#region Associations
 
@@ -235,6 +236,7 @@ namespace DM.Database
 		[Column(SkipOnUpdate=true), Nullable] public double? VitaminC               { get; set; } // double precision
 		[Column(SkipOnUpdate=true), Nullable] public double? VitaminB6              { get; set; } // double precision
 		[Column(SkipOnUpdate=true), Nullable] public double? VitaminD               { get; set; } // double precision
+		[Column(SkipOnUpdate=true), Nullable] public bool?   MealIngredientDeleted  { get; set; } // boolean
 	}
 
 	[Table(Schema="Meals", Name="MealIngredient")]
@@ -247,6 +249,7 @@ namespace DM.Database
 		[Column,     NotNull    ] public int    Calories     { get; set; } // integer
 		[Column,     NotNull    ] public Guid   NutritionsId { get; set; } // uuid
 		[Column,     NotNull    ] public int    NumberOfUses { get; set; } // integer
+		[Column,     NotNull    ] public bool   Deleted      { get; set; } // boolean
 
 		#region Associations
 
@@ -299,6 +302,7 @@ namespace DM.Database
 		[Column(SkipOnUpdate=true), Nullable] public double? VitaminC      { get; set; } // double precision
 		[Column(SkipOnUpdate=true), Nullable] public double? VitaminB6     { get; set; } // double precision
 		[Column(SkipOnUpdate=true), Nullable] public double? VitaminD      { get; set; } // double precision
+		[Column(SkipOnUpdate=true), Nullable] public bool?   Deleted       { get; set; } // boolean
 	}
 
 	[Table(Schema="Meals", Name="Meal-MealIngredient")]
@@ -490,7 +494,7 @@ namespace DM.Database
 		[Column,        Nullable] public Guid? FavouriteId      { get; set; } // uuid
 		[Column,        Nullable] public Guid? FriendId         { get; set; } // uuid
 		[Column,        Nullable] public Guid? AchievementId    { get; set; } // uuid
-		[Column,        Nullable] public bool? SeenByAdmin      { get; set; } // boolean
+		[Column,     NotNull    ] public bool  SeenByAdmin      { get; set; } // boolean
 
 		#region Associations
 

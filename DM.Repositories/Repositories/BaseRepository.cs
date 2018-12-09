@@ -2,6 +2,7 @@
 using DM.Repositories.Interfaces;
 using LinqToDB;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DM.Repositories

@@ -13,5 +13,6 @@ namespace DM.Repositories.Interfaces
         Task<Meal> GetMealByIdAsync(Guid id);
         Task<ICollection<MealPreview>> GetMealPreviewsAsync(Guid userId, int index, int takeAmount);
         Task<ICollection<MealPreview>> GetMealPreviewsByQueryAsync(string query, int index, int takeAmount);
+        Task<bool> MarkAsDeletedAsync(Guid mealId);
     }
 }

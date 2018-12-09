@@ -5,6 +5,8 @@ namespace DM.Models.ViewModels
 {
     public class UserActivityVM
     {
+        public int Id { get; set; }
+
         public UserVM User { get; set; }
 
         #region Activities
