@@ -23,6 +23,7 @@
       :enableFavouriteMarkToggling="asEmittingComponent ? false : true"
       :emitEvents="asEmittingComponent"
       @mealSelected="onMealSelected"
+      @meal-deleted="onMealDeleted"
     />
     <button
       v-if="!isLast && lastReturned"
@@ -141,6 +142,11 @@ export default class SearchMeals extends Vue {
         isLast: indexedMealPreviews.isLast
       };
     }
+  }
+
+  onMealDeleted(id: string) {
+    const indexOfDeletedItem = this.mealPreviews.findIndex(m => m.id == id);
+    this.mealPreviews.splice(indexOfDeletedItem, 1);
   }
 
   onMealSelected(id: string) {

@@ -1,6 +1,7 @@
 <template>
   <div id="meal" class="content-background">
     <div id="meal-name" class="main-color">{{meal.name}}</div>
+    <button v-if="isAdmin" class="button" @click="showDeleteModal = true">Delete meal</button>
     <div id="meal-summary">
       <div class="column-left content-background">
         <div id="meal-image">
@@ -29,7 +30,7 @@
         </div>
       </div>
 
-      <div id="xd">
+      <div id="cntr">
         <div class="meal-ingredients-container">
           <div>
             <h6>Ingredients</h6>
@@ -106,11 +107,15 @@ export default class Meal extends Vue {
   addToFavourites() {
     FavouritesApiCaller.add(this.meal.id, () => (this.meal.isFavourite = true));
   }
+
+  get isAdmin() {
+    return this.$route.params && this.$route.params.asAdmin;
+  }
 }
 </script>
 
 <style lang="less" scoped>
-#xd {
+#cntr {
   display: inline-flex;
   flex-grow: 4;
   justify-content: space-evenly;
@@ -183,6 +188,9 @@ export default class Meal extends Vue {
 #add-to-favourites-button {
   padding: 0px;
   text-align: left;
+  button {
+    width: 140px;
+  }
 }
 #user-image {
   padding: 0px;

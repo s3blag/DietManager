@@ -30,6 +30,7 @@
           :key="mealIngredient.id"
           :mealIngredient="mealIngredient"
           @meal-ingredient-added="mealIngredientAddedHandler"
+          @meal-ingredient-deleted="onMealIngredientDeleted"
         />
         <button
           v-if="!isLast && lastReturned"
@@ -165,6 +166,11 @@ export default class SearchMealIngredients extends Vue {
     addedMealIngredientWithQuantity: MealIngredientWithQuantity
   ) {
     this.$emit("meal-ingredient-added", addedMealIngredientWithQuantity);
+  }
+
+  onMealIngredientDeleted(id: string) {
+    const indexOfDeletedItem = this.mealIngredients.findIndex(m => m.id == id);
+    this.mealIngredients.splice(indexOfDeletedItem, 1);
   }
 }
 </script>

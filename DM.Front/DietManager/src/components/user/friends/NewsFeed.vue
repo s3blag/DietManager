@@ -1,8 +1,26 @@
 <template>
   <div class="list-container">
-    <h3 class="main-color">News feed</h3>
+    <modal v-if="showMarkAsSeenModal">
+      <span class="modal-text">Are you sure you want to mark all the visible activities as seen?
+        <br>They won't be visible anymore.
+      </span>
+      <div class="modal-buttons-container">
+        <button class="button" @click="markAsSeen">Proceed</button>
+        <button class="button" @click="showMarkAsSeenModal = false">Cancel</button>
+      </div>
+    </modal>
+
+    <div id="header">
+      <h3 class="main-color">News feed</h3>
+      <button
+        v-if="isAdmin && activities.length > 0"
+        @click="showMarkAsSeenModal = true"
+        class="button"
+      >Mark as seen</button>
+    </div>
+
     <div class="tile-container">
-      <h4 v-if="activities.length === 0 && lastReturned">There are no news to show</h4>
+      <h4 v-if="activities.length === 0 && lastReturned">There are no activities to show</h4>
       <user-activity-item
         v-else
         class="activity-item"
@@ -13,7 +31,7 @@
     </div>
 
     <button
-      @click="getFriendsActivities"
+      @click="getActivities"
       class="load-more-button main-background-color"
       v-if="elementsRemainingToLoad"
     >Load more...</button>
@@ -29,16 +47,21 @@ import ImageApiCaller from "@/services/api-callers/imageApi";
 import FriendsApiCaller from "@/services/api-callers/friendsApi";
 import UserActivity from "@/ViewModels/user/userActivity";
 import UserActivityItem from "@/components/user/friends/activity/UserActivityItem.vue";
+import AuthService from "@/services/authService";
+import AdminApiCaller from "@/services/api-callers/adminApi";
+import Modal from "@/components/common/Modal.vue";
 Component.registerHooks(["beforeRouteEnter"]);
 
 @Component({
   components: {
-    "user-activity-item": UserActivityItem
+    "user-activity-item": UserActivityItem,
+    modal: Modal
   }
 })
 export default class NewsFeed extends Vue {
   private activities: UserActivity[] = [];
   private lastReturned: IndexedResult<UserActivity> | null = null;
+  private showMarkAsSeenModal = false;
 
   beforeRouteEnter(
     to: any,
@@ -46,7 +69,7 @@ export default class NewsFeed extends Vue {
     next: (onBeforeRouteEnter: (instance: NewsFeed) => void) => void
   ) {
     next(instance => {
-      instance.getFriendsActivities();
+      instance.getActivities();
     });
   }
 
@@ -58,14 +81,25 @@ export default class NewsFeed extends Vue {
     }
   }
 
-  getFriendsActivities() {
-    FriendsApiCaller.getNewsFeed(
-      this.lastReturned,
-      this.getFriendsActivitiesSuccessHandler
-    );
+  get isAdmin() {
+    return this.$route.meta && this.$route.meta.asAdmin;
   }
 
-  getFriendsActivitiesSuccessHandler(
+  getActivities() {
+    if (this.isAdmin) {
+      AdminApiCaller.getUsersActivities(
+        this.lastReturned,
+        this.getActivitiesSuccessHandler
+      );
+    } else {
+      FriendsApiCaller.getNewsFeed(
+        this.lastReturned,
+        this.getActivitiesSuccessHandler
+      );
+    }
+  }
+
+  getActivitiesSuccessHandler(
     indexedActivities: IndexedResult<UserActivity[]>
   ) {
     if (
@@ -80,6 +114,13 @@ export default class NewsFeed extends Vue {
         isLast: indexedActivities.isLast
       };
     }
+  }
+
+  markAsSeen() {
+    AdminApiCaller.markActivitiesAsSeen(this.activities.map(a => a.id), () => {
+      this.activities.splice(0, this.activities.length);
+      this.showMarkAsSeenModal = false;
+    });
   }
 }
 </script>

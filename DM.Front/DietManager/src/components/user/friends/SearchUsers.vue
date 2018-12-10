@@ -23,6 +23,7 @@
         :key="user.id"
         :userPreview="user"
         :showFriendPin="true"
+        @user-deleted="onUserDeleted"
       />
     </div>
     <button
@@ -95,6 +96,11 @@ export default class SearchUsers extends Vue {
     };
 
     this.callApi(lastReturnedSearch);
+  }
+
+  onUserDeleted(id: string) {
+    const indexOfDeletedItem = this.users.findIndex(u => u.id == id);
+    this.users.splice(indexOfDeletedItem, 1);
   }
 
   loadMore() {

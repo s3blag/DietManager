@@ -59,9 +59,9 @@ namespace DM.Logic.Services
             };
         }
 
-        public async Task<UserWithAchievementsVM> GetFriendWithAchievementsAsync(Guid userId, Guid friendId)
+        public async Task<UserWithAchievementsVM> GetFriendWithAchievementsAsync(Guid userId, Guid friendId, bool isAdmin)
         {
-            var friendWithAchievements = await _friendRepository.GetFriendAsync(userId, friendId);
+            var friendWithAchievements = await _friendRepository.GetFriendAsync(userId, friendId, isAdmin);
 
             var achievementsVM = _mapper.Map<IEnumerable<UserAchievementVM>>(friendWithAchievements.Achievements);
 

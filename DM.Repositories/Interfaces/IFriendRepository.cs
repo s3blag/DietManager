@@ -14,6 +14,6 @@ namespace DM.Repositories.Interfaces
         Task<bool> SetFriendInvitationStatusAsync(Guid invitingUserId, Guid invitedUserId, FriendInvitationStatus status);
         Task<int> GetNumberOfFriendsAsync(Guid userId);
         Task<bool> RemoveFriendAsync(Guid userId, Guid friendId);
-        Task<UserWithAchievements> GetFriendAsync(Guid userId, Guid friendId);
+        Task<UserWithAchievements> GetFriendAsync(Guid userId, Guid friendId, bool isAdmin);
     }
 }

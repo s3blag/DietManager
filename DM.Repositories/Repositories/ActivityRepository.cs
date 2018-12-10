@@ -32,7 +32,7 @@ namespace DM.Repositories
             {
                 var activitiesQuery = GetActivitiesQuery(db).
                     Where(ua => GetFriendsIdsQuery(db, userId).Contains(ua.UserId)).
-                    OrderBy(ua => ua.Id).
+                    OrderByDescending(ua => ua.Id).
                     Skip(index).
                     Take(takeAmount);
 
@@ -46,7 +46,7 @@ namespace DM.Repositories
             {
                 var activitiesQuery = GetActivitiesQuery(db).
                     Where(ua => !ua.SeenByAdmin).
-                    OrderBy(ua => ua.Id).
+                    OrderByDescending(ua => ua.Id).
                     Skip(index).
                     Take(takeAmount);
 
@@ -58,11 +58,12 @@ namespace DM.Repositories
         {
             using (var db = new DietManagerDB())
             {
-                var activitiesQuery = GetActivitiesQuery(db).
+                int rowsAffected = await GetActivitiesQuery(db).
                     Where(ua => activityIds.Contains(ua.Id)).
-                    Set(ua => ua.SeenByAdmin, true);                    
+                    Set(ua => ua.SeenByAdmin, true).
+                    UpdateAsync();
 
-                return (await activitiesQuery.UpdateAsync()) == activityIds.Count();
+                return rowsAffected == activityIds.Count();
             }
         }
 

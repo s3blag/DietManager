@@ -69,6 +69,11 @@ namespace DM.Logic.Services
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
 
+            if (user == null)
+            {
+                return false;
+            }
+
             var oldAvatarId = user.ImageId;
 
             await _userRepository.UpdateUserAvatar(userId, newAvatarId);
@@ -103,6 +108,11 @@ namespace DM.Logic.Services
         public async Task<bool> DeleteAccountAsync(Guid userId)
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
+
+            if (user == null)
+            {
+                return false;
+            }
 
             if (user.ImageId != null)
             {

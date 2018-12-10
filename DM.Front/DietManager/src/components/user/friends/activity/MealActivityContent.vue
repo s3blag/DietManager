@@ -1,5 +1,9 @@
 <template>
-  <router-link :to="'/meal/' + meal.id" tag="div" class="link">
+  <router-link
+    :to="{ name: 'Meal', params: { mealId: meal.id, asAdmin: isAdmin } }"
+    tag="div"
+    class="link"
+  >
     <layout>
       <template slot="picture">
         <image-wrapper :imageId="meal.imageId" :asWheel="false">
@@ -33,6 +37,10 @@ import ImageWrapper from "@/components/image/ImageWrapper.vue";
 export default class MealActivityContent extends Vue {
   @Prop({ required: true })
   private meal!: Meal;
+
+  get isAdmin() {
+    return this.$route.meta && this.$route.meta.asAdmin;
+  }
 }
 </script>
 

@@ -1,5 +1,13 @@
 <template>
   <div id="preview-item">
+    <modal v-if="showDeleteModal">
+      <span class="modal-text">Are you sure you want to delete this meal ingredient?</span>
+      <div class="modal-buttons-container">
+        <button class="button" @click="deleteMealIngredient">Delete</button>
+        <button class="button" @click="showDeleteModal = false">Cancel</button>
+      </div>
+    </modal>
+
     <modal v-if="showDetailsModal">
       <div class="modal-text">
         <div class="label">Name</div>
@@ -56,9 +64,10 @@
       <div class="value">{{mealIngredient.calories}}</div>
     </div>
     <button class="button item" @click="showDetailsModal = true">Details</button>
-    <button class="button item" @click="showSetAmountModal = true" id="add">
+    <button v-if="!isAdmin" class="button item" @click="showSetAmountModal = true" id="add">
       <font-awesome-icon icon="plus-circle"/>
     </button>
+    <button v-else class="button item" @click="showDeleteModal = true" id="add">Delete</button>
   </div>
 </template>
 
@@ -70,6 +79,8 @@ import ImageWrapper from "@/components/image/ImageWrapper.vue";
 import MealIngredient from "@/ViewModels/meal-ingredient/mealIngredient";
 import Modal from "@/components/common/Modal.vue";
 import MealIngredientWithQuantity from "@/ViewModels/meal-ingredient/mealIngredientWithQuantity";
+import AuthService from "@/services/authService";
+import AdminApiCaller from "@/services/api-callers/adminApi";
 Component.registerHooks(["beforeRouteEnter"]);
 
 @Component({
@@ -78,21 +89,29 @@ Component.registerHooks(["beforeRouteEnter"]);
   }
 })
 export default class MealIngredientPreviewItem extends Vue {
-  @Prop({
-    required: true
-  })
+  @Prop({ required: true })
   private mealIngredient!: MealIngredient;
   private showDetailsModal = false;
   private showSetAmountModal = false;
   private amount: number = 0;
+  private showDeleteModal = false;
 
   onSubmit() {
     const addedMealIngredientWithQuantity = {
       mealIngredient: this.mealIngredient,
       quantity: this.amount
     } as MealIngredientWithQuantity;
-
     this.$emit("meal-ingredient-added", addedMealIngredientWithQuantity);
+  }
+
+  deleteMealIngredient() {
+    AdminApiCaller.deleteMealIngredient(this.mealIngredient.id, () =>
+      this.$emit("meal-ingredient-deleted", this.mealIngredient.id)
+    );
+  }
+
+  get isAdmin() {
+    return this.$route.meta && this.$route.meta.asAdmin;
   }
 }
 </script>

@@ -10,7 +10,7 @@ namespace DM.Logic.Interfaces
     {
         Task<IndexedResult<IEnumerable<UserActivityVM>>> GetFriendsActivitiesFeedAsync(Guid userId, IndexedResult<UserActivityVM> lastReturned, int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE);
         Task<IndexedResult<IEnumerable<UserVM>>> GetFriendsAsync(Guid userId, IndexedResult<UserVM> lastReturned, int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE);
-        Task<UserWithAchievementsVM> GetFriendWithAchievementsAsync(Guid userId, Guid friendId);
+        Task<UserWithAchievementsVM> GetFriendWithAchievementsAsync(Guid userId, Guid friendId, bool isAdmin);
         Task<IndexedResult<IEnumerable<AwaitingFriendInvitationVM>>> GetFriendInvitationsAsync(Guid userId, IndexedResult<AwaitingFriendInvitationVM> lastReturned, int takeAmount = Constants.DEFAULT_DB_TAKE_VALUE);
         Task<bool> SendFriendInvitationAsync(FriendInvitationCreationVM friendInvitation);
         Task IgnoreFriendInvitationAsync(Guid invitingUserId, Guid invitedUserId);

@@ -1,7 +1,10 @@
 <template>
   <div id="user-activity">
     <div id="user">
-      <router-link :to="'/user/' + userActivity.user.id" class="avatar-image-container">
+      <router-link
+        :to="{ name: 'Friend', params: { userId: userActivity.user.id, asAdmin: isAdmin } }"
+        class="avatar-image-container"
+      >
         <image-wrapper :imageId="userActivity.user.imageId" id="image" :asWheel="true">
           <template slot="placeholder" class="placeholder">
             <font-awesome-icon class="user-avatar main-color" icon="user-circle"/>
@@ -11,7 +14,7 @@
       <span id="activity-description">
         <router-link
           class="user-link"
-          :to="'/user/' + userActivity.user.id"
+          :to="{ name: 'Friend', params: { userId: userActivity.user.id, asAdmin: isAdmin } }"
         >{{this.userActivity.user.name + " " + this.userActivity.user.surname}}</router-link>
         {{activityDescription}}
       </span>
@@ -93,6 +96,10 @@ export default class UserActivtyItem extends Vue {
     } else {
       return "";
     }
+  }
+
+  get isAdmin() {
+    return this.$route.meta && this.$route.meta.asAdmin;
   }
 }
 </script>

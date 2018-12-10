@@ -20,6 +20,7 @@ import Meal from "@/components/meal/Meal.vue";
 import Login from "@/components/account/Login.vue";
 import Registration from "@/components/account/Register.vue";
 import AdminPanel from "@/components/admin/AdminManager.vue";
+import MealIngredientSearch from "@/components/meal-ingredient/SearchMealIngredients.vue";
 Vue.use(Router);
 
 export default new Router({
@@ -60,20 +61,26 @@ export default new Router({
         {
           path: "activities",
           name: "AdminActivities",
-          component: NewsFeed
+          component: NewsFeed,
+          meta: { asAdmin: true }
         },
         {
           path: "meals",
           name: "AdminMeals",
-          component: SearchMeals
+          component: SearchMeals,
+          meta: { asAdmin: true }
         },
         {
           path: "meal-ingredients",
-          name: "AdminMealIngredients"
+          name: "AdminMealIngredients",
+          component: MealIngredientSearch,
+          meta: { asAdmin: true }
         },
         {
           path: "users",
-          name: "AdminUsers"
+          name: "AdminUsers",
+          component: SearchUsers,
+          meta: { asAdmin: true }
         }
       ]
     },

@@ -8,12 +8,23 @@
           <button class="button" @click="showDeleteFriendModal = false">Cancel</button>
         </div>
       </modal>
-      <div id="unfriend-button">
+      <modal v-if="showDeleteUserModal">
+        <span class="modal-text">Are you sure you want to delete this account?</span>
+        <div class="modal-buttons-container">
+          <button class="button" @click="deleteAccount">Delete</button>
+          <button class="button" @click="showDeleteUserModal = false">Cancel</button>
+        </div>
+      </modal>
+
+      <div id="unfriend-button" v-if="!isAdmin">
         <button class="button" @click="showDeleteFriendModal = true">Unfriend</button>
+      </div>
+      <div id="unfriend-button" v-else>
+        <button class="button" @click="showDeleteUserModal = true">Delete user</button>
       </div>
       <div id="image">
         <div id="user-image">
-          <image-wrapper :imageId="friendWithAchievements.user.imageId">
+          <image-wrapper :imageId="userWithAchievements.user.imageId">
             <template slot="placeholder">
               <font-awesome-icon class="user-avatar main-color" icon="user-circle"/>
             </template>
@@ -22,12 +33,12 @@
       </div>
       <div
         id="user-name"
-      >{{friendWithAchievements.user.name + ' ' + friendWithAchievements.user.surname}}</div>
-      <div id="user-city">{{friendWithAchievements.user.city}}</div>
+      >{{userWithAchievements.user.name + ' ' + userWithAchievements.user.surname}}</div>
+      <div id="user-city">{{userWithAchievements.user.city}}</div>
     </div>
     <div id="achievements-container">
       <h4 class="main-color soft-border bottom">Achievements</h4>
-      <user-achievements :friendsGroupedAchievements="friendWithAchievements.achievements"/>
+      <user-achievements :friendsGroupedAchievements="userWithAchievements.achievements"/>
     </div>
   </div>
 </template>
@@ -46,6 +57,7 @@ import Modal from "@/components/common/Modal.vue";
 import FriendWithAchievements from "@/ViewModels/user/friendWithAchievement";
 import FriendsApiCaller from "@/services/api-callers/friendsApi";
 import UserAchievements from "@/components/user/user-panel/UserAchievements.vue";
+import AdminApiCaller from "@/services/api-callers/adminApi";
 Component.registerHooks(["beforeRouteEnter"]);
 
 @Component({
@@ -56,10 +68,11 @@ Component.registerHooks(["beforeRouteEnter"]);
   }
 })
 export default class Friend extends Vue {
-  private friendWithAchievements: FriendWithAchievements = {
+  private userWithAchievements: FriendWithAchievements = {
     user: { name: "", surname: "", imageId: null }
   } as any;
   private showDeleteFriendModal = false;
+  private showDeleteUserModal = false;
   beforeRouteEnter(
     to: any,
     from: any,
@@ -76,15 +89,24 @@ export default class Friend extends Vue {
     FriendsApiCaller.get(id, this.onLoadUserSuccess);
   }
 
-  onLoadUserSuccess(friendWithAchievements: FriendWithAchievements) {
-    this.friendWithAchievements = friendWithAchievements;
+  onLoadUserSuccess(userWithAchievements: FriendWithAchievements) {
+    this.userWithAchievements = userWithAchievements;
   }
 
   removeFromFriends() {
-    FriendsApiCaller.removeFromFriends(
-      this.friendWithAchievements.user.id,
-      () => this.$router.replace({ name: "Home" })
+    FriendsApiCaller.removeFromFriends(this.userWithAchievements.user.id, () =>
+      this.$router.replace({ name: "Home" })
     );
+  }
+
+  deleteAccount() {
+    AdminApiCaller.deleteUserAccount(this.userWithAchievements.user.id, () =>
+      this.$router.replace({ name: "AdminPanel" })
+    );
+  }
+
+  get isAdmin() {
+    return this.$route.params && this.$route.params.asAdmin;
   }
 }
 </script>

@@ -2,16 +2,16 @@
   <div id="user-panel">
     <div id="header" class="soft-border bottom">
       <span>
-        <font-awesome-icon class="user-avatar main-color" icon="user-circle" />
+        <font-awesome-icon class="user-avatar main-color" icon="user-circle"/>
         <router-link class="link" :to="{ name: 'AccountManager'}">Profile</router-link>
       </span>
       <span>
-        <font-awesome-icon class="site-logo main-color" icon="trophy" />
+        <font-awesome-icon class="site-logo main-color" icon="trophy"/>
         <router-link class="link" :to="{ name: 'UserAchievements'}">Achievements</router-link>
       </span>
     </div>
     <div id="content">
-      <router-view />
+      <router-view/>
     </div>
   </div>
 </template>

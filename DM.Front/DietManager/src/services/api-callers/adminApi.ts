@@ -4,7 +4,7 @@ import UserActivity from "@/ViewModels/user/userActivity";
 
 export default class AdminApiCaller extends BaseApiCaller {
   static markActivitiesAsSeen(
-    activitiesIds: string[],
+    activitiesIds: number[],
     successHandler: () => void,
     errorHandler: (error: Error) => void = this.defaultErrorHandler
   ) {
@@ -39,10 +39,10 @@ export default class AdminApiCaller extends BaseApiCaller {
 
   static deleteUserAccount(
     userId: string,
-    onSuccess: () => void | null,
-    onError: (errors: any) => void
+    onSuccess: () => void,
+    onError: (errors: any) => void = this.defaultErrorHandler
   ) {
-    super.Axios.delete(`"/api/user/${userId}`)
+    super.Axios.delete(`/api/user/${userId}`)
       .then(() => {
         onSuccess();
       })
@@ -53,10 +53,10 @@ export default class AdminApiCaller extends BaseApiCaller {
 
   static deleteMeal(
     mealId: string,
-    onSuccess: () => void | null,
-    onError: (errors: any) => void
+    onSuccess: () => void,
+    onError: (errors: any) => void = this.defaultErrorHandler
   ) {
-    super.Axios.delete(`"/api/meal/${mealId}`)
+    super.Axios.delete(`/api/meal/${mealId}`)
       .then(() => {
         onSuccess();
       })
@@ -67,10 +67,10 @@ export default class AdminApiCaller extends BaseApiCaller {
 
   static deleteMealIngredient(
     mealIngredientId: string,
-    onSuccess: () => void | null,
-    onError: (errors: any) => void
+    onSuccess: () => void,
+    onError: (errors: any) => void = this.defaultErrorHandler
   ) {
-    super.Axios.delete(`"/api/meal-ingredient/${mealIngredientId}`)
+    super.Axios.delete(`/api/meal-ingredient/${mealIngredientId}`)
       .then(() => {
         onSuccess();
       })

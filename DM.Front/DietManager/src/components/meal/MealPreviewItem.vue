@@ -1,5 +1,13 @@
 <template>
   <div id="preview-item" :class="mealPreview.isSelected ? 'meal-selected' : ''">
+    <modal v-if="showDeleteModal">
+      <span class="modal-text">Are you sure you want to delete this meal?</span>
+      <div class="modal-buttons-container">
+        <button class="button" @click="deleteMeal">Delete</button>
+        <button class="button" @click="showDeleteModal = false">Cancel</button>
+      </div>
+    </modal>
+
     <div class="avatar-image-container">
       <image-wrapper :imageId="mealPreview.imageId">
         <template slot="placeholder">
@@ -17,11 +25,20 @@
       <div class="label">Name</div>
       <router-link
         :class="emitEvents ? 'meal-link' : ''"
-        :to="'/meal/' + mealPreview.id"
+        :to="{ name: 'Meal', params: { mealId: mealPreview.id, asAdmin: isAdmin } }"
         class="value"
       >{{mealPreview.name}}</router-link>
     </div>
-    <div class="meal-info-element meal-name">
+    <router-link
+      v-if="isAdmin"
+      tag="div"
+      class="meal-info-element meal-name link"
+      :to="{name: 'Friend', params: { userId: mealPreview.creator.id, asAdmin: isAdmin } }"
+    >
+      <div class="label">Created by</div>
+      <div class="value">{{creatorName}}</div>
+    </router-link>
+    <div v-else class="meal-info-element meal-name">
       <div class="label">Created by</div>
       <div class="value">{{creatorName}}</div>
     </div>
@@ -39,6 +56,9 @@
         <div class="value">{{mealPreview.numberOfFavouriteMarks}} people</div>
       </div>
     </span>
+    <div id="delete-item-button" v-if="isAdmin">
+      <button class="button" @click="showDeleteModal = true">Delete</button>
+    </div>
     <div id="add-to-favourites-wrapper" v-if="enableFavouriteMarkToggling">
       <div
         v-if="enableFavouriteMarkToggling && mealPreview.isFavourite !== null"
@@ -56,7 +76,11 @@
       </div>
     </div>
 
-    <router-link v-if="!emitEvents" class="go-to-meal" :to="'/meal/' + mealPreview.id">
+    <router-link
+      v-if="!emitEvents"
+      class="go-to-meal"
+      :to="{ name: 'Meal', params: { mealId: mealPreview.id, asAdmin: isAdmin } }"
+    >
       <font-awesome-icon class="main-color" icon="arrow-alt-circle-right" size="2x"/>
     </router-link>
     <div v-else @click="onMealSelected" id="select-button">
@@ -75,30 +99,26 @@ import ImageApiCaller from "@/services/api-callers/imageApi";
 import FavouritesApiCaller from "@/services/api-callers/favouritesApi";
 import { Prop } from "vue-property-decorator";
 import ImageWrapper from "@/components/image/ImageWrapper.vue";
+import AuthService from "@/services/authService";
+import AdminApiCaller from "@/services/api-callers/adminApi";
+import Modal from "@/components/common/Modal.vue";
 
 Component.registerHooks(["beforeRouteEnter"]);
 
 @Component({
   components: {
-    "image-wrapper": ImageWrapper
+    "image-wrapper": ImageWrapper,
+    modal: Modal
   }
 })
 export default class MealPreviewItem extends Vue {
-  @Prop({
-    required: true
-  })
+  @Prop({ required: true })
   private mealPreview!: MealPreview;
-
-  @Prop({
-    required: true
-  })
+  @Prop({ required: true })
   private enableFavouriteMarkToggling!: boolean;
-
-  @Prop({
-    required: false,
-    default: false
-  })
+  @Prop({ required: false, default: false })
   private emitEvents!: boolean;
+  private showDeleteModal = false;
 
   get creatorName() {
     if (
@@ -123,6 +143,16 @@ export default class MealPreviewItem extends Vue {
     } else {
       return false;
     }
+  }
+
+  get isAdmin() {
+    return this.$route.meta && this.$route.meta.asAdmin;
+  }
+
+  deleteMeal() {
+    AdminApiCaller.deleteMeal(this.mealPreview.id, () =>
+      this.$emit("meal-deleted", this.mealPreview.id)
+    );
   }
 
   get createdByUser() {
@@ -156,7 +186,16 @@ export default class MealPreviewItem extends Vue {
 }
 </script>
 
-<style>
+<style lang="less">
+#delete-item-button {
+  height: 100%;
+  margin: auto 35px auto 0px;
+}
+.link {
+  .value {
+    text-decoration: underline;
+  }
+}
 #favourite-label {
   position: relative;
   left: -10px;

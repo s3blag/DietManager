@@ -60,7 +60,7 @@ namespace DM.Web.Controllers
         {
             var userId = new Guid(User.Identity.Name);
 
-            var result = await _friendService.GetFriendWithAchievementsAsync(userId, friendId);
+            var result = await _friendService.GetFriendWithAchievementsAsync(userId, friendId, IsAdmin());
 
             if (result == null || result.User == null)
             {
@@ -138,5 +138,7 @@ namespace DM.Web.Controllers
 
             return Ok(newsFeed);
         }
+
+        private bool IsAdmin() => User.IsInRole("Admin");
     }
 }

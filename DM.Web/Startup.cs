@@ -76,7 +76,6 @@ namespace Diet_Manager
             services.AddScoped<IFriendRepository, FriendRepository>();
             services.AddScoped<IMealScheduleRepository, MealScheduleRepository>();
             services.AddScoped<IActivityRepository, ActivityRepository>();
-            services.AddScoped<ISecurityService, SecurityService>();
 
             services.AddScoped<IMealService, MealService>();
             services.AddScoped<IMealIngredientService, MealIngredientService>();
@@ -89,6 +88,8 @@ namespace Diet_Manager
             services.AddScoped<IFavouritesService, FavouritesService>();
             services.AddScoped<IFriendService, FriendService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ISecurityService, SecurityService>();
+            services.AddScoped<IAdminService, AdminService>();
 
             services.AddScoped<IContentTypeProvider, FileExtensionContentTypeProvider>();
 

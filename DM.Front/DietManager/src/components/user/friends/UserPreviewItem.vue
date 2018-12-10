@@ -1,5 +1,13 @@
 <template>
   <div id="preview-item">
+    <modal v-if="showDeleteModal">
+      <span class="modal-text">Are you sure you want to delete this user?</span>
+      <div class="modal-buttons-container">
+        <button class="button" @click="deleteUser">Delete</button>
+        <button class="button" @click="showDeleteModal = false">Cancel</button>
+      </div>
+    </modal>
+
     <div class="image-container">
       <image-wrapper :imageId="userPreview.imageId">
         <template slot="placeholder">
@@ -13,8 +21,8 @@
     <div class="user-info-element user-name">
       <div class="label">Name</div>
       <router-link
-        :to="{ name: 'Friend', params: { userId: userPreview.id}}"
-        v-if="userPreview.isFriend"
+        :to="{ name: 'Friend', params: { userId: userPreview.id, asAdmin: isAdmin } }"
+        v-if="userPreview.isFriend || isAdmin"
         class="link"
       >
         <div class="value">{{userPreview.name + ' ' + userPreview.surname}}</div>
@@ -24,6 +32,9 @@
     <div class="user-info-element">
       <div class="label">City</div>
       <div class="value">{{userPreview.city}}</div>
+    </div>
+    <div id="delete-item-button" v-if="isAdmin">
+      <button class="button" @click="showDeleteModal = true">Delete</button>
     </div>
     <div id="invite-wrapper" v-if="!userPreview.isFriend">
       <div id="invite-button" @click="addToFriends">
@@ -41,20 +52,34 @@ import IndexedResult from "@/ViewModels/wrappers/indexedResult";
 import { Prop } from "vue-property-decorator";
 import ImageWrapper from "@/components/image/ImageWrapper.vue";
 import User from "@/ViewModels/user/user";
+import AuthService from "@/services/authService";
+import AdminApiCaller from "@/services/api-callers/adminApi";
+import Modal from "@/components/common/Modal.vue";
 
 Component.registerHooks(["beforeRouteEnter"]);
 
 @Component({
   components: {
-    "image-wrapper": ImageWrapper
+    "image-wrapper": ImageWrapper,
+    modal: Modal
   }
 })
 export default class MyMeals extends Vue {
   @Prop({ required: true })
   private userPreview!: User;
-
   @Prop()
   private showFriendPin!: boolean;
+  private showDeleteModal = false;
+
+  get isAdmin() {
+    return this.$route.meta && this.$route.meta.asAdmin;
+  }
+
+  deleteUser() {
+    AdminApiCaller.deleteUserAccount(this.userPreview.id, () =>
+      this.$emit("user-deleted", this.userPreview.id)
+    );
+  }
 
   addToFriends() {
     FriendsApiCaller.sendInvitation(

@@ -62,6 +62,11 @@ namespace DM.Logic.Services
         {
             var meal = await _mealRepository.GetMealByIdAsync(mealId);
 
+            if (meal == null)
+            {
+                return false;
+            }
+
             if (meal.ImageId != null)
             {
                 await _imageService.DeleteImageAsync(meal.ImageId.Value);

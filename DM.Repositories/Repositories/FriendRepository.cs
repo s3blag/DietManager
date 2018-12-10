@@ -87,21 +87,33 @@ namespace DM.Repositories
             }
         }
 
-        public async Task<UserWithAchievements> GetFriendAsync(Guid userId, Guid friendId)
+        public async Task<UserWithAchievements> GetFriendAsync(Guid userId, Guid friendId, bool isAdmin)
         {
             using (var db = new DietManagerDB())
             {
-                var friend = await db.Friends.
-                    LoadWith(f => f.InvitedUser).
-                    LoadWith(f => f.InvitingUser).
-                    Where(f => !f.InvitingUser.Deleted && !f.InvitedUser.Deleted).
-                    Where(f => f.InvitingUserId == userId && f.InvitedUserId == friendId ||
-                               f.InvitingUserId == friendId && f.InvitedUserId == userId).
-                    Where(f => f.Status == FriendInvitationStatus.Accepted.ToString()).
-                    Select(f => f.InvitingUserId == userId ? f.InvitedUser : f.InvitingUser).
-                    FirstOrDefaultAsync();
+                User user = null;
 
-                if (friend == null)
+                if (isAdmin)
+                {
+                    user = await db.Users.
+                        Where(u => u.Id == friendId).
+                        SingleOrDefaultAsync();
+                } 
+                else
+                {
+                   user = await db.Friends.
+                       LoadWith(f => f.InvitedUser).
+                       LoadWith(f => f.InvitingUser).
+                       Where(f => !f.InvitingUser.Deleted && !f.InvitedUser.Deleted).
+                       Where(f => f.InvitingUserId == userId && f.InvitedUserId == friendId ||
+                                  f.InvitingUserId == friendId && f.InvitedUserId == userId).
+                       Where(f => f.Status == FriendInvitationStatus.Accepted.ToString()).
+                       Select(f => f.InvitingUserId == userId ? f.InvitedUser : f.InvitingUser).
+                       FirstOrDefaultAsync();
+                }
+               
+
+                if (user == null)
                 {
                     return null;
                 }
@@ -117,7 +129,7 @@ namespace DM.Repositories
                 return new UserWithAchievements()
                 {
                     Achievements = achievements,
-                    User = friend
+                    User = user
                 };
             }
         }

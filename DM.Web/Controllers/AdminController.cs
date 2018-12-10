@@ -45,7 +45,7 @@ namespace DM.Web.Controllers
 
             bool deleted = await _adminService.DeleteUserAsync(userId);
 
-            if (deleted)
+            if (!deleted)
             {
                 return BadRequest();
             }
@@ -63,7 +63,7 @@ namespace DM.Web.Controllers
 
             bool deleted = await _adminService.DeleteMealAsync(mealId);
 
-            if (deleted)
+            if (!deleted)
             {
                 return BadRequest();
             }
@@ -81,7 +81,7 @@ namespace DM.Web.Controllers
 
             bool deleted = await _adminService.DeleteMealIngredientAsync(mealIngredientId);
 
-            if (deleted)
+            if (!deleted)
             {
                 return BadRequest();
             }
@@ -99,7 +99,7 @@ namespace DM.Web.Controllers
 
             bool markedAsSeen = await _adminService.MarkActivitiesAsSeenAsync(activitiesIds);
 
-            if (markedAsSeen)
+            if (!markedAsSeen)
             {
                 return BadRequest();
             }
