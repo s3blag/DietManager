@@ -1,7 +1,7 @@
 <template>
   <side-menu>
     <router-link tag="li" class="link" :to="{ name: 'AdminActivities'}">
-      <font-awesome-icon id="add-icon" class="option-icon" icon="plus-circle"/>Activities
+      <font-awesome-icon id="add-icon" class="option-icon" icon="newspaper"/>Activities
     </router-link>
 
     <router-link tag="li" class="link" :to="{ name: 'AdminMeals'}">
@@ -9,11 +9,11 @@
     </router-link>
 
     <router-link tag="li" class="link" :to="{ name: 'AdminMealIngredients'}">
-      <font-awesome-icon id="book-icon" class="option-icon" icon="book"/>Ingredients
+      <font-awesome-icon id="book-icon" class="option-icon" icon="search"/>Ingredients
     </router-link>
 
     <router-link tag="li" class="link" :to="{ name: 'AdminUsers'}">
-      <font-awesome-icon id="favourites-icon" class="option-icon" icon="star"/>Users
+      <font-awesome-icon id="favourites-icon" class="option-icon" icon="search"/>Users
     </router-link>
   </side-menu>
 </template>
@@ -34,18 +34,18 @@ export default class MealsManager extends Vue {}
 <style scoped>
 #add-icon {
   position: relative;
-  right: 30px;
+  right: 20px;
 }
 #search-icon {
   position: relative;
-  right: 18px;
+  right: 30px;
 }
 #book-icon {
   position: relative;
-  right: 9px;
+  right: 10px;
 }
 #favourites-icon {
   position: relative;
-  right: 5px;
+  right: 30px;
 }
 </style>

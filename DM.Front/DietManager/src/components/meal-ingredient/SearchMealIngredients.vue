@@ -40,7 +40,7 @@
       </div>
     </div>
     <div>
-      <div class="modal-buttons-container">
+      <div class="modal-buttons-container" v-if="!isAdmin">
         <button class="button" @click="$emit('cancel')">Back</button>
         <button class="button" @click="showAddMealIngredientModal = true">+</button>
       </div>
@@ -98,6 +98,10 @@ export default class SearchMealIngredients extends Vue {
     } else {
       return this.lastReturned.index;
     }
+  }
+
+  get isAdmin() {
+    return this.$route.meta && this.$route.meta.asAdmin;
   }
 
   get isQueryEmpty() {
